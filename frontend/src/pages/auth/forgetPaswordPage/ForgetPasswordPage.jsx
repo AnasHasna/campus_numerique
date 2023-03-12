@@ -11,7 +11,10 @@ import {
 } from "@mui/material";
 import { ErrorMessage, Form, Formik } from "formik";
 import React, { useState } from "react";
+import { useMutation } from "react-query";
 import { useNavigate } from "react-router-dom";
+import * as yup from "yup";
+import { forgertPassword } from "../../../redux/api/authApi";
 
 const initialValuesTechear = {
   email: "",
@@ -20,13 +23,42 @@ const initialValuesStudent = {
   cin: "",
 };
 
+const validateStudentSchema = yup.object().shape({
+  cin: yup.string().required("CIN Obligatoire"),
+});
+
+const validateTeacherSchema = yup.object().shape({
+  email: yup.string().email("Invalide Email").required("Email Obligatoire"),
+});
+
 function ForgetPasswordPage() {
-  const [typeUser, setTypeUser] = useState("Teacher");
+  const [userType, setUserType] = useState("");
   const navigate = useNavigate();
 
   const hanldeGoToLogin = () => {
     navigate("/auth/login");
   };
+
+  const { isLoading, mutate } = useMutation(forgertPassword, {
+    mutationKey: "forgertPassword",
+    onSuccess: (data) => {
+      console.log("====================================");
+      console.log(data);
+      console.log("====================================");
+    },
+    onError: (error) => {
+      console.log("====================================");
+      console.log(error.response.data);
+      console.log("====================================");
+    },
+  });
+
+  const handleSubmit = (values) => {
+    mutate({ ...values, userType });
+  };
+
+  if (isLoading) return <div>Loading...</div>;
+
   return (
     <Box
       sx={{
@@ -48,20 +80,15 @@ function ForgetPasswordPage() {
         </p>
         <Formik
           initialValues={
-            typeUser === "Teacher" ? initialValuesTechear : initialValuesStudent
+            userType === "Teacher" ? initialValuesTechear : initialValuesStudent
           }
-          validate={(values) => {
-            const errors = {};
-            if (!values.email) {
-              errors.email = "Email Obligatoire";
-            }
-            if (!values.cin) {
-              errors.cin = "CIN Obligatoire";
-            }
-            return errors;
-          }}
+          validationSchema={
+            userType === "Teacher"
+              ? validateTeacherSchema
+              : validateStudentSchema
+          }
           onSubmit={(values, { setSubmitting }) => {
-            console.log(values);
+            handleSubmit(values);
           }}
         >
           {({
@@ -79,8 +106,12 @@ function ForgetPasswordPage() {
                 row
                 aria-labelledby="demo-row-radio-buttons-group-label"
                 name="row-radio-buttons-group"
-                value={typeUser}
-                onChange={(e) => setTypeUser(e.target.value)}
+                value={userType}
+                onChange={(e) => {
+                  values.email = "";
+                  values.cin = "";
+                  setUserType(e.target.value);
+                }}
               >
                 <FormControlLabel
                   value="Teacher"
@@ -93,33 +124,32 @@ function ForgetPasswordPage() {
                   label="Student"
                 />
               </RadioGroup>
-              {typeUser === "Teacher" && (
+              {userType === "Teacher" && (
                 <div>
                   <TextField
+                    fullWidth
                     type="email"
                     name="email"
                     label="Email"
+                    value={values.email}
                     error={errors.email && touched.email}
-                    onChange={(e) => {
-                      setFieldValue("email", e.target.value);
-                    }}
+                    onBlur={handleBlur}
+                    onChange={handleChange}
+                    helperText={errors.email}
                   />
-                  <ErrorMessage name="email" component="div" />
                 </div>
               )}
-              {typeUser === "Student" && (
+              {userType === "Student" && (
                 <div>
                   <TextField
+                    fullWidth
                     type="cin"
                     name="cin"
                     error={errors.cin && touched.cin}
                     label="CIN/Code Massar"
-                    helperText="Veuillez saisir votre CIN ou votre code massar"
-                    onChange={(e) => {
-                      setFieldValue("cin", e.target.value);
-                    }}
+                    onChange={handleChange}
+                    onBlur={handleBlur}
                   />
-                  <ErrorMessage name="cin" component="div" />
                 </div>
               )}
               <Divider />
@@ -143,10 +173,10 @@ function ForgetPasswordPage() {
                   variant="contained"
                   color="primary"
                   disabled={
-                    typeUser === "Teacher" ? !values.email : !values.cin
+                    userType === "Teacher" ? !values.email : !values.cin
                   }
                   type="submit"
-                  onClick={() => console.log("clicked")}
+                  onClick={handleSubmit}
                 >
                   Rechercher
                 </Button>

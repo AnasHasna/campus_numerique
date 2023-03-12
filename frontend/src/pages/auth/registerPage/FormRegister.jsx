@@ -291,7 +291,7 @@ function FormRegister() {
                 sx={{ mt: 3, mb: 2, p: "0.5rem", gridColumn: "span 4" }}
                 onClick={() => {
                   setUserType("");
-                  resetForm();
+                  // resetForm();
                 }}
               >
                 {" "}

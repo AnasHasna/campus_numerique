@@ -23,4 +23,19 @@ const login = async ({ email, password, cin, codeMassar, userType }) => {
   }
 };
 
-export { signUp, login };
+const forgertPassword = async ({ email, cin, userType }) => {
+  console.log("====================================");
+  console.log({ userType, email, cin });
+  console.log("====================================");
+  if (userType === "Teacher") {
+    return await axios.post(`http://localhost:5000/teachers/forgetPassword`, {
+      email,
+    });
+  } else {
+    return await axios.post(`http://localhost:5000/students/forgetPassword`, {
+      cin,
+    });
+  }
+};
+
+export { signUp, login, forgertPassword };
