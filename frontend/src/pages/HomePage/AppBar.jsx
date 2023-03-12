@@ -14,6 +14,7 @@ import MenuItem from "@mui/material/MenuItem";
 import AdbIcon from "@mui/icons-material/Adb";
 import { Link, useNavigate } from "react-router-dom";
 import { primaryColor } from "../../utils/colors";
+import { useSelector } from "react-redux";
 
 const pages = [
   { page: "Cours", route: "/cours" },
@@ -31,6 +32,9 @@ function AppBarHomePage() {
   const [anchorElNav, setAnchorElNav] = React.useState(null);
   const [anchorElUser, setAnchorElUser] = React.useState(null);
   const navigate = useNavigate();
+
+  // get the user from store
+  const { user } = useSelector((state) => state.auth);
 
   const handleOpenNavMenu = (event) => {
     setAnchorElNav(event.currentTarget);
@@ -55,11 +59,14 @@ function AppBarHomePage() {
   return (
     <AppBar position="static" sx={{ backgroundColor: primaryColor }}>
       <Container maxWidth="xl">
-        <Toolbar disableGutters>
+        <Toolbar
+          disableGutters
+          sx={{ display: "flex", justifyContent: "space-between" }}
+        >
           <Link to="/" style={{ textDecoration: "none", display: "flex" }}>
             <AdbIcon
               sx={{
-                display: { xs: "none", md: "flex" },
+                display: { xs: user ? "none" : "flex", md: "flex" },
                 mr: 1,
                 color: "white",
               }}
@@ -69,7 +76,7 @@ function AppBarHomePage() {
               noWrap
               sx={{
                 mr: 2,
-                display: { xs: "none", md: "flex" },
+                display: { xs: user ? "none" : "flex", md: "flex" },
                 fontFamily: "monospace",
                 fontWeight: 700,
                 letterSpacing: ".3rem",
@@ -81,7 +88,12 @@ function AppBarHomePage() {
             </Typography>
           </Link>
 
-          <Box sx={{ flexGrow: 1, display: { xs: "flex", md: "none" } }}>
+          <Box
+            sx={{
+              flexGrow: 1,
+              display: { xs: user ? "none" : "flex", md: "none" },
+            }}
+          >
             <IconButton
               size="large"
               aria-label="account of current user"
@@ -89,6 +101,7 @@ function AppBarHomePage() {
               aria-haspopup="true"
               onClick={handleOpenNavMenu}
               color="inherit"
+              sx={{ display: user ? "flex" : "none" }}
             >
               <MenuIcon />
             </IconButton>
@@ -107,7 +120,7 @@ function AppBarHomePage() {
               open={Boolean(anchorElNav)}
               onClose={handleCloseNavMenu}
               sx={{
-                display: { xs: "block", md: "none" },
+                display: { xs: user === null ? "none" : "block", md: "none" },
               }}
             >
               {pages.map((page) => (
@@ -125,7 +138,9 @@ function AppBarHomePage() {
               ))}
             </Menu>
           </Box>
-          <AdbIcon sx={{ display: { xs: "flex", md: "none" }, mr: 1 }} />
+          <AdbIcon
+            sx={{ display: { xs: user ? "flex" : "none", md: "none" }, mr: 1 }}
+          />
           <Typography
             variant="h5"
             noWrap
@@ -133,7 +148,7 @@ function AppBarHomePage() {
             href=""
             sx={{
               mr: 2,
-              display: { xs: "flex", md: "none" },
+              display: { xs: user ? "flex" : "none", md: "none" },
               flexGrow: 1,
               fontFamily: "monospace",
               fontWeight: 700,
@@ -144,7 +159,12 @@ function AppBarHomePage() {
           >
             LOGO
           </Typography>
-          <Box sx={{ flexGrow: 1, display: { xs: "none", md: "flex" } }}>
+          <Box
+            sx={{
+              flexGrow: 1,
+              display: { xs: "none", md: user === null ? "none" : "flex" },
+            }}
+          >
             {pages.map((page) => (
               <Button
                 key={page.page}
@@ -160,7 +180,7 @@ function AppBarHomePage() {
           </Box>
 
           <Box sx={{ flexGrow: 0 }}>
-            <Box display="flex">
+            <Box display={user !== null ? "none" : "flex"}>
               <Button
                 sx={{ color: "white", mr: 1 }}
                 variant="contained"
@@ -168,7 +188,7 @@ function AppBarHomePage() {
                   handleGoToRoute(e, "auth/login");
                 }}
               >
-                Login
+                Se Connecter
               </Button>
               <Button
                 sx={{ color: "white" }}
@@ -177,11 +197,10 @@ function AppBarHomePage() {
                   handleGoToRoute(e, "auth/register");
                 }}
               >
-                Sign Up
+                S'inscrire
               </Button>
             </Box>
-            <Box display="none">
-              {/**TODO: only if he is log in */}
+            <Box display={user !== null ? "flex" : "none"}>
               <Tooltip title="Open settings">
                 <IconButton onClick={handleOpenUserMenu} sx={{ p: 0 }}>
                   <Avatar alt="Remy Sharp" src="/static/images/avatar/2.jpg" />

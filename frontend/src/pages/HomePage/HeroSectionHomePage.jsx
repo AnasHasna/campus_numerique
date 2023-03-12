@@ -1,4 +1,5 @@
 import { Box, Button, Container, Stack, Typography } from "@mui/material";
+import { useNavigate } from "react-router-dom";
 import BgHero from "../../static/images/bghero.jpg";
 import { black, orange } from "../../utils/colors";
 
@@ -12,7 +13,7 @@ const styles = {
       left: 0,
       top: 0,
       width: "100%",
-      height: `calc(100vh - 80px)`,
+      height: `calc(100vh)`,
       opacity: { xs: 0.1, sm: 0.1, md: 0.3, lg: 1 },
       backgroundImage: `url(${BgHero})`,
       backgroundRepeat: "no-repeat",
@@ -25,13 +26,23 @@ const styles = {
     width: { xs: "100%", sm: "100%", md: "50%", lg: "35%" },
     alignItems: { xs: "center", sm: "center", md: "start" },
     textAlign: { xs: "center", sm: "center", md: "start" },
-    pt: 18,
+    pt: 10,
   },
 };
 
 function HeroSectionHomePage() {
+  const navigate = useNavigate();
+
+  const handleClickSeConnect = (e) => {
+    e.preventDefault();
+    navigate("auth/login");
+  };
+  const handleClickSinscrire = (e) => {
+    e.preventDefault();
+    navigate("auth/register");
+  };
   return (
-    <Box component="div" sx={styles.demoWrap }>
+    <Box component="div" sx={styles.demoWrap}>
       <Container>
         <Stack direction="column" spacing={1} sx={styles.demoContent}>
           <Typography variant="h3" sx={{ color: black, fontWeight: "bold" }}>
@@ -67,16 +78,18 @@ function HeroSectionHomePage() {
           <Stack direction="row" pt={7}>
             <Box>
               <Button
-                sx={{ color: "white", width: "120px", mr: "14px" }}
+                onClick={(e) => handleClickSeConnect(e)}
+                sx={{ color: "white", mr: "14px" }}
                 variant="contained"
               >
-                Login
+                Se Connecter
               </Button>
               <Button
                 sx={{ color: "black", width: "120px" }}
                 variant="outlined"
+                onClick={(e) => handleClickSinscrire(e)}
               >
-                Sign Up
+                S'inscrire
               </Button>
             </Box>
           </Stack>
