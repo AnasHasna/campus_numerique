@@ -4,7 +4,6 @@ import Avatar from "@mui/material/Avatar";
 import Link from "@mui/material/Link";
 import * as yup from "yup";
 import AssignmentIndIcon from "@mui/icons-material/AssignmentInd";
-
 import { useState } from "react";
 import {
   Box,
@@ -17,28 +16,30 @@ import {
   TextField,
   Typography,
 } from "@mui/material";
+import { useMutation } from "react-query";
+import { signUp } from "../../../redux/api/authApi";
 
 const registerSchemaTeacher = yup.object().shape({
-  fullName: yup.string().required("required"),
-  email: yup.string().email("invalid email").required("required"),
-  picture: yup.string().required("required"),
-  password: yup.string().required("required"),
+  fullName: yup.string().required("Obligatoire"),
+  email: yup.string().email("invalide email").required("Obligatoire"),
+  picture: yup.string().required("Obligatoire"),
+  password: yup.string().required("Obligatoire"),
   verifyPassword: yup
     .string()
-    .oneOf([yup.ref("password"), null], "Passwords must match")
-    .required("required"),
+    .oneOf([yup.ref("password"), null], "Passwords doivent se ressambler")
+    .required("Obligatoire"),
 });
 
 const registerSchemaStudent = yup.object().shape({
-  fullName: yup.string().required("required"),
-  massar: yup.string().required("required"),
-  cin: yup.string().required("required"),
-  phoneNumber: yup.number().positive().integer().required("required"),
-  password: yup.string().required("required"),
+  fullName: yup.string().required("Obligatoire"),
+  codeMassar: yup.string().required("Obligatoire"),
+  cin: yup.string().required("Obligatoire"),
+  phoneNumber: yup.number().positive().integer().required("Obligatoire"),
+  password: yup.string().required("Obligatoire"),
   verifyPassword: yup
     .string()
     .oneOf([yup.ref("password"), null], "Passwords must match")
-    .required("required"),
+    .required("Obligatoire"),
 });
 
 const initialValuesRegisterTeacher = {
@@ -51,19 +52,72 @@ const initialValuesRegisterTeacher = {
 
 const initialValuesRegisterStudent = {
   fullName: "",
-  massar: "",
+  codeMassar: "",
   cin: "",
   phoneNumber: "",
   password: "",
   verifyPassword: "",
 };
 
+function Copyright(props) {
+  return (
+    <Typography
+      variant="body2"
+      color="text.secondary"
+      align="center"
+      {...props}
+    >
+      {"Copyright © "}
+      <Link color="inherit" href="https://mui.com/">
+        Your Website
+      </Link>{" "}
+      {new Date().getFullYear()}
+      {"."}
+    </Typography>
+  );
+}
+
 function FormRegister() {
   const [userType, setUserType] = useState("");
   const isTeacher = userType === "Teacher";
   const isStudent = userType === "Student";
-  // const isNonMobile = useMediaQuery("(min-width:600)");
+  const [picture, setPicture] = useState(null);
+  const { isLoading, mutate } = useMutation(signUp, {
+    mutationKey: "signUp",
+    onSuccess: (data) => {
+      console.log("====================================");
+      console.log(data.data);
+      console.log("====================================");
+    },
+    onError: (error) => {
+      console.log("====================================");
+      console.log(error.response.data);
+      console.log("====================================");
+    },
+  });
 
+  const handleFormSubmit = (values, { setSubmitting }) => {
+    let formData = new FormData();
+
+    if (userType === "Teacher") {
+      formData.append("fullName", values.fullName);
+      formData.append("email", values.email);
+      formData.append("password", values.password);
+      formData.append("image", picture);
+    } else {
+      formData = {
+        fullName: values.fullName,
+        codeMassar: values.codeMassar,
+        cin: values.cin,
+        phoneNumber: values.phoneNumber,
+        password: values.password,
+      };
+    }
+    mutate({ data: formData, userType });
+  };
+  if (isLoading) {
+    return <div>isLoading</div>;
+  }
   return (
     <Box
       sx={{
@@ -74,7 +128,6 @@ function FormRegister() {
       }}
     >
       <Formik
-        onSubmit={() => {}}
         initialValues={
           isTeacher
             ? initialValuesRegisterTeacher
@@ -83,6 +136,7 @@ function FormRegister() {
         validationSchema={
           isTeacher ? registerSchemaTeacher : registerSchemaStudent
         }
+        onSubmit={handleFormSubmit}
       >
         {({
           values,
@@ -90,8 +144,8 @@ function FormRegister() {
           touched,
           handleBlur,
           handleChange,
-          handleSubmit,
           setFieldValue,
+          handleSubmit,
           resetForm,
         }) => (
           <Form onSubmit={handleSubmit}>
@@ -113,7 +167,7 @@ function FormRegister() {
                 <AssignmentIndIcon />
               </Avatar>
               <Typography component="h1" variant="h5">
-                Sign in
+                S'inscrire
               </Typography>
             </Box>
             <Box
@@ -153,12 +207,12 @@ function FormRegister() {
                   <FormControlLabel
                     value="Teacher"
                     control={<Radio />}
-                    label="Teacher"
+                    label="Professeur"
                   />
                   <FormControlLabel
                     value="Student"
                     control={<Radio />}
-                    label="Student"
+                    label="Etudiant"
                   />
                 </RadioGroup>
               </FormControl>
@@ -185,9 +239,10 @@ function FormRegister() {
                     <Dropzone
                       acceptedFiles=".jpg,.jpeg,.png"
                       multiple={false}
-                      onDrop={(acceptedFiles) =>
-                        setFieldValue("picture", acceptedFiles[0])
-                      }
+                      onDrop={(acceptedFiles) => {
+                        setPicture(acceptedFiles[0]);
+                        setFieldValue("picture", acceptedFiles[0]);
+                      }}
                     >
                       {({ getRootProps, getInputProps }) => (
                         <Box
@@ -228,8 +283,8 @@ function FormRegister() {
                     label="Code Massar"
                     onBlur={handleBlur}
                     onChange={handleChange}
-                    value={values.massar}
-                    name="massar"
+                    value={values.codeMassar}
+                    name="codeMassar"
                     error={Boolean(touched.massar) && Boolean(errors.massar)}
                     helperText={touched.massar && errors.massar}
                     sx={{
@@ -268,7 +323,7 @@ function FormRegister() {
               />
               <TextField
                 label="Confirm Password"
-                type="verifyPassword"
+                type="Password"
                 onBlur={handleBlur}
                 onChange={handleChange}
                 value={values.verifyPassword}
@@ -289,13 +344,9 @@ function FormRegister() {
                 fullWidth
                 variant="contained"
                 sx={{ mt: 3, mb: 2, p: "0.5rem", gridColumn: "span 4" }}
-                onClick={() => {
-                  setUserType("");
-                  // resetForm();
-                }}
               >
                 {" "}
-                Register
+                Se Connecter
               </Button>
             </Box>
           </Form>
@@ -303,9 +354,10 @@ function FormRegister() {
       </Formik>
       <Box display="flex" justifyContent="center" sx={{ mb: 4 }}>
         <Link href="#" variant="body2">
-          {"You have an account? Sign In"}
+          {"Vous avez déja un comptre? Se Connecter"}
         </Link>
       </Box>
+      <Copyright sx={{ mt: 8, mb: 4 }} />
     </Box>
   );
 }

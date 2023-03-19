@@ -46,7 +46,7 @@ function HeroSectionHomePage() {
       <Container>
         <Stack direction="column" spacing={1} sx={styles.demoContent}>
           <Typography variant="h3" sx={{ color: black, fontWeight: "bold" }}>
-            EDUCATION ONLINE
+            EDUCATION
           </Typography>
           <Typography
             variant="h5"
@@ -55,8 +55,8 @@ function HeroSectionHomePage() {
               alignItems: "center",
             }}
           >
-            Empowering the Next Generation of Learners: Join the Online
-            Classroom Revolution Today!
+            Autonomiser la prochaine génération d'apprenants : rejoignez la
+            révolution des salles de classe en ligne dès aujourd'hui !
           </Typography>
 
           <Typography
@@ -68,12 +68,12 @@ function HeroSectionHomePage() {
               fontWeight: "bold",
             }}
           >
-            Welcome to [Website Name], where teachers and students come together
-            to learn, grow, and succeed. Our platform is designed to provide a
-            seamless, interactive learning experience that will help you reach
-            your full potential. Whether you're a teacher looking to enhance
-            your students' education or a student eager to expand your
-            knowledge, [Website Name] is the perfect place to start.
+            Bienvenue sur MonSite, la plateforme éducative en ligne ultime pour
+            les enseignants et les élèves. Créez des salles de classe
+            virtuelles, partagez des fichiers et des devoirs, et communiquez
+            facilement avec vos élèves. Rejoignez-nous dès maintenant et
+            découvrez comment Classroom peut transformer votre expérience
+            d'apprentissage.
           </Typography>
           <Stack direction="row" pt={7}>
             <Box>

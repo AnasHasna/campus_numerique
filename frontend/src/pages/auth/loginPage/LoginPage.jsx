@@ -1,21 +1,26 @@
 import * as React from "react";
-import Avatar from "@mui/material/Avatar";
-import Button from "@mui/material/Button";
-import CssBaseline from "@mui/material/CssBaseline";
-import TextField from "@mui/material/TextField";
-import FormControlLabel from "@mui/material/FormControlLabel";
-import Checkbox from "@mui/material/Checkbox";
-import Link from "@mui/material/Link";
-import Grid from "@mui/material/Grid";
-import Box from "@mui/material/Box";
-import LockOutlinedIcon from "@mui/icons-material/LockOutlined";
-import Typography from "@mui/material/Typography";
-import Container from "@mui/material/Container";
 import { createTheme, ThemeProvider } from "@mui/material/styles";
-import { Formik, Form, Field, ErrorMessage } from "formik";
+import { Formik, Form, ErrorMessage } from "formik";
 import * as Yup from "yup";
 import { useMutation } from "react-query";
 import { login } from "../../../redux/api/authApi";
+import { useState } from "react";
+import LockIcon from "@mui/icons-material/Lock";
+import {
+  Avatar,
+  Box,
+  Button,
+  Checkbox,
+  Container,
+  CssBaseline,
+  FormControlLabel,
+  Grid,
+  Link,
+  Radio,
+  RadioGroup,
+  TextField,
+  Typography,
+} from "@mui/material";
 
 function Copyright(props) {
   return (
@@ -35,9 +40,41 @@ function Copyright(props) {
   );
 }
 
-const theme = createTheme();
-
 export default function LoginPage() {
+  const [userType, setUserType] = useState("");
+  const isTeacher = userType === "Teacher";
+  const isStudent = userType === "Student";
+
+  const handleSubmit = (event) => {
+    event.preventDefault();
+    let data = new FormData(event.currentTarget);
+
+    if (userType === "Teacher") {
+      data = {
+        email: data.get("email"),
+        password: data.get("password"),
+        userType: "Teacher",
+      };
+    } else {
+      data = {
+        cin: data.get("cin"),
+        password: data.get("password"),
+        userType: "Student",
+      };
+    }
+    mutate(data);
+  };
+  const validateTeacherSchema = Yup.object({
+    email: Yup.string("Enter your email")
+      .email("Enter a valid email")
+      .required("Email is required"),
+    password: Yup.string().required("Password is required"),
+  });
+
+  const initialValuesTeaacher = { email: "", password: "" };
+
+  //////////////////////////: student
+
   const { isLoading, mutate } = useMutation(login, {
     mutationKey: "login",
 
@@ -52,27 +89,14 @@ export default function LoginPage() {
       console.log("====================================");
     },
   });
-  const handleSubmit = (event) => {
-    event.preventDefault();
-    let data = new FormData(event.currentTarget);
-    data = {
-      email: data.get("email"),
-      password: data.get("password"),
-      userType: "Teacher",
-    };
 
-    mutate(data);
-  };
-  const validateSchema = Yup.object({
-    email: Yup.string("Enter your email")
-      .email("Enter a valid email")
-      .required("Email is required"),
+  const validateStudentSchema = Yup.object({
+    cin: Yup.string("Enter your cin").required("cin is required"),
     password: Yup.string().required("Password is required"),
-    //.matches(/([0-9])/, "Password must contain a number.")
-    //  .matches(/([A-Z])/, "Au moins une lettre majuscule")
   });
 
-  const initialValues = { email: "", password: "" };
+  const initialValuesStudent = { cin: "", password: "" };
+
   const onSubmit = (values) => {
     alert(JSON.stringify(values, null, 2));
   };
@@ -92,26 +116,60 @@ export default function LoginPage() {
 
   return (
     <Formik
-      initialValues={initialValues}
-      validationSchema={validateSchema}
       onSubmit={onSubmit}
       onChange={handleChange}
+      initialValues={isTeacher ? initialValuesTeaacher : initialValuesStudent}
+      validationSchema={
+        isTeacher ? validateTeacherSchema : validateStudentSchema
+      }
     >
-      {(values) => (
-        <ThemeProvider theme={theme}>
-          <Container component="main" maxWidth="xs">
-            <CssBaseline />
-
-            <Form
-              onSubmit={handleSubmit}
+      {(values, handleChange, handleSubmit) => (
+        <>
+          <Box
+            sx={{
+              marginTop: 8,
+              display: "flex",
+              flexDirection: "column",
+              alignItems: "center",
+            }}
+          >
+            <Avatar
               sx={{
-                marginTop: 8,
-                display: "flex",
-                flexDirection: "column",
-                alignItems: "center",
+                m: 1,
+                bgcolor: "secondary.main",
               }}
             >
-              <Box
+              <LockIcon />
+            </Avatar>
+            <Typography component="h1" variant="h5">
+              Se Connecter
+            </Typography>
+
+            <RadioGroup
+              row
+              value={userType}
+              onChange={(e) => {
+                setUserType(e.target.value);
+              }}
+            >
+              <FormControlLabel
+                value="Teacher"
+                control={<Radio />}
+                label="Professeur"
+              />
+              <FormControlLabel
+                value="Student"
+                control={<Radio />}
+                label="Etudiant"
+              />
+            </RadioGroup>
+          </Box>
+          {isStudent && (
+            <Container component="main" maxWidth="xs">
+              <CssBaseline />
+
+              <Form
+                onSubmit={handleSubmit}
                 sx={{
                   marginTop: 8,
                   display: "flex",
@@ -119,89 +177,174 @@ export default function LoginPage() {
                   alignItems: "center",
                 }}
               >
-                <Avatar
+                {/* <Form  onSubmit={handleSubmit} > */}
+
+                <TextField
+                  margin="normal"
+                  required
+                  fullWidth
+                  id="cin"
+                  label="CIN / Code Massar"
+                  name="cin"
+                  type="cin"
+                  autoComplete="cin"
+                  autoFocus
+                  value={values.cin}
+                  onChange={handleChange}
                   sx={{
-                    m: 1,
-                    bgcolor: "secondary.main",
+                    gridColumn: "span 4",
+                  }}
+
+                  //component = {TextField}
+                />
+                <ErrorMessage name="email" />
+
+                <TextField
+                  //helperText="Please enter your password"
+                  margin="normal"
+                  fullWidth
+                  required
+                  name="password"
+                  label="Mot de passe"
+                  type="password"
+                  id="password"
+                  autoComplete="current-password"
+                  onChange={handleChange}
+                  value={values.password}
+                  sx={{
+                    gridColumn: "span 4",
+                  }}
+
+                  //component = {TextField}
+                />
+                <ErrorMessage name="password" />
+
+                <br />
+                <FormControlLabel
+                  control={<Checkbox value="remember" color="primary" />}
+                  label="Se souvenir de moi"
+                />
+                <Button
+                  type="submit"
+                  fullWidth
+                  variant="contained"
+                  onClick={handleSubmit}
+                  sx={{
+                    mt: 3,
+                    mb: 2,
                   }}
                 >
-                  <LockOutlinedIcon />
-                </Avatar>
-                <Typography component="h1" variant="h5">
-                  Sign in
-                </Typography>
-              </Box>
+                  Connexion
+                </Button>
 
-              {/* <Form  onSubmit={handleSubmit} > */}
+                <Grid container>
+                  <Grid item xs>
+                    <Link href="#" variant="body2">
+                      Mot de passe oublié ?
+                    </Link>
+                  </Grid>
+                  <Grid item>
+                    <Link href="#" variant="body2">
+                      {"Créer nouveau compte"}
+                    </Link>
+                  </Grid>
+                </Grid>
+                {/* </Form> */}
+              </Form>
+              <Copyright sx={{ mt: 8, mb: 4 }} />
+            </Container>
+          )}
 
-              <TextField
-                margin="normal"
-                required
-                fullWidth
-                id="email"
-                label="Email Address"
-                name="email"
-                type="email"
-                autoComplete="email"
-                autoFocus
-                variant="standard"
-                value={values.email}
+          {isTeacher && (
+            <Container component="main" maxWidth="xs">
+              <CssBaseline />
 
-                //component = {TextField}
-              />
-              <ErrorMessage name="email" />
-
-              <TextField
-                //helperText="Please enter your password"
-                margin="normal"
-                required
-                fullWidth
-                name="password"
-                label="Password"
-                type="password"
-                id="password"
-                autoComplete="current-password"
-                variant="standard"
-                onChange={handleChange}
-                value={values.password}
-                //component = {TextField}
-              />
-              <ErrorMessage name="password" />
-
-              <br />
-              <FormControlLabel
-                control={<Checkbox value="remember" color="primary" />}
-                label="Remember me"
-              />
-              <Button
-                type="submit"
-                fullWidth
-                variant="contained"
+              <Form
+                onSubmit={handleSubmit}
                 sx={{
-                  mt: 3,
-                  mb: 2,
+                  marginTop: 8,
+                  display: "flex",
+                  flexDirection: "column",
+                  alignItems: "center",
                 }}
               >
-                Sign In
-              </Button>
+                {/* <Form  onSubmit={handleSubmit} > */}
 
-              <Grid container>
-                <Grid item xs>
-                  <Link href="#" variant="body2">
-                    Forgot password?
-                  </Link>
+                <TextField
+                  margin="normal"
+                  required
+                  fullWidth
+                  id="email"
+                  label="Address e-mail"
+                  name="email"
+                  type="email"
+                  autoComplete="email"
+                  autoFocus
+                  value={values.email}
+                  onChange={handleChange}
+                  sx={{
+                    gridColumn: "span 4",
+                  }}
+
+                  //component = {TextField}
+                />
+                <ErrorMessage name="email" />
+
+                <TextField
+                  //helperText="Please enter your password"
+                  margin="normal"
+                  required
+                  fullWidth
+                  name="password"
+                  label="Mot de passe"
+                  type="password"
+                  id="password"
+                  autoComplete="current-password"
+                  onChange={handleChange}
+                  value={values.password}
+                  sx={{
+                    gridColumn: "span 4",
+                  }}
+                  //component = {TextField}
+                />
+                <ErrorMessage name="password" />
+
+                <br />
+                <FormControlLabel
+                  control={<Checkbox value="remember" color="primary" />}
+                  label="Se souvenir de moi"
+                />
+                <Button
+                  type="submit"
+                  fullWidth
+                  variant="contained"
+                  sx={{
+                    mt: 3,
+                    mb: 2,
+                  }}
+                  onSubmit={handleSubmit}
+                >
+                  Connexion
+                </Button>
+
+                <Grid container>
+                  <Grid item xs>
+                    <Link href="#" variant="body2">
+                      Mot de passe oublié ?
+                    </Link>
+                  </Grid>
+                  <Grid item>
+                    <Link href="#" variant="body2">
+                      {"Créer nouveau compte"}
+                    </Link>
+                  </Grid>
                 </Grid>
-                <Grid item>
-                  <Link href="#" variant="body2">
-                    {"Don't have an account? Sign Up"}
-                  </Link>
-                </Grid>
-              </Grid>
-              {/* </Form> */}
-            </Form>
-            <Copyright sx={{ mt: 8, mb: 4 }} />
-          </Container>
-        </ThemeProvider>
+                {/* </Form> */}
+              </Form>
+              <Copyright sx={{ mt: 8, mb: 4 }} />
+            </Container>
+          )}
+        </>
       )}
     </Formik>
   );

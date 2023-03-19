@@ -21,7 +21,7 @@ const { JsonWebTokenError } = require("jsonwebtoken");
 
 module.exports.registerTeacherController = asyncHandler(async (req, res) => {
   // validate data
-
+  console.log(req.body);
   const { error } = validateRegisterTeacher(req.body);
   if (error) {
     return res.status(400).json({
