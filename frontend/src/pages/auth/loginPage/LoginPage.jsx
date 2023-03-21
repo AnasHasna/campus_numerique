@@ -1,11 +1,11 @@
 import * as React from "react";
-import { createTheme, ThemeProvider } from "@mui/material/styles";
 import { Formik, Form, ErrorMessage } from "formik";
 import * as Yup from "yup";
 import { useMutation } from "react-query";
 import { login } from "../../../redux/api/authApi";
 import { useState } from "react";
 import LockIcon from "@mui/icons-material/Lock";
+import { useDispatch, useSelector } from "react-redux";
 import {
   Avatar,
   Box,
@@ -21,6 +21,9 @@ import {
   TextField,
   Typography,
 } from "@mui/material";
+import { useNavigate } from "react-router-dom";
+import Loading from "../../../components/Loading";
+import { authActions } from "../../../redux/slices/authSlice";
 
 function Copyright(props) {
   return (
@@ -41,34 +44,43 @@ function Copyright(props) {
 }
 
 export default function LoginPage() {
+  const navigate = useNavigate();
+
+  const dispatch = useDispatch();
+
+  const { user } = useSelector((state) => state.auth);
+
   const [userType, setUserType] = useState("");
   const isTeacher = userType === "Teacher";
   const isStudent = userType === "Student";
 
-  const handleSubmit = (event) => {
-    event.preventDefault();
-    let data = new FormData(event.currentTarget);
-
+  const handleSubmit = (values, { setSubmitting }) => {
+    console.log("stap 1 passed");
+    let data = {};
+    console.log("stap 2 passed");
     if (userType === "Teacher") {
       data = {
-        email: data.get("email"),
-        password: data.get("password"),
+        email: values.email,
+        password: values.password,
         userType: "Teacher",
       };
     } else {
       data = {
-        cin: data.get("cin"),
-        password: data.get("password"),
+        cin: values.cin,
+        password: values.password,
         userType: "Student",
       };
     }
+    console.log("stap 3 passed");
     mutate(data);
+    console.log("stap 4 passed");
   };
+
   const validateTeacherSchema = Yup.object({
     email: Yup.string("Enter your email")
       .email("Enter a valid email")
       .required("Email is required"),
-    password: Yup.string().required("Password is required"),
+    // password: Yup.string().required("Password is required"),
   });
 
   const initialValuesTeaacher = { email: "", password: "" };
@@ -79,9 +91,8 @@ export default function LoginPage() {
     mutationKey: "login",
 
     onSuccess: (data) => {
-      console.log("====================================");
-      console.log(data.data);
-      console.log("====================================");
+      dispatch(authActions.login(data.data.user));
+      navigate("/", { replace: true });
     },
     onError: (error) => {
       console.log("====================================");
@@ -92,14 +103,10 @@ export default function LoginPage() {
 
   const validateStudentSchema = Yup.object({
     cin: Yup.string("Enter your cin").required("cin is required"),
-    password: Yup.string().required("Password is required"),
+    // password: Yup.string().required("Password is required"),
   });
 
   const initialValuesStudent = { cin: "", password: "" };
-
-  const onSubmit = (values) => {
-    alert(JSON.stringify(values, null, 2));
-  };
 
   const [values, setValues] = React.useState({});
 
@@ -110,20 +117,25 @@ export default function LoginPage() {
     }));
   };
 
-  if (isLoading) {
-    return <div>isLoading</div>;
-  }
-
   return (
     <Formik
-      onSubmit={onSubmit}
+      onSubmit={handleSubmit}
       onChange={handleChange}
       initialValues={isTeacher ? initialValuesTeaacher : initialValuesStudent}
       validationSchema={
         isTeacher ? validateTeacherSchema : validateStudentSchema
       }
     >
-      {(values, handleChange, handleSubmit) => (
+      {({
+        values,
+        errors,
+        touched,
+        handleBlur,
+        handleChange,
+        setFieldValue,
+        handleSubmit,
+        resetForm,
+      }) => (
         <>
           <Box
             sx={{
@@ -142,7 +154,7 @@ export default function LoginPage() {
               <LockIcon />
             </Avatar>
             <Typography component="h1" variant="h5">
-              Se Connecter
+              Se connecter
             </Typography>
 
             <RadioGroup
@@ -169,7 +181,6 @@ export default function LoginPage() {
               <CssBaseline />
 
               <Form
-                onSubmit={handleSubmit}
                 sx={{
                   marginTop: 8,
                   display: "flex",
@@ -177,8 +188,6 @@ export default function LoginPage() {
                   alignItems: "center",
                 }}
               >
-                {/* <Form  onSubmit={handleSubmit} > */}
-
                 <TextField
                   margin="normal"
                   required
@@ -228,24 +237,38 @@ export default function LoginPage() {
                   type="submit"
                   fullWidth
                   variant="contained"
-                  onClick={handleSubmit}
                   sx={{
                     mt: 3,
                     mb: 2,
                   }}
+                  disabled={isLoading}
                 >
-                  Connexion
+                  {isLoading ? <Loading /> : "Connexion"}
                 </Button>
 
                 <Grid container>
                   <Grid item xs>
-                    <Link href="#" variant="body2">
+                    <Link
+                      href="#"
+                      variant="body2"
+                      onClick={(e) => {
+                        e.preventDefault();
+                        navigate("auth/forgetpassword", { replace: true });
+                      }}
+                    >
                       Mot de passe oublié ?
                     </Link>
                   </Grid>
                   <Grid item>
-                    <Link href="#" variant="body2">
-                      {"Créer nouveau compte"}
+                    <Link
+                      href="#"
+                      variant="body2"
+                      onClick={(e) => {
+                        e.preventDefault();
+                        navigate("auth/forgetpassword", { replace: true });
+                      }}
+                    >
+                      Créer nouveau compte
                     </Link>
                   </Grid>
                 </Grid>
@@ -260,7 +283,6 @@ export default function LoginPage() {
               <CssBaseline />
 
               <Form
-                onSubmit={handleSubmit}
                 sx={{
                   marginTop: 8,
                   display: "flex",
@@ -268,8 +290,6 @@ export default function LoginPage() {
                   alignItems: "center",
                 }}
               >
-                {/* <Form  onSubmit={handleSubmit} > */}
-
                 <TextField
                   margin="normal"
                   required
@@ -322,20 +342,32 @@ export default function LoginPage() {
                     mt: 3,
                     mb: 2,
                   }}
-                  onSubmit={handleSubmit}
+                  disabled={isLoading}
                 >
-                  Connexion
+                  {isLoading ? <Loading /> : "Connexion"}
                 </Button>
 
                 <Grid container>
                   <Grid item xs>
-                    <Link href="#" variant="body2">
+                    <Link
+                      onClick={(e) => {
+                        e.preventDefault();
+                        navigate("auth/forgetpassword", { replace: true });
+                      }}
+                      variant="body2"
+                    >
                       Mot de passe oublié ?
                     </Link>
                   </Grid>
                   <Grid item>
-                    <Link href="#" variant="body2">
-                      {"Créer nouveau compte"}
+                    <Link
+                      onClick={(e) => {
+                        e.preventDefault();
+                        navigate("auth/register", { replace: true });
+                      }}
+                      variant="body2"
+                    >
+                      Créer nouveau compte
                     </Link>
                   </Grid>
                 </Grid>

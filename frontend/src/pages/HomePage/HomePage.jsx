@@ -1,10 +1,9 @@
-import AppBarHomePage from "./AppBar";
+import MyAppBar from "./AppBar";
 import HeroSectionHomePage from "./HeroSectionHomePage";
 
 function HomePage() {
   return (
     <div>
-      <AppBarHomePage />
       <HeroSectionHomePage />
     </div>
   );

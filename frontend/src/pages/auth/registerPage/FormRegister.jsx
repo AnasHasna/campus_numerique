@@ -18,6 +18,8 @@ import {
 } from "@mui/material";
 import { useMutation } from "react-query";
 import { signUp } from "../../../redux/api/authApi";
+import { useNavigate } from "react-router-dom";
+import Loading from "../../../components/Loading";
 
 const registerSchemaTeacher = yup.object().shape({
   fullName: yup.string().required("Obligatoire"),
@@ -82,6 +84,7 @@ function FormRegister() {
   const isTeacher = userType === "Teacher";
   const isStudent = userType === "Student";
   const [picture, setPicture] = useState(null);
+  const navigate = useNavigate();
   const { isLoading, mutate } = useMutation(signUp, {
     mutationKey: "signUp",
     onSuccess: (data) => {
@@ -115,9 +118,6 @@ function FormRegister() {
     }
     mutate({ data: formData, userType });
   };
-  if (isLoading) {
-    return <div>isLoading</div>;
-  }
   return (
     <Box
       sx={{
@@ -343,17 +343,17 @@ function FormRegister() {
                 type="submit"
                 fullWidth
                 variant="contained"
+                disabled={isLoading}
                 sx={{ mt: 3, mb: 2, p: "0.5rem", gridColumn: "span 4" }}
               >
-                {" "}
-                Se Connecter
+                {isLoading ? <Loading /> : "Se connecter"}
               </Button>
             </Box>
           </Form>
         )}
       </Formik>
       <Box display="flex" justifyContent="center" sx={{ mb: 4 }}>
-        <Link href="#" variant="body2">
+        <Link href="#" variant="body2" onClick={() => navigate("/auth/login")}>
           {"Vous avez déja un comptre? Se Connecter"}
         </Link>
       </Box>

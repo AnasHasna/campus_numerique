@@ -9,12 +9,14 @@ import {
   Stack,
   TextField,
 } from "@mui/material";
-import { ErrorMessage, Form, Formik } from "formik";
+import { Form, Formik } from "formik";
 import React, { useState } from "react";
 import { useMutation } from "react-query";
 import { useNavigate } from "react-router-dom";
 import * as yup from "yup";
-import { forgertPassword } from "../../../redux/api/authApi";
+import { forgetPassword } from "../../../redux/api/authApi";
+import { useDispatch } from "react-redux";
+import { authActions } from "../../../redux/slices/authSlice";
 
 const initialValuesTechear = {
   email: "",
@@ -34,20 +36,27 @@ const validateTeacherSchema = yup.object().shape({
 function ForgetPasswordPage() {
   const [userType, setUserType] = useState("");
   const navigate = useNavigate();
+  const dispatch = useDispatch();
+
+  const [email, setEmail] = useState("");
+  const [cin, setCin] = useState("");
 
   const hanldeGoToLogin = () => {
     navigate("/auth/login");
   };
 
-  const { isLoading, mutate } = useMutation(forgertPassword, {
-    mutationKey: "forgertPassword",
+  const { isLoading, mutate } = useMutation(forgetPassword, {
+    mutationKey: "forgetPassword",
     onSuccess: (data) => {
-      console.log("====================================");
-      console.log(data);
-      console.log("====================================");
+      if (userType === "Teacher") {
+        dispatch(authActions.forgetPassword({ email, userType }));
+      } else {
+        dispatch(authActions.forgetPassword({ cin, userType }));
+      }
+      // navigate("/auth/verifycode", { replace: true });
     },
     onError: (error) => {
-      console.log("====================================");
+      console.log("================= erroooooooor ===================");
       console.log(error.response.data);
       console.log("====================================");
     },
@@ -88,6 +97,8 @@ function ForgetPasswordPage() {
               : validateStudentSchema
           }
           onSubmit={(values, { setSubmitting }) => {
+            setEmail(values.email);
+            setCin(values.cin);
             handleSubmit(values);
           }}
         >
@@ -134,7 +145,10 @@ function ForgetPasswordPage() {
                     value={values.email}
                     error={errors.email && touched.email}
                     onBlur={handleBlur}
-                    onChange={handleChange}
+                    onChange={(e) => {
+                      setEmail(e.target.value);
+                      handleChange(e);
+                    }}
                     helperText={errors.email}
                   />
                 </div>
@@ -147,7 +161,10 @@ function ForgetPasswordPage() {
                     name="cin"
                     error={errors.cin && touched.cin}
                     label="CIN/Code Massar"
-                    onChange={handleChange}
+                    onChange={(e) => {
+                      handleChange(e);
+                      setCin(e.target.value);
+                    }}
                     onBlur={handleBlur}
                   />
                 </div>

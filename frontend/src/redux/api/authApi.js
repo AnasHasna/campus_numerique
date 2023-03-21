@@ -31,7 +31,7 @@ const login = async ({ email, password, cin, codeMassar, userType }) => {
   }
 };
 
-const forgertPassword = async ({ email, cin, userType }) => {
+const forgetPassword = async ({ email, cin, userType }) => {
   console.log("====================================");
   console.log({ userType, email, cin });
   console.log("====================================");
@@ -46,4 +46,4 @@ const forgertPassword = async ({ email, cin, userType }) => {
   }
 };
 
-export { signUp, login, forgertPassword };
+export { signUp, login, forgetPassword };

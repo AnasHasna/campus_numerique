@@ -18,6 +18,7 @@ import Product from "./pages/fakePage/Product";
 import AddProduct from "./pages/fakePage/AddProduct";
 import UpdateProduct from "./pages/fakePage/UpdateProduct";
 import DeleteProduct from "./pages/fakePage/DeleteProduct";
+import MyAppBar from "./pages/HomePage/AppBar";
 
 const queryClient = new QueryClient();
 
@@ -27,6 +28,8 @@ function App() {
       <CssBaseline />
       <QueryClientProvider client={queryClient}>
         <BrowserRouter>
+          <MyAppBar />
+
           <Routes>
             <Route index element={<HomePage />} />
             <Route path="cours" element={<CoursPage />} />

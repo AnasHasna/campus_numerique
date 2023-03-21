@@ -28,7 +28,7 @@ const settings = [
   { setting: "Logout", route: "Logout" },
 ];
 
-function AppBarHomePage() {
+function MyAppBar() {
   const [anchorElNav, setAnchorElNav] = React.useState(null);
   const [anchorElUser, setAnchorElUser] = React.useState(null);
   const navigate = useNavigate();
@@ -237,4 +237,4 @@ function AppBarHomePage() {
     </AppBar>
   );
 }
-export default AppBarHomePage;
+export default MyAppBar;
