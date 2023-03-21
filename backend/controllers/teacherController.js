@@ -141,7 +141,7 @@ module.exports.forgetPasswordTeacherController = asyncHandler(
     await Teacher.findByIdAndUpdate(teacher._id, { $set: { verifyCode } });
 
     // send response to frontend
-    res.status(200).json({ status: true });
+    res.status(200).json({ status: true, id: teacher._id });
   }
 );
 

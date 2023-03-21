@@ -9,6 +9,7 @@ const authSlice = createSlice({
     userType: localStorage.getItem("userType")
       ? localStorage.getItem("userType")
       : null,
+    isLogin: localStorage.getItem("user") ? true : false,
   },
   reducers: {
     login(state, action) {
@@ -23,13 +24,7 @@ const authSlice = createSlice({
       state.user = null;
     },
     forgetPassword(state, action) {
-      if (action.payload.userType === "Teacher") {
-        let user = {};
-        user.email = action.payload.email;
-        state.user = user;
-      } else {
-        state.user = action.payload.cin;
-      }
+      state.user = action.payload.user;
       state.userType = action.payload.userType;
     },
     changePassword() {},

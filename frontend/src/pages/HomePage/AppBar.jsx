@@ -34,7 +34,7 @@ function MyAppBar() {
   const navigate = useNavigate();
 
   // get the user from store
-  const { user } = useSelector((state) => state.auth);
+  const { user, isLogin } = useSelector((state) => state.auth);
 
   const handleOpenNavMenu = (event) => {
     setAnchorElNav(event.currentTarget);
@@ -66,7 +66,7 @@ function MyAppBar() {
           <Link to="/" style={{ textDecoration: "none", display: "flex" }}>
             <AdbIcon
               sx={{
-                display: { xs: user ? "none" : "flex", md: "flex" },
+                display: { xs: user && isLogin ? "none" : "flex", md: "flex" },
                 mr: 1,
                 color: "white",
               }}
@@ -76,7 +76,7 @@ function MyAppBar() {
               noWrap
               sx={{
                 mr: 2,
-                display: { xs: user ? "none" : "flex", md: "flex" },
+                display: { xs: user && isLogin ? "none" : "flex", md: "flex" },
                 fontFamily: "monospace",
                 fontWeight: 700,
                 letterSpacing: ".3rem",
@@ -91,7 +91,7 @@ function MyAppBar() {
           <Box
             sx={{
               flexGrow: 1,
-              display: { xs: user ? "none" : "flex", md: "none" },
+              display: { xs: user && isLogin ? "none" : "flex", md: "none" },
             }}
           >
             <IconButton
@@ -101,7 +101,7 @@ function MyAppBar() {
               aria-haspopup="true"
               onClick={handleOpenNavMenu}
               color="inherit"
-              sx={{ display: user ? "flex" : "none" }}
+              sx={{ display: user && isLogin ? "flex" : "none" }}
             >
               <MenuIcon />
             </IconButton>
@@ -120,7 +120,7 @@ function MyAppBar() {
               open={Boolean(anchorElNav)}
               onClose={handleCloseNavMenu}
               sx={{
-                display: { xs: user === null ? "none" : "block", md: "none" },
+                display: { xs: user && isLogin ? "block" : "none", md: "none" },
               }}
             >
               {pages.map((page) => (
@@ -139,7 +139,10 @@ function MyAppBar() {
             </Menu>
           </Box>
           <AdbIcon
-            sx={{ display: { xs: user ? "flex" : "none", md: "none" }, mr: 1 }}
+            sx={{
+              display: { xs: user && isLogin ? "flex" : "none", md: "none" },
+              mr: 1,
+            }}
           />
           <Typography
             variant="h5"
@@ -148,7 +151,7 @@ function MyAppBar() {
             href=""
             sx={{
               mr: 2,
-              display: { xs: user ? "flex" : "none", md: "none" },
+              display: { xs: user && isLogin ? "flex" : "none", md: "none" },
               flexGrow: 1,
               fontFamily: "monospace",
               fontWeight: 700,
@@ -162,7 +165,7 @@ function MyAppBar() {
           <Box
             sx={{
               flexGrow: 1,
-              display: { xs: "none", md: user === null ? "none" : "flex" },
+              display: { xs: "none", md: user && isLogin ? "flex" : "none" },
             }}
           >
             {pages.map((page) => (
@@ -180,7 +183,7 @@ function MyAppBar() {
           </Box>
 
           <Box sx={{ flexGrow: 0 }}>
-            <Box display={user !== null ? "none" : "flex"}>
+            <Box display={user && isLogin ? "none" : "flex"}>
               <Button
                 sx={{ color: "white", mr: 1 }}
                 variant="contained"
@@ -200,7 +203,7 @@ function MyAppBar() {
                 S'inscrire
               </Button>
             </Box>
-            <Box display={user !== null ? "flex" : "none"}>
+            <Box display={user & isLogin ? "flex" : "none"}>
               <Tooltip title="Open settings">
                 <IconButton onClick={handleOpenUserMenu} sx={{ p: 0 }}>
                   <Avatar alt="Remy Sharp" src="/static/images/avatar/2.jpg" />

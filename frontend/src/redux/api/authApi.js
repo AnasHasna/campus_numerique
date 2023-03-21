@@ -40,7 +40,7 @@ const forgetPassword = async ({ email, cin, userType }) => {
       email,
     });
   } else {
-    return await axios.post(`http://localhost:5000/students/forgetPassword`, {
+    return await axios.post(`http://localhost:5000/students/forgetpassword`, {
       cin,
     });
   }

@@ -203,13 +203,10 @@ export default function LoginPage() {
                   sx={{
                     gridColumn: "span 4",
                   }}
-
-                  //component = {TextField}
                 />
                 <ErrorMessage name="email" />
 
                 <TextField
-                  //helperText="Please enter your password"
                   margin="normal"
                   fullWidth
                   required
@@ -249,11 +246,10 @@ export default function LoginPage() {
                 <Grid container>
                   <Grid item xs>
                     <Link
-                      href="#"
                       variant="body2"
                       onClick={(e) => {
                         e.preventDefault();
-                        navigate("auth/forgetpassword", { replace: true });
+                        navigate("/auth/forgetpassword", { relative: true });
                       }}
                     >
                       Mot de passe oublié ?
@@ -261,11 +257,10 @@ export default function LoginPage() {
                   </Grid>
                   <Grid item>
                     <Link
-                      href="#"
                       variant="body2"
                       onClick={(e) => {
                         e.preventDefault();
-                        navigate("auth/forgetpassword", { replace: true });
+                        navigate("/auth/signup", { relative: true });
                       }}
                     >
                       Créer nouveau compte
@@ -352,7 +347,7 @@ export default function LoginPage() {
                     <Link
                       onClick={(e) => {
                         e.preventDefault();
-                        navigate("auth/forgetpassword", { replace: true });
+                        navigate("/auth/forgetpassword", { relative: true });
                       }}
                       variant="body2"
                     >
@@ -363,7 +358,7 @@ export default function LoginPage() {
                     <Link
                       onClick={(e) => {
                         e.preventDefault();
-                        navigate("auth/register", { replace: true });
+                        navigate("/auth/register", { relative: true });
                       }}
                       variant="body2"
                     >

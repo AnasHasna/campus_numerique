@@ -49,9 +49,9 @@ function ForgetPasswordPage() {
     mutationKey: "forgetPassword",
     onSuccess: (data) => {
       if (userType === "Teacher") {
-        dispatch(authActions.forgetPassword({ email, userType }));
+        dispatch(authActions.forgetPassword({ user: data.data, userType }));
       } else {
-        dispatch(authActions.forgetPassword({ cin, userType }));
+        dispatch(authActions.forgetPassword({ user: data.data, userType }));
       }
       // navigate("/auth/verifycode", { replace: true });
     },
