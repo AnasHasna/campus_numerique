@@ -15,15 +15,14 @@ import {
   RadioGroup,
   TextField,
   Typography,
-  Snackbar,
-  SnackbarContent,
 } from "@mui/material";
 import { useMutation } from "react-query";
 import { signUp } from "../../../redux/api/authApi";
 import { useNavigate } from "react-router-dom";
-import SnackBar from "../../../Components/SnackBar";
+import SnackBar from "../../../components/SnackBar";
 import { useDispatch } from "react-redux";
 import { authActions } from "../../../redux/slices/authSlice";
+import Loading from "../../../components/Loading";
 
 const registerSchemaTeacher = yup.object().shape({
   fullName: yup.string().required("Obligatoire"),
@@ -40,7 +39,7 @@ const registerSchemaTeacher = yup.object().shape({
     .string()
     .required("Obligatoire")
     .matches(
-      /^(?=.[a-z])(?=.[A-Z])(?=.[!@#$%^&])/,
+      /^(?=.*[a-z])(?=.*[A-Z])(?=.*[!@#$%^&])/,
       "Mot de passe doit contenir au moin une lettre minuscule, majuscule et un charactére spéciale !"
     ),
   verifyPassword: yup
@@ -382,7 +381,7 @@ function FormRegister() {
                   disabled={isLoading}
                   sx={{ mt: 3, mb: 2, p: "0.5rem", gridColumn: "span 4" }}
                 >
-                  {isLoading ? "isLoading" : "Se connecter"}
+                  {isLoading ? <Loading /> : "Se connecter"}
                 </Button>
               </Box>
             </Form>

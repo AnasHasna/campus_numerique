@@ -15,6 +15,7 @@ import { textAlign } from "@mui/system";
 import { Form, Formik } from "formik";
 import { verifyCode } from "../../../redux/api/authApi";
 import { useSelector } from "react-redux";
+import Loading from "../../../components/Loading";
 
 const initialValues = {
   verifyCode: "",
@@ -24,23 +25,23 @@ const validateSchema = yup.object().shape({
 });
 
 function VerifyCodePage() {
-  // const userType = useSelector((state) => state.userType);
-  // const { _id } = useSelector((state) => state.user.user);
-  // const { isLoading, mutate } = useMutation(verifyCode, {
-  //   mutationKey: "verifyCode",
-  //   onSuccess: (data) => {
-  //     console.log("====================================");
-  //     console.log(data);
-  //     console.log("====================================");
-  //   },
-  //   onError: (error) => {
-  //     console.log("====================================");
-  //     console.log(error.response.data);
-  //     console.log("====================================");
-  //   },
-  // });
+  const userType = useSelector((state) => state.userType);
+  const { _id } = useSelector((state) => state.user.user);
+  const { isLoading, mutate } = useMutation(verifyCode, {
+    mutationKey: "verifyCode",
+    onSuccess: (data) => {
+      console.log("====================================");
+      console.log(data);
+      console.log("====================================");
+    },
+    onError: (error) => {
+      console.log("====================================");
+      console.log(error.response.data);
+      console.log("====================================");
+    },
+  });
   const handleSubmit = (values) => {
-    // mutate({ ...values, userType, _id });
+    mutate({ ...values, userType, _id });
   };
   return (
     <Box
@@ -134,10 +135,11 @@ function VerifyCodePage() {
                   <Button
                     variant="contained"
                     color="primary"
+                    disabled={isLoading || !values.verifyCode}
                     type="submit"
                     onSubmit={handleSubmit}
                   >
-                    Rechercher
+                    {isLoading ? <Loading /> : "Continuer"}
                   </Button>
                 </Stack>
               </Stack>
