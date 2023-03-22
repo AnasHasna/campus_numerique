@@ -11,6 +11,7 @@ const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
 const path = require("path");
 const { JsonWebTokenError } = require("jsonwebtoken");
+const sendMail = require("../utils/sendmail");
 
 /**
  * @description     register teacher
@@ -21,7 +22,6 @@ const { JsonWebTokenError } = require("jsonwebtoken");
 
 module.exports.registerTeacherController = asyncHandler(async (req, res) => {
   // validate data
-  console.log(req.body);
   const { error } = validateRegisterTeacher(req.body);
   if (error) {
     return res.status(400).json({
@@ -49,6 +49,8 @@ module.exports.registerTeacherController = asyncHandler(async (req, res) => {
   const verifyCode = Math.floor(Math.random() * 90000) + 10000;
 
   // TODO: send it to email
+
+  await sendMail(email, verifyCode);
 
   // create new teacher and save it
   teacher = new Teacher({

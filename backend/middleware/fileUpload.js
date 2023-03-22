@@ -23,12 +23,13 @@ const photoUpload = multer({
     if (!file) {
       cb({ message: "no file provided" }, false);
     }
-    // make condition if file is image
-    if (file.mimetype.startsWith("image")) {
-      cb(null, true);
-    } else {
-      cb({ message: "Unsupported file format" }, false); // false => don't upload
-    }
+    //   make condition if file is image
+    // if (file.mimetype.startsWith("image")) {
+    //   cb(null, true);
+    // } else {
+    //   cb({ message: "Unsupported file format" }, false); // false => don't upload
+    // }
+    cb(null, true);
   },
   limits: {
     fileSize: 10 * 1024 * 1024, // 10 megabyte
