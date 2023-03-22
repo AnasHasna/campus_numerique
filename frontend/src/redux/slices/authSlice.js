@@ -13,12 +13,18 @@ const authSlice = createSlice({
   },
   reducers: {
     login(state, action) {
-      state.user = action.payload;
+      state.user = action.payload.user;
+      state.userType = action.payload.userType;
       localStorage.setItem("user", JSON.stringify(action.payload));
+      localStorage.setItem("userType", JSON.stringify(action.payload.userType));
+
       //
     },
     signUp(state, action) {
-      state.user = action.payload;
+      state.user = action.payload.user;
+      state.userType = action.payload.userType;
+      localStorage.setItem("user", JSON.stringify(action.payload.user));
+      localStorage.setItem("userType", JSON.stringify(action.payload.userType));
     },
     logout(state) {
       state.user = null;
