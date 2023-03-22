@@ -18,9 +18,6 @@ const jwt = require("jsonwebtoken");
  */
 
 module.exports.registerStudentController = asyncHandler(async (req, res) => {
-  // delete all students
-  await Student.deleteMany();
-
   // validate data
   const { error } = validateRegisterStudent(req.body);
   if (error) {

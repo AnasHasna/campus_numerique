@@ -172,6 +172,11 @@ module.exports.verifyCodeTeacherController = asyncHandler(async (req, res) => {
       message: "Wrong verification code",
     });
   }
+
+  await Teacher.findByIdAndUpdate(teacherId, {
+    $set: { isAccountVerified: true },
+  });
+
   res.status(200).json({
     status: true,
   });

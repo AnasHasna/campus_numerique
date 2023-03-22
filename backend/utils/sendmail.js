@@ -13,11 +13,10 @@ const sendMail = async (email, verifyCode) => {
   });
 
   const mailOptions = {
-    from: '"MERN app 👻" <mernapp@gmail.com>',
-    to: "bensaltana10@gmail.com",
+    from: '"MERN app" <hbc@hbc.com>',
+    to: email,
     subject: "Verification Code",
     // we can send html or text or both of them
-    subject: "Verification Code",
     text: `Le code de vérification`,
     html: `<h1>Votre code de vérification est: ${verifyCode}</h1>`,
   };
