@@ -117,7 +117,7 @@ function FormRegister() {
       // console.log(data.data);
       // console.log("====================================");
       navigate("/auth/verifycode");
-      dispatch(authActions.signUp({ user: data.data, userType }));
+      dispatch(authActions.signUp({ user: data.data, userType: userType }));
     },
     onError: (error) => {
       // console.log("====================================");
@@ -157,6 +157,7 @@ function FormRegister() {
           top: "50%",
           left: "50%",
           transform: "translate(-50%, -50%)",
+          marginTop: "3rem",
         }}
       >
         <Formik

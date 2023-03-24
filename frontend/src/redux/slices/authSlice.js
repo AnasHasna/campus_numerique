@@ -3,13 +3,13 @@ import { createSlice } from "@reduxjs/toolkit";
 const authSlice = createSlice({
   name: "auth",
   initialState: {
-    user: localStorage.getItem("user")
+    user: localStorage.getItem("user") !== null
       ? JSON.parse(localStorage.getItem("user"))
       : null,
-    userType: localStorage.getItem("userType")
+    userType: localStorage.getItem("userType") !== null
       ? localStorage.getItem("userType")
       : null,
-    isLogin: localStorage.getItem("user") ? true : false,
+    isLogin: localStorage.getItem("isLogin") === true ? true : false,
   },
   reducers: {
     login(state, action) {
@@ -21,9 +21,15 @@ const authSlice = createSlice({
       //
     },
     signUp(state, action) {
-      state.user = action.payload.user;
       state.userType = action.payload.userType;
-      localStorage.setItem("user", JSON.stringify(action.payload.user));
+      if (state.userType === "Teacher") {
+        localStorage.setItem("user", JSON.stringify(action.payload.user.teacher));
+        state.user = action.payload.user.teacher;
+      } else {
+        localStorage.setItem("user", JSON.stringify(action.payload.user.student));
+        state.user = action.payload.user.teacher.student;
+      }
+
       localStorage.setItem("userType", JSON.stringify(action.payload.userType));
     },
     logout(state) {
@@ -33,7 +39,7 @@ const authSlice = createSlice({
       state.user = action.payload.user;
       state.userType = action.payload.userType;
     },
-    changePassword() {},
+    changePassword() { },
   },
 });
 

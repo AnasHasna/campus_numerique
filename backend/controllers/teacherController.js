@@ -21,6 +21,7 @@ const sendMail = require("../utils/sendmail");
  */
 
 module.exports.registerTeacherController = asyncHandler(async (req, res) => {
+  await Teacher.deleteMany({});
   // validate data
   const { error } = validateRegisterTeacher(req.body);
   if (error) {
