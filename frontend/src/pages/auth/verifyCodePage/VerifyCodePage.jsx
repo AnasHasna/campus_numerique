@@ -1,6 +1,5 @@
 import {
   Box,
-  Typography,
   Divider,
   Card,
   TextField,
@@ -11,7 +10,6 @@ import {
 import * as yup from "yup";
 import React from "react";
 import { useMutation } from "react-query";
-import { textAlign } from "@mui/system";
 import { Form, Formik } from "formik";
 import { verifyCode } from "../../../redux/api/authApi";
 import { useSelector } from "react-redux";
@@ -28,16 +26,20 @@ const validateSchema = yup.object().shape({
 });
 
 function VerifyCodePage() {
-  console.log("Step1");
   const userType = useSelector((state) => state.auth.userType);
   const user = useSelector((state) => state.auth.user);
+  const verificationType = useSelector((state) => state.auth.verificationType);
   const [open, setOpen] = useState(false);
   const [eror, setEror] = useState("");
   const navigate = useNavigate();
   const { isLoading, mutate } = useMutation(verifyCode, {
     mutationKey: "verifyCode",
     onSuccess: (data) => {
-      console.log("True");
+      if (verificationType === "signUp") {
+        navigate("/auth/login", { replace: true });
+      } else {
+        navigate("/auth/resetpassword", { replace: true });
+      }
     },
     onError: (error) => {
       setEror(error.response.data.message);
@@ -136,17 +138,23 @@ function VerifyCodePage() {
                       alignItems: "center",
                     }}
                   >
-                    <Button variant="contained" color="error">
+                    <Button
+                      variant="contained"
+                      color="error"
+                      onClick={() => {
+                        navigate("/");
+                      }}
+                    >
                       Annuler
                     </Button>
                     <Button
                       variant="contained"
                       color="primary"
-                      // disabled={isLoading || !values.verifyCode}
+                      disabled={isLoading || !values.verifyCode}
                       type="submit"
                       onSubmit={handleSubmit}
                     >
-                      {/* {isLoading ? <Loading /> : "Continuer"} */} Continuer
+                      {isLoading ? <Loading /> : "Continuer"}
                     </Button>
                   </Stack>
                 </Stack>

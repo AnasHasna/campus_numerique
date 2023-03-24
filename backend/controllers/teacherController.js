@@ -49,8 +49,6 @@ module.exports.registerTeacherController = asyncHandler(async (req, res) => {
   // generate verify code Math.floor(Math.random() * (max - min + 1)) + min;
   const verifyCode = Math.floor(Math.random() * 90000) + 10000;
 
-  // TODO: send it to email
-
   await sendMail(email, verifyCode);
 
   // create new teacher and save it
@@ -138,13 +136,14 @@ module.exports.forgetPasswordTeacherController = asyncHandler(
 
     const verifyCode = Math.floor(Math.random() * 90000) + 10000;
 
-    // TODO: send it to email
+    // send it to email
+    await sendMail(email, verifyCode);
 
     // change verify code ond DB
     await Teacher.findByIdAndUpdate(teacher._id, { $set: { verifyCode } });
 
     // send response to frontend
-    res.status(200).json({ status: true, id: teacher._id });
+    res.status(200).json({ status: true, teacher });
   }
 );
 

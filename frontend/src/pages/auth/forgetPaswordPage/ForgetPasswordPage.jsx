@@ -17,6 +17,7 @@ import * as yup from "yup";
 import { forgetPassword } from "../../../redux/api/authApi";
 import { useDispatch } from "react-redux";
 import { authActions } from "../../../redux/slices/authSlice";
+import SnackBar from "../../../components/SnackBar";
 
 const initialValuesTechear = {
   email: "",
@@ -34,12 +35,14 @@ const validateTeacherSchema = yup.object().shape({
 });
 
 function ForgetPasswordPage() {
-  const [userType, setUserType] = useState("");
   const navigate = useNavigate();
   const dispatch = useDispatch();
 
+  const [userType, setUserType] = useState("");
   const [email, setEmail] = useState("");
   const [cin, setCin] = useState("");
+  const [open, setOpen] = useState(false);
+  const [eror, setEror] = useState("");
 
   const hanldeGoToLogin = () => {
     navigate("/auth/login");
@@ -53,12 +56,11 @@ function ForgetPasswordPage() {
       } else {
         dispatch(authActions.forgetPassword({ user: data.data, userType }));
       }
-      // navigate("/auth/verifycode", { replace: true });
+      navigate("/auth/verifycode");
     },
     onError: (error) => {
-      console.log("================= erroooooooor ===================");
-      console.log(error.response.data);
-      console.log("====================================");
+      setEror(error.response.data.message);
+      setOpen(true);
     },
   });
 
@@ -69,140 +71,146 @@ function ForgetPasswordPage() {
   if (isLoading) return <div>Loading...</div>;
 
   return (
-    <Box
-      sx={{
-        display: "flex",
-        justifyContent: "center",
-        alignItems: "center",
-        height: "100vh",
-      }}
-    >
-      <Card
+    <div>
+      <Box
         sx={{
-          padding: "20px",
+          display: "flex",
+          justifyContent: "center",
+          alignItems: "center",
+          height: "100vh",
         }}
       >
-        <h1>Trouvez votre compte </h1>
-        <Divider />
-        <p>
-          Veuillez choisir le type de compte que vous souhaitez réinitialiser le
-        </p>
-        <Formik
-          initialValues={
-            userType === "Teacher" ? initialValuesTechear : initialValuesStudent
-          }
-          validationSchema={
-            userType === "Teacher"
-              ? validateTeacherSchema
-              : validateStudentSchema
-          }
-          onSubmit={(values, { setSubmitting }) => {
-            setEmail(values.email);
-            setCin(values.cin);
-            handleSubmit(values);
+        <Card
+          sx={{
+            padding: "20px",
           }}
         >
-          {({
-            values,
-            errors,
-            touched,
-            handleBlur,
-            handleChange,
-            handleSubmit,
-            setFieldValue,
-            resetForm,
-          }) => (
-            <Form>
-              <RadioGroup
-                row
-                aria-labelledby="demo-row-radio-buttons-group-label"
-                name="row-radio-buttons-group"
-                value={userType}
-                onChange={(e) => {
-                  values.email = "";
-                  values.cin = "";
-                  setUserType(e.target.value);
-                }}
-              >
-                <FormControlLabel
-                  value="Teacher"
-                  control={<Radio />}
-                  label="Teacher"
-                />
-                <FormControlLabel
-                  value="Student"
-                  control={<Radio />}
-                  label="Student"
-                />
-              </RadioGroup>
-              {userType === "Teacher" && (
-                <div>
-                  <TextField
-                    fullWidth
-                    type="email"
-                    name="email"
-                    label="Email"
-                    value={values.email}
-                    error={errors.email && touched.email}
-                    onBlur={handleBlur}
-                    onChange={(e) => {
-                      setEmail(e.target.value);
-                      handleChange(e);
-                    }}
-                    helperText={errors.email}
-                  />
-                </div>
-              )}
-              {userType === "Student" && (
-                <div>
-                  <TextField
-                    fullWidth
-                    type="cin"
-                    name="cin"
-                    error={errors.cin && touched.cin}
-                    label="CIN/Code Massar"
-                    onChange={(e) => {
-                      handleChange(e);
-                      setCin(e.target.value);
-                    }}
-                    onBlur={handleBlur}
-                  />
-                </div>
-              )}
-              <Divider />
-              <Stack
-                direction="row"
-                spacing={2}
-                mt={2}
-                sx={{
-                  display: "flex",
-                  justifyContent: "flex-end",
-                }}
-              >
-                <Button
-                  variant="contained"
-                  color="error"
-                  onClick={hanldeGoToLogin}
+          <h1>Trouvez votre compte </h1>
+          <Divider />
+          <p>
+            Veuillez choisir le type de compte que vous souhaitez réinitialiser
+            le
+          </p>
+          <Formik
+            initialValues={
+              userType === "Teacher"
+                ? initialValuesTechear
+                : initialValuesStudent
+            }
+            validationSchema={
+              userType === "Teacher"
+                ? validateTeacherSchema
+                : validateStudentSchema
+            }
+            onSubmit={(values, { setSubmitting }) => {
+              setEmail(values.email);
+              setCin(values.cin);
+              handleSubmit(values);
+            }}
+          >
+            {({
+              values,
+              errors,
+              touched,
+              handleBlur,
+              handleChange,
+              handleSubmit,
+              setFieldValue,
+              resetForm,
+            }) => (
+              <Form>
+                <RadioGroup
+                  row
+                  aria-labelledby="demo-row-radio-buttons-group-label"
+                  name="row-radio-buttons-group"
+                  value={userType}
+                  onChange={(e) => {
+                    values.email = "";
+                    values.cin = "";
+                    setUserType(e.target.value);
+                  }}
                 >
-                  Annuler
-                </Button>
-                <Button
-                  variant="contained"
-                  color="primary"
-                  disabled={
-                    userType === "Teacher" ? !values.email : !values.cin
-                  }
-                  type="submit"
-                  onClick={handleSubmit}
+                  <FormControlLabel
+                    value="Teacher"
+                    control={<Radio />}
+                    label="Teacher"
+                  />
+                  <FormControlLabel
+                    value="Student"
+                    control={<Radio />}
+                    label="Student"
+                  />
+                </RadioGroup>
+                {userType === "Teacher" && (
+                  <div>
+                    <TextField
+                      fullWidth
+                      type="email"
+                      name="email"
+                      label="Email"
+                      value={values.email}
+                      error={errors.email && touched.email}
+                      onBlur={handleBlur}
+                      onChange={(e) => {
+                        setEmail(e.target.value);
+                        handleChange(e);
+                      }}
+                      helperText={errors.email}
+                    />
+                  </div>
+                )}
+                {userType === "Student" && (
+                  <div>
+                    <TextField
+                      fullWidth
+                      type="cin"
+                      name="cin"
+                      error={errors.cin && touched.cin}
+                      label="CIN/Code Massar"
+                      onChange={(e) => {
+                        handleChange(e);
+                        setCin(e.target.value);
+                      }}
+                      onBlur={handleBlur}
+                    />
+                  </div>
+                )}
+                <Divider />
+                <Stack
+                  direction="row"
+                  spacing={2}
+                  mt={2}
+                  sx={{
+                    display: "flex",
+                    justifyContent: "flex-end",
+                  }}
                 >
-                  Rechercher
-                </Button>
-              </Stack>
-            </Form>
-          )}
-        </Formik>
-      </Card>
-    </Box>
+                  <Button
+                    variant="contained"
+                    color="error"
+                    onClick={hanldeGoToLogin}
+                  >
+                    Annuler
+                  </Button>
+                  <Button
+                    variant="contained"
+                    color="primary"
+                    disabled={
+                      userType === "Teacher" ? !values.email : !values.cin
+                    }
+                    type="submit"
+                    onClick={handleSubmit}
+                  >
+                    Rechercher
+                  </Button>
+                </Stack>
+              </Form>
+            )}
+          </Formik>
+        </Card>
+      </Box>
+      {open && <SnackBar message={eror} open={open} />}
+    </div>
   );
 }
 

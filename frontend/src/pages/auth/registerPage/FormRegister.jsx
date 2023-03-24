@@ -113,20 +113,12 @@ function FormRegister() {
   const { isLoading, mutate } = useMutation(signUp, {
     mutationKey: "signUp",
     onSuccess: (data) => {
-      // console.log("====================================");
-      // console.log(data.data);
-      // console.log("====================================");
       navigate("/auth/verifycode");
       dispatch(authActions.signUp({ user: data.data, userType: userType }));
     },
     onError: (error) => {
-      // console.log("====================================");
-      // console.log(error.response.data);
-      // console.log("====================================");
-      // return <SnackBar message={error.response.data} />;
       setEror(error.response.data.message);
       setOpen(true);
-      console.log(error.response.data);
     },
   });
 

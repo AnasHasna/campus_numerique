@@ -1,12 +1,7 @@
 import axios from "axios";
-import request from "../../utils/request";
-import { authActions } from "../slices/authSlice";
 
 // SignUp user
 const signUp = async ({ data, userType }) => {
-  console.log("====================================");
-  console.log({ data, userType });
-  console.log("====================================");
   if (userType === "Teacher") {
     return await axios.post(`http://localhost:5000/teachers/register`, data, {
       headers: { "Content-Type": "multipart/form-data" },
@@ -32,9 +27,6 @@ const login = async ({ email, password, cin, codeMassar, userType }) => {
 };
 
 const forgetPassword = async ({ email, cin, userType }) => {
-  console.log("====================================");
-  console.log({ userType, email, cin });
-  console.log("====================================");
   if (userType === "Teacher") {
     return await axios.post(`http://localhost:5000/teachers/forgetPassword`, {
       email,
@@ -57,6 +49,6 @@ const verifyCode = async ({ verifyCode, _id, userType }) => {
       studentId: _id,
     });
   }
-}
+};
 
 export { signUp, login, forgetPassword, verifyCode };

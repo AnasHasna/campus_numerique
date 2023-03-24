@@ -3,13 +3,16 @@ import { createSlice } from "@reduxjs/toolkit";
 const authSlice = createSlice({
   name: "auth",
   initialState: {
-    user: localStorage.getItem("user") !== null
-      ? JSON.parse(localStorage.getItem("user"))
-      : null,
-    userType: localStorage.getItem("userType") !== null
-      ? localStorage.getItem("userType")
-      : null,
+    user:
+      localStorage.getItem("user") !== null
+        ? JSON.parse(localStorage.getItem("user"))
+        : null,
+    userType:
+      localStorage.getItem("userType") !== null
+        ? localStorage.getItem("userType")
+        : null,
     isLogin: localStorage.getItem("isLogin") === true ? true : false,
+    verificationType: null,
   },
   reducers: {
     login(state, action) {
@@ -21,12 +24,19 @@ const authSlice = createSlice({
       //
     },
     signUp(state, action) {
+      state.verificationType = "signUp";
       state.userType = action.payload.userType;
       if (state.userType === "Teacher") {
-        localStorage.setItem("user", JSON.stringify(action.payload.user.teacher));
+        localStorage.setItem(
+          "user",
+          JSON.stringify(action.payload.user.teacher)
+        );
         state.user = action.payload.user.teacher;
       } else {
-        localStorage.setItem("user", JSON.stringify(action.payload.user.student));
+        localStorage.setItem(
+          "user",
+          JSON.stringify(action.payload.user.student)
+        );
         state.user = action.payload.user.teacher.student;
       }
 
@@ -36,10 +46,25 @@ const authSlice = createSlice({
       state.user = null;
     },
     forgetPassword(state, action) {
-      state.user = action.payload.user;
+      state.verificationType = "forgetPassword";
       state.userType = action.payload.userType;
+      if (state.userType === "Teacher") {
+        localStorage.setItem(
+          "user",
+          JSON.stringify(action.payload.user.teacher)
+        );
+        state.user = action.payload.user.teacher;
+      } else {
+        localStorage.setItem(
+          "user",
+          JSON.stringify(action.payload.user.student)
+        );
+        state.user = action.payload.user.teacher.student;
+      }
+
+      localStorage.setItem("userType", JSON.stringify(action.payload.userType));
     },
-    changePassword() { },
+    changePassword() {},
   },
 });
 
