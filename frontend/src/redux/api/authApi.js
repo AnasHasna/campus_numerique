@@ -45,7 +45,18 @@ const forgetPassword = async ({ email, cin, userType }) => {
     });
   }
 };
-
-const verifyCode = async () => {};
+const verifyCode = async ({ verifyCode, _id, userType }) => {
+  if (userType === "Teacher") {
+    return await axios.post(`http://localhost:5000/teachers/verifyCode`, {
+      verifyCode,
+      teacherId: _id,
+    });
+  } else {
+    return await axios.post(`http://localhost:5000/students/verifyCode`, {
+      verifyCode,
+      studentId: _id,
+    });
+  }
+}
 
 export { signUp, login, forgetPassword, verifyCode };
