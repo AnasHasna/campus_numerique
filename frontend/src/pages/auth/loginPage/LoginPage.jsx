@@ -6,6 +6,7 @@ import { login } from "../../../redux/api/authApi";
 import { useState } from "react";
 import LockIcon from "@mui/icons-material/Lock";
 import { useDispatch, useSelector } from "react-redux";
+
 import {
   Avatar,
   Box,
@@ -15,6 +16,8 @@ import {
   CssBaseline,
   FormControlLabel,
   Grid,
+  IconButton,
+  InputAdornment,
   Link,
   Radio,
   RadioGroup,
@@ -24,6 +27,10 @@ import {
 import { useNavigate } from "react-router-dom";
 import Loading from "../../../components/Loading";
 import { authActions } from "../../../redux/slices/authSlice";
+import SnackBar from "../../../components/SnackBar";
+import VisibilityIcon from "../../../components/VisibilityIcon";
+import VisibilityOff from "@mui/icons-material/VisibilityOff";
+import Visibility from "@mui/icons-material/Visibility";
 
 function Copyright(props) {
   return (
@@ -44,11 +51,16 @@ function Copyright(props) {
 }
 
 export default function LoginPage() {
+  const [showPassword, setShowPassword] = React.useState(false);
+
+  const handleClickShowPassword = () => setShowPassword((show) => !show);
+
   const navigate = useNavigate();
 
   const dispatch = useDispatch();
 
   const { user } = useSelector((state) => state.auth);
+  const [error, setEror] = useState("");
 
   const [userType, setUserType] = useState("");
   const isTeacher = userType === "Teacher";
@@ -98,6 +110,9 @@ export default function LoginPage() {
       console.log("====================================");
       console.log(error.response.data);
       console.log("====================================");
+      setEror(error.response.data.message);
+      setOpen(true);
+      console.log(error.response.data);
     },
   });
 
@@ -116,6 +131,8 @@ export default function LoginPage() {
       [event.target.name]: event.target.value,
     }));
   };
+
+  const [open, setOpen] = useState(false);
 
   return (
     <Formik
@@ -176,201 +193,136 @@ export default function LoginPage() {
               />
             </RadioGroup>
           </Box>
-          {isStudent && (
-            <Container component="main" maxWidth="xs">
-              <CssBaseline />
+          <Container component="main" maxWidth="xs">
+            <CssBaseline />
+            <Form
+              sx={{
+                marginTop: 8,
+                display: "flex",
+                flexDirection: "column",
+                alignItems: "center",
+              }}
+            >
+              {isStudent && (
+                <Box>
+                  <TextField
+                    margin="normal"
+                    required
+                    fullWidth
+                    id="cin"
+                    label="CIN / Code Massar"
+                    name="cin"
+                    type="cin"
+                    autoComplete="cin"
+                    autoFocus
+                    value={values.cin}
+                    onChange={handleChange}
+                    sx={{
+                      gridColumn: "span 4",
+                    }}
+                  />
+                  <ErrorMessage name="email" />
+                </Box>
+              )}
 
-              <Form
+              {isTeacher && (
+                <Box>
+                  <TextField
+                    margin="normal"
+                    required
+                    fullWidth
+                    id="email"
+                    label="Address e-mail"
+                    name="email"
+                    type="email"
+                    autoComplete="email"
+                    autoFocus
+                    value={values.email}
+                    onChange={handleChange}
+                    sx={{
+                      gridColumn: "span 4",
+                    }}
+                  />
+                  <ErrorMessage name="email" />
+                </Box>
+              )}
+
+              <TextField
+                margin="normal"
+                fullWidth
+                required
+                name="password"
+                label="Mot de passe"
+                type="password"
+                id="password"
+                autoComplete="current-password"
+                onChange={handleChange}
+                value={values.password}
                 sx={{
-                  marginTop: 8,
-                  display: "flex",
-                  flexDirection: "column",
-                  alignItems: "center",
+                  gridColumn: "span 4",
                 }}
-              >
-                <TextField
-                  margin="normal"
-                  required
-                  fullWidth
-                  id="cin"
-                  label="CIN / Code Massar"
-                  name="cin"
-                  type="cin"
-                  autoComplete="cin"
-                  autoFocus
-                  value={values.cin}
-                  onChange={handleChange}
-                  sx={{
-                    gridColumn: "span 4",
-                  }}
-                />
-                <ErrorMessage name="email" />
-
-                <TextField
-                  margin="normal"
-                  fullWidth
-                  required
-                  name="password"
-                  label="Mot de passe"
-                  type="password"
-                  id="password"
-                  autoComplete="current-password"
-                  onChange={handleChange}
-                  value={values.password}
-                  sx={{
-                    gridColumn: "span 4",
-                  }}
-
-                  //component = {TextField}
-                />
-                <ErrorMessage name="password" />
-
-                <br />
-                <FormControlLabel
-                  control={<Checkbox value="remember" color="primary" />}
-                  label="Se souvenir de moi"
-                />
-                <Button
-                  type="submit"
-                  fullWidth
-                  variant="contained"
-                  sx={{
-                    mt: 3,
-                    mb: 2,
-                  }}
-                  disabled={isLoading}
-                >
-                  {isLoading ? <Loading /> : "Connexion"}
-                </Button>
-
-                <Grid container>
-                  <Grid item xs>
-                    <Link
-                      variant="body2"
-                      onClick={(e) => {
-                        e.preventDefault();
-                        navigate("/auth/forgetpassword", { relative: true });
-                      }}
+                endAdornment={
+                  <InputAdornment position="end">
+                    <IconButton
+                      aria-label="toggle password visibility"
+                      onClick={handleClickShowPassword}
+                      onMouseDown={handleMouseDownPassword}
+                      edge="end"
                     >
-                      Mot de passe oublié ?
-                    </Link>
-                  </Grid>
-                  <Grid item>
-                    <Link
-                      variant="body2"
-                      onClick={(e) => {
-                        e.preventDefault();
-                        navigate("/auth/signup", { relative: true });
-                      }}
-                    >
-                      Créer nouveau compte
-                    </Link>
-                  </Grid>
-                </Grid>
-                {/* </Form> */}
-              </Form>
-              <Copyright sx={{ mt: 8, mb: 4 }} />
-            </Container>
-          )}
-
-          {isTeacher && (
-            <Container component="main" maxWidth="xs">
-              <CssBaseline />
-
-              <Form
+                      {showPassword ? <VisibilityOff /> : <Visibility />}
+                    </IconButton>
+                  </InputAdornment>
+                }
+              />
+              <ErrorMessage name="password" />
+              <br />
+              <FormControlLabel
+                control={<Checkbox value="remember" color="primary" />}
+                label="Se souvenir de moi"
+              />
+              <Button
+                type="submit"
+                fullWidth
+                variant="contained"
                 sx={{
-                  marginTop: 8,
-                  display: "flex",
-                  flexDirection: "column",
-                  alignItems: "center",
+                  mt: 3,
+                  mb: 2,
                 }}
+                disabled={isLoading}
               >
-                <TextField
-                  margin="normal"
-                  required
-                  fullWidth
-                  id="email"
-                  label="Address e-mail"
-                  name="email"
-                  type="email"
-                  autoComplete="email"
-                  autoFocus
-                  value={values.email}
-                  onChange={handleChange}
-                  sx={{
-                    gridColumn: "span 4",
-                  }}
+                {isLoading ? <Loading /> : "Connexion"}
+              </Button>
 
-                  //component = {TextField}
-                />
-                <ErrorMessage name="email" />
-
-                <TextField
-                  //helperText="Please enter your password"
-                  margin="normal"
-                  required
-                  fullWidth
-                  name="password"
-                  label="Mot de passe"
-                  type="password"
-                  id="password"
-                  autoComplete="current-password"
-                  onChange={handleChange}
-                  value={values.password}
-                  sx={{
-                    gridColumn: "span 4",
-                  }}
-                  //component = {TextField}
-                />
-                <ErrorMessage name="password" />
-
-                <br />
-                <FormControlLabel
-                  control={<Checkbox value="remember" color="primary" />}
-                  label="Se souvenir de moi"
-                />
-                <Button
-                  type="submit"
-                  fullWidth
-                  variant="contained"
-                  sx={{
-                    mt: 3,
-                    mb: 2,
-                  }}
-                  disabled={isLoading}
-                >
-                  {isLoading ? <Loading /> : "Connexion"}
-                </Button>
-
-                <Grid container>
-                  <Grid item xs>
-                    <Link
-                      onClick={(e) => {
-                        e.preventDefault();
-                        navigate("/auth/forgetpassword", { relative: true });
-                      }}
-                      variant="body2"
-                    >
-                      Mot de passe oublié ?
-                    </Link>
-                  </Grid>
-                  <Grid item>
-                    <Link
-                      onClick={(e) => {
-                        e.preventDefault();
-                        navigate("/auth/register", { relative: true });
-                      }}
-                      variant="body2"
-                    >
-                      Créer nouveau compte
-                    </Link>
-                  </Grid>
+              <Grid container>
+                <Grid item xs>
+                  <Link
+                    href="#"
+                    variant="body2"
+                    onClick={(e) => {
+                      e.preventDefault();
+                      navigate("/auth/forgetpassword", { relative: true });
+                    }}
+                  >
+                    Mot de passe oublié ?
+                  </Link>
                 </Grid>
-                {/* </Form> */}
-              </Form>
-              <Copyright sx={{ mt: 8, mb: 4 }} />
-            </Container>
-          )}
+                <Grid item>
+                  <Link
+                    href="#"
+                    variant="body2"
+                    onClick={(e) => {
+                      e.preventDefault();
+                      navigate("/auth/register", { relative: true });
+                    }}
+                  >
+                    {"Créer nouveau compte"}
+                  </Link>
+                </Grid>
+              </Grid>
+            </Form>
+            <Copyright sx={{ mt: 8, mb: 4 }} />
+          </Container>
+          {open && <SnackBar message={error} open={open} />}
         </>
       )}
     </Formik>

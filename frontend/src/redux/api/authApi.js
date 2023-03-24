@@ -46,4 +46,6 @@ const forgetPassword = async ({ email, cin, userType }) => {
   }
 };
 
-export { signUp, login, forgetPassword };
+const verifyCode = async () => {};
+
+export { signUp, login, forgetPassword, verifyCode };
