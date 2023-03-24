@@ -36,7 +36,7 @@ module.exports.registerTeacherController = asyncHandler(async (req, res) => {
   if (teacher) {
     return res
       .status(400)
-      .json({ status: false, message: "email is already exist" });
+      .json({ status: false, message: "Email déja utilisé" });
   }
   // hash the password
   const salt = await bcrypt.genSalt(10);
