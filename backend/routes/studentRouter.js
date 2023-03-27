@@ -7,8 +7,6 @@ const {
 } = require("../controllers/studentController");
 const studentRouter = require("express").Router();
 
-// studentRouter.route("/:id").put().get().delete();
-
 studentRouter.post("/register", registerStudentController);
 studentRouter.post("/login", loginStudentController);
 studentRouter.post("/forgetpassword", forgetPasswordStudentController);
