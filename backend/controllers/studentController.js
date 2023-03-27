@@ -10,6 +10,7 @@ const {
 } = require("../models/studentModel");
 const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
+const sendMessageWhatsapp = require("../utils/sendMessage");
 /**
  * @description     register student
  * @router          /students/register
@@ -18,6 +19,7 @@ const jwt = require("jsonwebtoken");
  */
 
 module.exports.registerStudentController = asyncHandler(async (req, res) => {
+  await Student.deleteMany({});
   // validate data
   const { error } = validateRegisterStudent(req.body);
   if (error) {
@@ -130,6 +132,8 @@ module.exports.forgetPasswordStudentController = asyncHandler(
     const verifyCode = Math.floor(Math.random() * 90000) + 10000;
 
     // TODO: send it to whatsap
+
+    await sendMessage();
 
     // change verify code ond DB
     await Student.findByIdAndUpdate(student._id, { $set: { verifyCode } });
