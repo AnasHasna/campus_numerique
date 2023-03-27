@@ -6,6 +6,8 @@ const connectToDB = require("./config/connectToDB.js");
 const { notFound, errorHandler } = require("./middleware/error.js");
 const teacherRouter = require("./routes/teacherRouter.js");
 const studentRouter = require("./routes/studentRouter.js");
+const moduleRouter = require("./routes/moduleRouter.js");
+const filesRouter = require("./routes/filesRouter.js");
 
 const app = express();
 
@@ -23,6 +25,8 @@ app.use(express.json());
 //routes
 app.use("/teachers", teacherRouter);
 app.use("/students", studentRouter);
+app.use("/modules", moduleRouter);
+app.use("/files", filesRouter);
 
 // error handler middleware
 app.use(notFound);

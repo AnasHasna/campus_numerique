@@ -5,7 +5,7 @@ const {
   verifyCodeTeacherController,
   changePasswordCodeTeacherController,
 } = require("../controllers/teacherController");
-const photoUpload = require("../middleware/fileUpload");
+const { photoUpload } = require("../middleware/fileUpload");
 
 const teacherRouter = require("express").Router();
 
