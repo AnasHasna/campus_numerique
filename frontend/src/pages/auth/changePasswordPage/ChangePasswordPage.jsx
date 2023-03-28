@@ -8,18 +8,15 @@ import {
 } from "@mui/material";
 import { Visibility, VisibilityOff } from "@mui/icons-material";
 import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import * as yup from "yup";
 import { Formik } from "formik";
+import Loading from "../../../components/Loading";
+import SnackBar from "../../../components/SnackBar";
+import axios from "axios";
 
-const ChangePasswordPage = () => {
-  const initialValuesChangePassword = {
-    password: "",
-    verifyPassword: "",
-    showNewPassword: false,
-    showConfirmPassword: false,
-  };
-
-  const ChangePasswSchema = yup.object().shape({
+/* 
+const ChangePasswSchema = yup.object().shape({
     newPassword: yup
       .string()
       .required("Obligatoire")
@@ -31,46 +28,71 @@ const ChangePasswordPage = () => {
       .string()
       .oneOf([yup.ref("newPassword"), null], "Passwords doivent se ressambler")
       .required("Obligatoire"),
+  }); 
+*/
+const ChangePasswordPage = () => {
+  const navigate = useNavigate();
+
+  const resetSchemaPassword = yup.object().shape({
+    newPassword: yup
+      .string()
+      .required("Obligatoire")
+      .matches(
+        /^(?=.*[a-z])(?=.*[A-Z])(?=.*[!@#$%^&])/,
+        "Mot de passe doit contenir au moin une lettre minuscule, majuscule et un charactére spéciale!"
+      ),
+    confirmPassword: yup
+      .string()
+      .oneOf([yup.ref("newPassword"), null], "Passwords doivent se ressambler")
+      .required("Obligatoire"),
   });
 
-  const [values, setValues] = useState(false);
+  const initialValuesPasswords = {
+    newPassword: "",
+    confirmPassword: "",
+  };
 
-  const handleMouseDownPassword = (event) => {
-    console.log("showpass ver 1");
+  const handleSubmit = async (event) => {
     event.preventDefault();
-  };
-  const handleClickShowPassword = () => {
-    setValues({ ...values, showNewPassword: !values.showNewPassword });
-  };
-  const handleClickShowConfirmPassword = () => {
-    setValues({ ...values, showConfirmPassword: !values.showConfirmPassword });
-  };
-  const handleChange = (prop) => (event) => {
-    setValues({ ...values, [prop]: event.target.value });
-  };
-  const handleSubmit = (event) => {
-    event.preventDefault();
+    try {
+      const { data } = await axios.put(
+        "http://localhost:5000/teachers/changePassword",
+        {
+          newPassword: initialValuesPasswords.newPassword,
+          confirmPassword: initialValuesPasswords.confirmPassword,
+        }
+      );
+      if (data.success) {
+        navigate("/auth/login");
+      } else {
+        throw new Error(data.message);
+      }
+      console.log(data);
+      console.log(data.message);
+      console.log(data.success);
+    } catch (error) {
+      console.log(error);
+    }
   };
 
   return (
     <Formik
-      validationSchema={ChangePasswSchema}
-      onSubmit={handleSubmit}
-      initialValues={initialValuesChangePassword}
+      initialValues={initialValuesPasswords}
+      validationSchema={resetSchemaPassword}
     >
       {({
         values,
         errors,
         touched,
-        handleBlur,
         handleChange,
+        handleBlur,
         handleSubmit,
-        // handleClickShowConfirmPassword,
-        // handleClickShowPassword,
-        // handleMouseDownPassword,
+        isSubmitting,
       }) => (
         <form onSubmit={handleSubmit}>
           <Box
+            display="grid"
+            gap="20px"
             sx={{
               marginTop: 10,
               display: "flex",
@@ -78,80 +100,51 @@ const ChangePasswordPage = () => {
               alignItems: "center",
             }}
           >
-            <Box>
-              <InputLabel htmlFor="new-password">
-                Nouveau Mot de passe
-              </InputLabel>
-              <TextField
-                name="showNewPassword"
-                id="newpassword"
-                value={values.showNewPassword}
-                onChange={handleChange("newPassword")}
-                type={values.showNewPassword ? "text" : "password"}
-                error={Boolean(touched.password) && Boolean(errors.password)}
-                helperText={touched.password && errors.password}
-                InputProps={{
-                  endAdornment: (
-                    <InputAdornment position="end">
-                      <IconButton
-                        onClick={handleClickShowPassword}
-                        onMouseDown={handleMouseDownPassword}
-                      >
-                        {values.showNewPassword ? (
-                          <Visibility />
-                        ) : (
-                          <VisibilityOff />
-                        )}
-                      </IconButton>
-                    </InputAdornment>
-                  ),
-                }}
-              />
-            </Box>
-
-            <Box mt={2}>
-              <InputLabel htmlFor="confirm-password">
-                Confirmer Mot de passe
-              </InputLabel>
-              <TextField
-                name="confirmPassword"
-                id="confirm-password"
-                value={values.confirmPassword}
-                onChange={handleChange("confirmPassword")}
-                type={values.showConfirmPassword ? "text" : "password"}
-                error={
-                  Boolean(touched.verifyPassword) &&
-                  Boolean(errors.verifyPassword)
-                }
-                helperText={touched.verifyPassword && errors.verifyPassword}
-                InputProps={{
-                  endAdornment: (
-                    <InputAdornment position="end">
-                      <IconButton
-                        onClick={handleClickShowConfirmPassword}
-                        onMouseDown={handleMouseDownPassword}
-                      >
-                        {values.showConfirmPassword ? (
-                          <Visibility />
-                        ) : (
-                          <VisibilityOff />
-                        )}
-                      </IconButton>
-                    </InputAdornment>
-                  ),
-                }}
-              />
-            </Box>
+            <TextField
+              label="Password"
+              type="password"
+              onBlur={handleBlur}
+              onChange={handleChange}
+              value={values.newPassword}
+              name="newPassword"
+              error={
+                Boolean(touched.newPassword) && Boolean(errors.newPassword)
+              }
+              helperText={touched.newPassword && errors.newPassword}
+              sx={{
+                gridColumn: "span 2",
+              }}
+            />
+            <TextField
+              label="Confirm Password"
+              type="Password"
+              onBlur={handleBlur}
+              onChange={handleChange}
+              value={values.confirmPassword}
+              name="confirmPassword"
+              error={
+                Boolean(touched.confirmPassword) &&
+                Boolean(errors.confirmPassword)
+              }
+              helperText={touched.confirmPassword && errors.confirmPassword}
+              sx={{
+                gridColumn: "span 2",
+              }}
+            />
 
             <Button
               type="submit"
               variant="contained"
               color="primary"
-              onClick={handleSubmit}
+              onClick={(e) => {
+                e.preventDefault();
+                navigate("/auth/login", { relative: true });
+              }}
               sx={{
                 mt: 3,
                 mb: 2,
               }}
+              disabled={isSubmitting}
             >
               Change Mot de passe
             </Button>
