@@ -52,7 +52,6 @@ function ForgetPasswordPage() {
     mutationKey: "forgetPassword",
     onSuccess: (data) => {
       dispatch(authActions.forgetPassword({ user: data.data, userType }));
-
       navigate("/auth/verifycode");
     },
     onError: (error) => {
