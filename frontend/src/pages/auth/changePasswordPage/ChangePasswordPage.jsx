@@ -10,7 +10,7 @@ import { Visibility, VisibilityOff } from "@mui/icons-material";
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import * as yup from "yup";
-import { Formik } from "formik";
+import { Form, Formik } from "formik";
 import Loading from "../../../components/Loading";
 import SnackBar from "../../../components/SnackBar";
 import axios from "axios";
@@ -55,26 +55,20 @@ const ChangePasswordPage = () => {
     confirmPassword: "",
   };
 
-  const handleSubmit = async (event) => {
-    event.preventDefault();
+  const handleSubmit = async (values) => {
+    // event.preventDefault();
+    console.log("step1");
     try {
+      console.log("step2");
+
       console.log(userType.toLowerCase());
       const { data } = await axios.put(
         `http://localhost:5000/${userType.toLowerCase()}/changePassword`,
         {
-          newPassword: initialValuesPasswords.newPassword,
-          confirmPassword: initialValuesPasswords.confirmPassword,
+          newPassword: values.newPassword,
         }
       );
       console.log(data);
-      // if (data.) {
-      //   navigate("/auth/login");
-      // } else {
-      //   throw new Error(data.message);
-      // }
-      console.log(data);
-      console.log(data.message);
-      console.log(data.success);
     } catch (error) {
       console.log(error);
     }
@@ -84,6 +78,9 @@ const ChangePasswordPage = () => {
     <Formik
       initialValues={initialValuesPasswords}
       validationSchema={resetSchemaPassword}
+      onSubmit={(values, { setSubmitting }) => {
+        handleSubmit(values);
+      }}
     >
       {({
         values,
@@ -94,7 +91,7 @@ const ChangePasswordPage = () => {
         handleSubmit,
         isSubmitting,
       }) => (
-        <form onSubmit={handleSubmit}>
+        <Form>
           <Box
             display="grid"
             gap="20px"
@@ -141,20 +138,21 @@ const ChangePasswordPage = () => {
               type="submit"
               variant="contained"
               color="primary"
-              onClick={(e) => {
-                e.preventDefault();
-                navigate("/auth/login", { relative: true });
+              onClick={() => {
+                console.log("fuck you");
+                console.log(values);
+                handleSubmit(values);
               }}
               sx={{
                 mt: 3,
                 mb: 2,
               }}
-              disabled={isSubmitting}
+              // disabled={isSubmitting}
             >
               Change Mot de passe
             </Button>
           </Box>
-        </form>
+        </Form>
       )}
     </Formik>
   );

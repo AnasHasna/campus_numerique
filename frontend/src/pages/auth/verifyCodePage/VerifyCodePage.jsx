@@ -38,7 +38,7 @@ function VerifyCodePage() {
       if (verificationType === "signUp") {
         navigate("/auth/login", { replace: true });
       } else {
-        navigate("/auth/resetpassword", { replace: true });
+        navigate("/auth/changepassword", { replace: true });
       }
     },
     onError: (error) => {
