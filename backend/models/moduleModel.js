@@ -42,4 +42,11 @@ const validateCreateModule = (module) => {
   return schema.validate(module);
 };
 
-module.exports = { Module, validateCreateModule };
+const validateGetALLModules = (module) => {
+  const schema = Joi.object({
+    teacherId: Joi.string().required(),
+  });
+  return schema.validate(module);
+};
+
+module.exports = { Module, validateCreateModule, validateGetALLModules };

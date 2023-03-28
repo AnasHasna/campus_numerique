@@ -8,6 +8,8 @@ const teacherRouter = require("./routes/teacherRouter.js");
 const studentRouter = require("./routes/studentRouter.js");
 const moduleRouter = require("./routes/moduleRouter.js");
 const filesRouter = require("./routes/filesRouter.js");
+const commentRouter = require("./routes/commentRouter.js");
+const pubRouter = require("./routes/pubRouter.js");
 
 const app = express();
 
@@ -27,6 +29,8 @@ app.use("/teachers", teacherRouter);
 app.use("/students", studentRouter);
 app.use("/modules", moduleRouter);
 app.use("/files", filesRouter);
+app.use("/comments", commentRouter);
+app.use("/pub", pubRouter);
 
 // error handler middleware
 app.use(notFound);

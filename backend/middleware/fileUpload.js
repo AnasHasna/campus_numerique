@@ -15,6 +15,20 @@ const photoStorage = multer.diskStorage({
   },
 });
 
+// file storage
+const fileStorage = multer.diskStorage({
+  destination: (req, file, cb) => {
+    cb(null, path.join(__dirname, "../files"));
+  },
+  filename: (req, file, cb) => {
+    if (file) {
+      cb(null, new Date().toISOString().replace(/:/g, "-") + file.originalname);
+    } else {
+      cb(null, false);
+    }
+  },
+});
+
 // Photo Upload middleware
 const photoUpload = multer({
   storage: photoStorage,
@@ -38,7 +52,7 @@ const photoUpload = multer({
 
 // File Upload middleware
 const fileUpload = multer({
-  storage: photoStorage,
+  storage: fileStorage,
   fileFilter: (req, file, cb) => {
     // make condition is there is no file
     if (!file) {

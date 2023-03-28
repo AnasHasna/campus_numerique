@@ -10,7 +10,6 @@ const {
 } = require("../models/studentModel");
 const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
-const sendMessageWhatsapp = require("../utils/sendMessage");
 /**
  * @description     register student
  * @router          /students/register
@@ -98,9 +97,8 @@ module.exports.loginStudentController = asyncHandler(async (req, res) => {
     .select("-verifyCode");
   // generate token for student
   const token = jwt.sign({ id: student._id }, process.env.JWT_SECRET);
-  student.token = token;
-  // send response to client
-  res.status(200).json({ status: true, user: student });
+  let result = { ...student.toObject(), token };
+  res.status(200).json({ status: true, user: result });
 });
 
 /**

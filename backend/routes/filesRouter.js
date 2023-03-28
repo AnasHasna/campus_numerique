@@ -7,7 +7,7 @@ const verifyToken = require("../middleware/verifyToken");
 
 const filesRouter = require("express").Router();
 
-moduleRouter
+filesRouter
   .route("/:moduleId")
   .post(verifyToken, fileUpload.single("file"), addFileToModuleController)
   .get(verifyToken, getAllFilesInModuleController);
