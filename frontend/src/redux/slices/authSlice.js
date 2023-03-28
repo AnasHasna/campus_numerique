@@ -48,17 +48,13 @@ const authSlice = createSlice({
     forgetPassword(state, action) {
       state.verificationType = "forgetPassword";
       state.userType = action.payload.userType;
-      console.log(action.payload.userType);
       if (state.userType === "Teacher") {
-
         state.user = action.payload.user.teacher;
       } else {
-
-        state.user = action.payload.user.teacher.student;
+        state.user = action.payload.user.student;
       }
-
     },
-    changePassword() { },
+    changePassword() {},
   },
 });
 
