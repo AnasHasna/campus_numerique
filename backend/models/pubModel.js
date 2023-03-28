@@ -23,6 +23,8 @@ const pubSchema = new mongoose.Schema(
   { timestamps: true }
 );
 
+pubSchema.plugin(require("mongoose-autopopulate"));
+
 const Pub = mongoose.model("Pub", pubSchema);
 
 module.exports = Pub;

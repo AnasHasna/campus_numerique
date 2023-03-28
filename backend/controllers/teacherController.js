@@ -21,7 +21,6 @@ const sendMail = require("../utils/sendmail");
  */
 
 module.exports.registerTeacherController = asyncHandler(async (req, res) => {
-  await Teacher.deleteMany({});
   // validate data
   const { error } = validateRegisterTeacher(req.body);
   if (error) {
@@ -101,11 +100,14 @@ module.exports.loginTeacherController = asyncHandler(async (req, res) => {
   }
   // generate token for teacher
   const accessToken = jwt.sign({ id: teacher._id }, process.env.JWT_SECRET);
-  teacher.token = accessToken;
+
   teacher = await Teacher.findById(teacher._id)
     .select("-password")
     .select("-verifyCode");
-  res.status(200).json({ status: true, user: teacher });
+
+  let result = { ...teacher.toObject() };
+  result.token = accessToken;
+  res.status(200).json({ status: true, user: result });
 });
 
 /**

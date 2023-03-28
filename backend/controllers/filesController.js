@@ -1,6 +1,6 @@
 const asyncHandler = require("express-async-handler");
 const File = require("../models/filesModel");
-
+const path = require("path");
 /**
  * @description     Get all files in module
  * @router          /files/:moduleId/
@@ -26,13 +26,14 @@ module.exports.getAllFilesInModuleController = asyncHandler(
 module.exports.addFileToModuleController = asyncHandler(async (req, res) => {
   const { name, type } = req.body;
 
-  // TODO: get the path of the file
+  // get the path to the image
+  const filePath = path.join(__dirname, `../files/${req.file.filename}`);
 
   const file = new File({
     module: req.params.moduleId,
     name,
     type,
-    //TODO: path
+    path: filePath,
   });
 
   await file.save();
