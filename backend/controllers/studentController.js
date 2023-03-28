@@ -131,7 +131,6 @@ module.exports.forgetPasswordStudentController = asyncHandler(
 
     // TODO: send it to whatsap
 
-    await sendMessage();
 
     // change verify code ond DB
     await Student.findByIdAndUpdate(student._id, { $set: { verifyCode } });

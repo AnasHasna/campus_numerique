@@ -51,11 +51,8 @@ function ForgetPasswordPage() {
   const { isLoading, mutate } = useMutation(forgetPassword, {
     mutationKey: "forgetPassword",
     onSuccess: (data) => {
-      if (userType === "Teacher") {
-        dispatch(authActions.forgetPassword({ user: data.data, userType }));
-      } else {
-        dispatch(authActions.forgetPassword({ user: data.data, userType }));
-      }
+      dispatch(authActions.forgetPassword({ user: data.data, userType }));
+
       navigate("/auth/verifycode");
     },
     onError: (error) => {

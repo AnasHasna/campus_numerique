@@ -14,6 +14,7 @@ import { Formik } from "formik";
 import Loading from "../../../components/Loading";
 import SnackBar from "../../../components/SnackBar";
 import axios from "axios";
+import { useDispatch, useSelector } from "react-redux";
 
 /* 
 const ChangePasswSchema = yup.object().shape({
@@ -32,6 +33,8 @@ const ChangePasswSchema = yup.object().shape({
 */
 const ChangePasswordPage = () => {
   const navigate = useNavigate();
+  const dispatch = useDispatch();
+  const { userType } = useSelector((state) => state.auth);
 
   const resetSchemaPassword = yup.object().shape({
     newPassword: yup
@@ -55,18 +58,20 @@ const ChangePasswordPage = () => {
   const handleSubmit = async (event) => {
     event.preventDefault();
     try {
+      console.log(userType.toLowerCase());
       const { data } = await axios.put(
-        "http://localhost:5000/teachers/changePassword",
+        `http://localhost:5000/${userType.toLowerCase()}/changePassword`,
         {
           newPassword: initialValuesPasswords.newPassword,
           confirmPassword: initialValuesPasswords.confirmPassword,
         }
       );
-      if (data.success) {
-        navigate("/auth/login");
-      } else {
-        throw new Error(data.message);
-      }
+      console.log(data);
+      // if (data.) {
+      //   navigate("/auth/login");
+      // } else {
+      //   throw new Error(data.message);
+      // }
       console.log(data);
       console.log(data.message);
       console.log(data.success);

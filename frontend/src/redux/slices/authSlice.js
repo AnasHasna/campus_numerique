@@ -48,23 +48,17 @@ const authSlice = createSlice({
     forgetPassword(state, action) {
       state.verificationType = "forgetPassword";
       state.userType = action.payload.userType;
+      console.log(action.payload.userType);
       if (state.userType === "Teacher") {
-        localStorage.setItem(
-          "user",
-          JSON.stringify(action.payload.user.teacher)
-        );
+
         state.user = action.payload.user.teacher;
       } else {
-        localStorage.setItem(
-          "user",
-          JSON.stringify(action.payload.user.student)
-        );
+
         state.user = action.payload.user.teacher.student;
       }
 
-      localStorage.setItem("userType", JSON.stringify(action.payload.userType));
     },
-    changePassword() {},
+    changePassword() { },
   },
 });
 
