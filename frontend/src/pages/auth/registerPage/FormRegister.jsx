@@ -23,6 +23,7 @@ import SnackBar from "../../../components/SnackBar";
 import { useDispatch } from "react-redux";
 import { authActions } from "../../../redux/slices/authSlice";
 import Loading from "../../../components/Loading";
+import OurCopyright from "../../../components/OurCopyright";
 
 const registerSchemaTeacher = yup.object().shape({
   fullName: yup.string().required("Obligatoire"),
@@ -83,24 +84,6 @@ const initialValuesRegisterStudent = {
   verifyPassword: "",
 };
 
-function Copyright(props) {
-  return (
-    <Typography
-      variant="body2"
-      color="text.secondary"
-      align="center"
-      {...props}
-    >
-      {"Copyright © "}
-      <Link color="inherit" href="https://mui.com/">
-        Your Website
-      </Link>{" "}
-      {new Date().getFullYear()}
-      {"."}
-    </Typography>
-  );
-}
-
 function FormRegister() {
   const dispatch = useDispatch();
   const [userType, setUserType] = useState("");
@@ -149,7 +132,7 @@ function FormRegister() {
           top: "50%",
           left: "50%",
           transform: "translate(-50%, -50%)",
-          marginTop: 15,
+          marginTop: 8,
         }}
       >
         <Formik
@@ -389,7 +372,7 @@ function FormRegister() {
             {"Vous avez déja un comptre? Se Connecter"}
           </Link>
         </Box>
-        <Copyright sx={{ mt: 8, mb: 4 }} />
+        <OurCopyright />
       </Box>
       {open && <SnackBar message={eror} open={open} />}
     </>

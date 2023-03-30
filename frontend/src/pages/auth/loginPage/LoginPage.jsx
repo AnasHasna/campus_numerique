@@ -5,7 +5,7 @@ import { useMutation } from "react-query";
 import { login } from "../../../redux/api/authApi";
 import { useState } from "react";
 import LockIcon from "@mui/icons-material/Lock";
-import { useDispatch, useSelector } from "react-redux";
+import { useDispatch } from "react-redux";
 
 import {
   Avatar,
@@ -28,27 +28,9 @@ import { useNavigate } from "react-router-dom";
 import Loading from "../../../components/Loading";
 import { authActions } from "../../../redux/slices/authSlice";
 import SnackBar from "../../../components/SnackBar";
-import VisibilityIcon from "../../../components/VisibilityIcon";
 import VisibilityOff from "@mui/icons-material/VisibilityOff";
 import Visibility from "@mui/icons-material/Visibility";
-
-function Copyright(props) {
-  return (
-    <Typography
-      variant="body2"
-      color="text.secondary"
-      align="center"
-      {...props}
-    >
-      {"Copyright © "}
-      <Link color="inherit" href="https://mui.com/">
-        Your Website
-      </Link>{" "}
-      {new Date().getFullYear()}
-      {"."}
-    </Typography>
-  );
-}
+import OurCopyright from "../../../components/OurCopyright";
 
 export default function LoginPage() {
   const [passw, setShowPassword] = useState(false);
@@ -58,19 +40,13 @@ export default function LoginPage() {
   };
 
   const handleMouseDownPassword = (event) => {
-    console.log("showpass ver 2");
     event.preventDefault();
-  };
-
-  const handlePasswordChange = (prop) => (event) => {
-    setShowPassword({ ...passw, [prop]: event.target.value });
   };
 
   const navigate = useNavigate();
 
   const dispatch = useDispatch();
 
-  const { user } = useSelector((state) => state.auth);
   const [error, setEror] = useState("");
 
   const [userType, setUserType] = useState("");
@@ -78,9 +54,7 @@ export default function LoginPage() {
   const isStudent = userType === "Student";
 
   const handleSubmit = (values, { setSubmitting }) => {
-    console.log("stap 1 passed");
     let data = {};
-    console.log("stap 2 passed");
     if (userType === "Teacher") {
       data = {
         email: values.email,
@@ -94,9 +68,7 @@ export default function LoginPage() {
         userType: "Student",
       };
     }
-    console.log("stap 3 passed");
     mutate(data);
-    console.log("stap 4 passed");
   };
 
   const validateTeacherSchema = Yup.object({
@@ -114,16 +86,12 @@ export default function LoginPage() {
     mutationKey: "login",
 
     onSuccess: (data) => {
-      dispatch(authActions.login(data.data.user));
+      dispatch(authActions.login({ ...data.data, userType: userType }));
       navigate("/", { replace: true });
     },
     onError: (error) => {
-      console.log("====================================");
-      console.log(error.response.data);
-      console.log("====================================");
       setEror(error.response.data.message);
       setOpen(true);
-      console.log(error.response.data);
     },
   });
 
@@ -335,7 +303,7 @@ export default function LoginPage() {
                 </Grid>
               </Grid>
             </Form>
-            <Copyright sx={{ mt: 8, mb: 4 }} />
+            <OurCopyright />
           </Container>
           {open && <SnackBar message={error} open={open} />}
         </>

@@ -51,4 +51,18 @@ const verifyCode = async ({ verifyCode, _id, userType }) => {
   }
 };
 
-export { signUp, login, forgetPassword, verifyCode };
+const resetPassword = async ({ newPassword, userType, id }) => {
+  if (userType === "Teacher") {
+    return await axios.put("http://localhost:5000/teachers/changepassword", {
+      teacherId: id,
+      password: newPassword,
+    });
+  } else {
+    return await axios.put(`http://localhost:5000/students/changepassword`, {
+      studentId: id,
+      password: newPassword,
+    });
+  }
+};
+
+export { signUp, login, forgetPassword, verifyCode, resetPassword };

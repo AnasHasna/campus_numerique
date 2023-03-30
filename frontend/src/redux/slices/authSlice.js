@@ -11,17 +11,17 @@ const authSlice = createSlice({
       localStorage.getItem("userType") !== null
         ? localStorage.getItem("userType")
         : null,
-    isLogin: localStorage.getItem("isLogin") === true ? true : false,
+    isLogin: localStorage.getItem("isLogin") ? true : false,
     verificationType: null,
   },
   reducers: {
     login(state, action) {
       state.user = action.payload.user;
       state.userType = action.payload.userType;
-      localStorage.setItem("user", JSON.stringify(action.payload));
+      state.isLogin = true;
+      localStorage.setItem("isLogin", true);
+      localStorage.setItem("user", JSON.stringify(action.payload.user));
       localStorage.setItem("userType", JSON.stringify(action.payload.userType));
-
-      //
     },
     signUp(state, action) {
       state.verificationType = "signUp";
@@ -44,6 +44,11 @@ const authSlice = createSlice({
     },
     logout(state) {
       state.user = null;
+      state.userType = null;
+      state.isLogin = false;
+      localStorage.removeItem("isLogin");
+      localStorage.removeItem("user");
+      localStorage.removeItem("userType");
     },
     forgetPassword(state, action) {
       state.verificationType = "forgetPassword";

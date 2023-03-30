@@ -15,6 +15,8 @@ import Loading from "../../../components/Loading";
 import SnackBar from "../../../components/SnackBar";
 import axios from "axios";
 import { useDispatch, useSelector } from "react-redux";
+import { useMutation } from "react-query";
+import { resetPassword } from "../../../redux/api/authApi";
 
 /* 
 const ChangePasswSchema = yup.object().shape({
@@ -34,7 +36,7 @@ const ChangePasswSchema = yup.object().shape({
 const ChangePasswordPage = () => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
-  const { userType } = useSelector((state) => state.auth);
+  const { userType, user } = useSelector((state) => state.auth);
 
   const resetSchemaPassword = yup.object().shape({
     newPassword: yup
@@ -55,23 +57,23 @@ const ChangePasswordPage = () => {
     confirmPassword: "",
   };
 
-  const handleSubmit = async (values) => {
-    // event.preventDefault();
-    console.log("step1");
-    try {
-      console.log("step2");
+  const [open, setOpen] = useState(false);
+  const [eror, setEror] = useState("");
 
-      console.log(userType.toLowerCase());
-      const { data } = await axios.put(
-        `http://localhost:5000/${userType.toLowerCase()}/changePassword`,
-        {
-          newPassword: values.newPassword,
-        }
-      );
-      console.log(data);
-    } catch (error) {
-      console.log(error);
-    }
+  const { isLoading, mutate } = useMutation(resetPassword, {
+    mutationKey: "resetPassword",
+
+    onSuccess: (data) => {
+      navigate("/auth/login", { replace: true });
+    },
+    onError: (error) => {
+      setEror(error.response.data.message);
+      setOpen(true);
+    },
+  });
+
+  const handleSubmit = (values) => {
+    mutate({ newPassword: values.newPassword, userType, id: user._id });
   };
 
   return (
@@ -138,18 +140,14 @@ const ChangePasswordPage = () => {
               type="submit"
               variant="contained"
               color="primary"
-              onClick={() => {
-                console.log("fuck you");
-                console.log(values);
-                handleSubmit(values);
-              }}
+              onClick={handleSubmit}
               sx={{
                 mt: 3,
                 mb: 2,
               }}
-              // disabled={isSubmitting}
+              disabled={isLoading}
             >
-              Change Mot de passe
+              {isLoading ? <Loading /> : "Change Mot de passe"}
             </Button>
           </Box>
         </Form>

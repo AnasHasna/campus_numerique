@@ -18,6 +18,7 @@ import { forgetPassword } from "../../../redux/api/authApi";
 import { useDispatch } from "react-redux";
 import { authActions } from "../../../redux/slices/authSlice";
 import SnackBar from "../../../components/SnackBar";
+import Loading from "../../../components/Loading";
 
 const initialValuesTechear = {
   email: "",
@@ -63,8 +64,6 @@ function ForgetPasswordPage() {
   const handleSubmit = (values) => {
     mutate({ ...values, userType });
   };
-
-  if (isLoading) return <div>Loading...</div>;
 
   return (
     <div>
@@ -197,7 +196,7 @@ function ForgetPasswordPage() {
                     type="submit"
                     onClick={handleSubmit}
                   >
-                    Rechercher
+                    {isLoading ? <Loading /> : "Rechercher"}
                   </Button>
                 </Stack>
               </Form>

@@ -14,7 +14,8 @@ import MenuItem from "@mui/material/MenuItem";
 import AdbIcon from "@mui/icons-material/Adb";
 import { Link, useNavigate } from "react-router-dom";
 import { primaryColor } from "../../utils/colors";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
+import { authActions } from "../../redux/slices/authSlice";
 
 const pages = [
   { page: "Cours", route: "/cours" },
@@ -32,6 +33,8 @@ function MyAppBar() {
   const [anchorElNav, setAnchorElNav] = React.useState(null);
   const [anchorElUser, setAnchorElUser] = React.useState(null);
   const navigate = useNavigate();
+
+  const dispatch = useDispatch();
 
   // get the user from store
   const { user, isLogin } = useSelector((state) => state.auth);
@@ -54,6 +57,11 @@ function MyAppBar() {
 
   const handleCloseUserMenu = () => {
     setAnchorElUser(null);
+  };
+
+  const handleLogout = () => {
+    dispatch(authActions.logout());
+    navigate("/");
   };
 
   return (
@@ -203,7 +211,7 @@ function MyAppBar() {
                 S'inscrire
               </Button>
             </Box>
-            <Box display={user & isLogin ? "flex" : "none"}>
+            <Box display={isLogin === true ? "flex" : "none"}>
               <Tooltip title="Open settings">
                 <IconButton onClick={handleOpenUserMenu} sx={{ p: 0 }}>
                   <Avatar alt="Remy Sharp" src="/static/images/avatar/2.jpg" />
@@ -226,7 +234,15 @@ function MyAppBar() {
                 onClose={handleCloseUserMenu}
               >
                 {settings.map((setting) => (
-                  <MenuItem key={setting.setting} onClick={handleCloseUserMenu}>
+                  <MenuItem
+                    key={setting.setting}
+                    onClick={() => {
+                      handleCloseUserMenu();
+                      if (setting.setting === "Logout") {
+                        handleLogout();
+                      }
+                    }}
+                  >
                     <Typography textAlign="center">
                       {setting.setting}
                     </Typography>
