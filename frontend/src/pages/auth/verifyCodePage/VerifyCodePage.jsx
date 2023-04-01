@@ -163,7 +163,7 @@ function VerifyCodePage() {
           </Formik>
         </Card>
       </Box>
-      {open && <SnackBar message={eror} open={open} />}
+      {open && <SnackBar message={eror} open={open} setOpen={setOpen} />}
     </>
   );
 }

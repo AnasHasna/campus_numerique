@@ -72,9 +72,13 @@ export default function LoginPage() {
   };
 
   const validateTeacherSchema = Yup.object({
-    email: Yup.string("Enter your email")
-      .email("Enter a valid email")
-      .required("Email is required"),
+    email: Yup.string("Entrer votre email")
+      .email("Email invalide")
+      .matches(
+        /@uca\.ac\.ma$/,
+        "Email doit contenir un domaine UCA (@uca.ac.ma)"
+      )
+      .required("Email est obligatoire"),
     // password: Yup.string().required("Password is required"),
   });
 
@@ -200,7 +204,6 @@ export default function LoginPage() {
                       gridColumn: "span 4",
                     }}
                   />
-                  <ErrorMessage name="email" />
                 </Box>
               )}
 
@@ -218,11 +221,12 @@ export default function LoginPage() {
                     autoFocus
                     value={values.email}
                     onChange={handleChange}
+                    error={Boolean(touched.email) && Boolean(errors.email)}
+                    helperText={errors.email}
                     sx={{
                       gridColumn: "span 4",
                     }}
                   />
-                  <ErrorMessage name="email" />
                 </Box>
               )}
 
@@ -257,7 +261,6 @@ export default function LoginPage() {
                   ),
                 }}
               />
-              <ErrorMessage name="password" />
               <br />
               <FormControlLabel
                 control={<Checkbox value="remember" color="primary" />}
@@ -305,7 +308,7 @@ export default function LoginPage() {
             </Form>
             <OurCopyright />
           </Container>
-          {open && <SnackBar message={error} open={open} />}
+          {open && <SnackBar message={error} open={open} setOpen={setOpen} />}
         </>
       )}
     </Formik>

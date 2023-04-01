@@ -145,12 +145,12 @@ function ForgetPasswordPage() {
                       label="Email"
                       value={values.email}
                       error={errors.email && touched.email}
+                      helperText={errors.email}
                       onBlur={handleBlur}
                       onChange={(e) => {
                         setEmail(e.target.value);
                         handleChange(e);
                       }}
-                      helperText={errors.email}
                     />
                   </div>
                 )}
@@ -204,7 +204,7 @@ function ForgetPasswordPage() {
           </Formik>
         </Card>
       </Box>
-      {open && <SnackBar message={eror} open={open} />}
+      {open && <SnackBar message={eror} open={open} setOpen={setOpen} />}
     </div>
   );
 }

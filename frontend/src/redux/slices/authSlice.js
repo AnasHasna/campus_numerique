@@ -25,22 +25,23 @@ const authSlice = createSlice({
     },
     signUp(state, action) {
       state.verificationType = "signUp";
-      state.userType = action.payload.userType;
       if (state.userType === "Teacher") {
+        state.userType = "Teacher";
+        localStorage.setItem("userType", "Teacher");
         localStorage.setItem(
           "user",
           JSON.stringify(action.payload.user.teacher)
         );
         state.user = action.payload.user.teacher;
       } else {
+        state.userType = "Student";
+        localStorage.setItem("userType", "Student");
         localStorage.setItem(
           "user",
           JSON.stringify(action.payload.user.student)
         );
-        state.user = action.payload.user.teacher.student;
+        state.user = action.payload.user.student;
       }
-
-      localStorage.setItem("userType", JSON.stringify(action.payload.userType));
     },
     logout(state) {
       state.user = null;

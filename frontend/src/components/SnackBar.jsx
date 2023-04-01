@@ -9,20 +9,18 @@ const Alert = React.forwardRef(function Alert(props, ref) {
 });
 
 function SnackBar(props) {
-  const [open, setOpen] = React.useState(props.open);
-
   const handleClose = (event, reason) => {
     if (reason === "clickaway") {
       return;
     }
 
-    setOpen(false);
+    props.setOpen(false);
   };
 
   return (
     <Stack spacing={2} sx={{ width: "100%" }}>
       <Snackbar
-        open={open}
+        open={props.open}
         autoHideDuration={6000}
         onClose={handleClose}
         anchorOrigin={{

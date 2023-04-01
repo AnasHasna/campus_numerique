@@ -10,6 +10,7 @@ const {
 } = require("../models/studentModel");
 const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
+const sendWhatsappMessage = require("../utils/sendWhatsappMessage");
 /**
  * @description     register student
  * @router          /students/register
@@ -18,7 +19,7 @@ const jwt = require("jsonwebtoken");
  */
 
 module.exports.registerStudentController = asyncHandler(async (req, res) => {
-  await Student.deleteMany({});
+  // await Student.deleteMany({});
   // validate data
   const { error } = validateRegisterStudent(req.body);
   if (error) {
@@ -34,8 +35,16 @@ module.exports.registerStudentController = asyncHandler(async (req, res) => {
   if (student) {
     return res
       .status(400)
-      .json({ status: false, message: "codeMassar or cin already exists" });
+      .json({ status: false, message: "codeMassar ou cin existe déja" });
   }
+  // verify if the phone is not used
+  student = await Student.findOne({ phoneNumber });
+  if (student) {
+    return res
+      .status(400)
+      .json({ status: false, message: "Numéro de téléphone existe déja" });
+  }
+
   // hash the password
   const salt = await bcrypt.genSalt(10);
   const hashedPassword = await bcrypt.hash(password, salt);
@@ -43,7 +52,8 @@ module.exports.registerStudentController = asyncHandler(async (req, res) => {
   // generate verify code Math.floor(Math.random() * (max - min + 1)) + min;
   const verifyCode = Math.floor(Math.random() * 90000) + 10000;
 
-  // TODO: send it to whatsup
+  // send verify code to the phone number
+  await sendWhatsappMessage(fullName, verifyCode, phoneNumber);
 
   // create new teacher and save it
   student = new Student({
@@ -56,9 +66,7 @@ module.exports.registerStudentController = asyncHandler(async (req, res) => {
   });
   await student.save();
 
-  student = await Student.findById(student._id)
-    .select("-password")
-    .select("-verifyCode");
+  student = await Student.findById(student._id).select("-password -verifyCode");
 
   res.status(201).json({ status: true, student });
 });
@@ -83,14 +91,14 @@ module.exports.loginStudentController = asyncHandler(async (req, res) => {
   if (!student) {
     return res
       .status(404)
-      .json({ status: false, message: "Student not found" });
+      .json({ status: false, message: "Etudiant non trouvé" });
   }
   // check if the password is correct
   const passwordIsMatch = await bcrypt.compare(password, student.password);
   if (!passwordIsMatch) {
     return res
       .status(400)
-      .json({ status: false, message: "password not correct" });
+      .json({ status: false, message: "Mot de passe incorrect" });
   }
   student = await Student.findById(student._id)
     .select("-password")
@@ -123,14 +131,18 @@ module.exports.forgetPasswordStudentController = asyncHandler(
     if (!student) {
       return res
         .status(404)
-        .json({ status: false, message: "Student not found" });
+        .json({ status: false, message: "Etudiant non trouvé" });
     }
     // cin exist ===> generate code
 
     const verifyCode = Math.floor(Math.random() * 90000) + 10000;
 
-    // TODO: send it to whatsap
-
+    // send it to whatsap
+    await sendWhatsappMessage(
+      student.fullName,
+      verifyCode,
+      student.phoneNumber
+    );
 
     // change verify code ond DB
     await Student.findByIdAndUpdate(student._id, { $set: { verifyCode } });
@@ -157,10 +169,11 @@ module.exports.verifyCodeStudentController = asyncHandler(async (req, res) => {
   }
   const { verifyCode, studentId } = req.body;
   let student = await Student.findById(studentId);
-  if (student.verifyCode !== verifyCode) {
+  console.log(student);
+  if (student.verifyCode != verifyCode) {
     return res.status(400).json({
       status: false,
-      message: "Wrong verification code",
+      message: "Code de vérification eroné",
     });
   }
   student = await Student.findByIdAndUpdate(

@@ -23,10 +23,9 @@ const pages = [
   { page: "EXAMENS", route: "/examens" },
 ];
 const settings = [
-  { setting: "Profile", route: "profile" },
-  { setting: "Account", route: "account" },
-  { setting: "Dashboard", route: "dashboard" },
-  { setting: "Logout", route: "Logout" },
+  { setting: "Compte", route: "profile" },
+  { setting: "Paramètres", route: "dashboard" },
+  { setting: "Se déconnecter", route: "Logout" },
 ];
 
 function MyAppBar() {
@@ -92,7 +91,7 @@ function MyAppBar() {
                 textDecoration: "none",
               }}
             >
-              LOGO
+              Campus Numérique
             </Typography>
           </Link>
 
@@ -238,7 +237,7 @@ function MyAppBar() {
                     key={setting.setting}
                     onClick={() => {
                       handleCloseUserMenu();
-                      if (setting.setting === "Logout") {
+                      if (setting.route === "Logout") {
                         handleLogout();
                       }
                     }}

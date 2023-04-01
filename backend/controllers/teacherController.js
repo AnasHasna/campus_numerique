@@ -21,6 +21,7 @@ const sendMail = require("../utils/sendmail");
  */
 
 module.exports.registerTeacherController = asyncHandler(async (req, res) => {
+  // await Teacher.deleteMany({});
   // validate data
   const { error } = validateRegisterTeacher(req.body);
   if (error) {
@@ -88,14 +89,14 @@ module.exports.loginTeacherController = asyncHandler(async (req, res) => {
   if (!teacher) {
     return res.status(404).json({
       status: false,
-      message: "User not found",
+      message: "Utilisateur non trouvé",
     });
   }
   const passwordIsMatch = await bcrypt.compare(password, teacher.password);
   if (!passwordIsMatch) {
     return res.status(400).json({
       status: false,
-      message: "Password is incorrect",
+      message: "Mot de passe incorrect",
     });
   }
   // generate token for teacher
@@ -132,7 +133,7 @@ module.exports.forgetPasswordTeacherController = asyncHandler(
     if (!teacher) {
       return res
         .status(404)
-        .json({ status: false, message: "Teacher not found" });
+        .json({ status: false, message: "Professeur non trouvé" });
     }
     // email exist ===> generate code
 
@@ -171,7 +172,7 @@ module.exports.verifyCodeTeacherController = asyncHandler(async (req, res) => {
   if (teacher.verifyCode != verifyCode) {
     return res.status(400).json({
       status: false,
-      message: "Wrong verification code",
+      message: "Verification code érroné",
     });
   }
 

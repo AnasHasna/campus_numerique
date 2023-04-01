@@ -1,41 +1,14 @@
-import {
-  TextField,
-  Button,
-  InputLabel,
-  InputAdornment,
-  IconButton,
-  Box,
-} from "@mui/material";
-import { Visibility, VisibilityOff } from "@mui/icons-material";
-import { useState } from "react";
+import { TextField, Button, Box } from "@mui/material";
 import { useNavigate } from "react-router-dom";
 import * as yup from "yup";
 import { Form, Formik } from "formik";
 import Loading from "../../../components/Loading";
-import SnackBar from "../../../components/SnackBar";
-import axios from "axios";
-import { useDispatch, useSelector } from "react-redux";
+import { useSelector } from "react-redux";
 import { useMutation } from "react-query";
 import { resetPassword } from "../../../redux/api/authApi";
 
-/* 
-const ChangePasswSchema = yup.object().shape({
-    newPassword: yup
-      .string()
-      .required("Obligatoire")
-      .matches(
-        /^(?=.*[a-z])(?=.*[A-Z])(?=.*[!@#$%^&])/,
-        "Mot de passe doit contenir au moin une lettre minuscule, majuscule et un charactére spéciale !"
-      ),
-    confirmPassword: yup
-      .string()
-      .oneOf([yup.ref("newPassword"), null], "Passwords doivent se ressambler")
-      .required("Obligatoire"),
-  }); 
-*/
 const ChangePasswordPage = () => {
   const navigate = useNavigate();
-  const dispatch = useDispatch();
   const { userType, user } = useSelector((state) => state.auth);
 
   const resetSchemaPassword = yup.object().shape({
@@ -57,19 +30,13 @@ const ChangePasswordPage = () => {
     confirmPassword: "",
   };
 
-  const [open, setOpen] = useState(false);
-  const [eror, setEror] = useState("");
-
   const { isLoading, mutate } = useMutation(resetPassword, {
     mutationKey: "resetPassword",
 
     onSuccess: (data) => {
       navigate("/auth/login", { replace: true });
     },
-    onError: (error) => {
-      setEror(error.response.data.message);
-      setOpen(true);
-    },
+    onError: (error) => {},
   });
 
   const handleSubmit = (values) => {
@@ -105,7 +72,7 @@ const ChangePasswordPage = () => {
             }}
           >
             <TextField
-              label="Password"
+              label="Nouveau Mot de Passe"
               type="password"
               onBlur={handleBlur}
               onChange={handleChange}
@@ -120,7 +87,7 @@ const ChangePasswordPage = () => {
               }}
             />
             <TextField
-              label="Confirm Password"
+              label="Confirmer Mot de Passe"
               type="Password"
               onBlur={handleBlur}
               onChange={handleChange}

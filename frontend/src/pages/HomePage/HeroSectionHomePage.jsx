@@ -45,8 +45,11 @@ function HeroSectionHomePage() {
     <Box component="div" sx={styles.demoWrap}>
       <Container>
         <Stack direction="column" spacing={1} sx={styles.demoContent}>
-          <Typography variant="h3" sx={{ color: black, fontWeight: "bold" }}>
-            EDUCATION
+          <Typography
+            variant="h5"
+            sx={{ color: black, fontWeight: "bold", fontSize: 30 }}
+          >
+            Campus Numérique
           </Typography>
           <Typography
             variant="h5"
@@ -62,18 +65,15 @@ function HeroSectionHomePage() {
           <Typography
             variant="h6"
             sx={{
-              lineHeight: 1.1,
+              lineHeight: 1.6,
               fontSize: 16,
               color: "black",
               fontWeight: "bold",
             }}
           >
-            Bienvenue sur MonSite, la plateforme éducative en ligne ultime pour
-            les enseignants et les élèves. Créez des salles de classe
-            virtuelles, partagez des fichiers et des devoirs, et communiquez
-            facilement avec vos élèves. Rejoignez-nous dès maintenant et
-            découvrez comment Classroom peut transformer votre expérience
-            d'apprentissage.
+            Campus Numérique est la solution idéale pour les enseignants et les
+            étudiants qui cherchent à explorer un monde d'apprentissage
+            interactif et collaboratif en ligne
           </Typography>
           <Stack direction="row" pt={7}>
             <Box>

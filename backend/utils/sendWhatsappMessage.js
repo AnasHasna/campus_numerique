@@ -1,24 +1,39 @@
-const accountSid = process.env.TWILIO_ACCOUNT_SID
-const authToken = process.env.TWILIO_AUTH_TOKEN
+var qs = require("querystring");
+var http = require("https");
 
-const client = require('twilio')(accountSid, authToken, {
-    lazyLoading: true
-})
+const sendWhatsappMessage = (name, verifyCode, phone) => {
+  var options = {
+    method: "POST",
+    hostname: "api.ultramsg.com",
+    port: null,
+    path: "/instance42005/messages/chat",
+    headers: {
+      "content-type": "application/x-www-form-urlencoded",
+    },
+  };
 
-// Function to send message to whatsApp
+  var req = http.request(options, function (res) {
+    var chunks = [];
 
-const sendMessage = async (phoneNumber, verifyCode) => {
-    try {
-        await client.messages
-            .create({
-                body: verifyCode,
-                from: `whatsapp:+212622920600`,
-                to: `whatsapp:${phoneNumber}`
-            })
-    } catch (err) {
-        console.log(`Error at sendMessage: ${err.message}`);
-    }
-}
+    res.on("data", function (chunk) {
+      chunks.push(chunk);
+    });
 
-module.exports = { sendMessage }
+    res.on("end", function () {
+      var body = Buffer.concat(chunks);
+      console.log(body.toString());
+    });
+  });
 
+  const phoneToSend = phone.substring(1);
+
+  var postData = qs.stringify({
+    token: "5thuj3r6ewxgo9bp",
+    to: `+212${phoneToSend}`,
+    body: `Bonjour ${name}, votre code de vérification est ${verifyCode}`,
+  });
+  req.write(postData);
+  req.end();
+};
+
+module.exports = sendWhatsappMessage;

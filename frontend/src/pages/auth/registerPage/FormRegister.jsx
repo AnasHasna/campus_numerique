@@ -30,7 +30,7 @@ const registerSchemaTeacher = yup.object().shape({
   email: yup
     .string()
     .email("invalide email")
-    .required("Obligatoire")
+    .required("Email est obligatoire")
     .matches(
       /@uca\.ac\.ma$/,
       "Email doit contenir un domaine UCA (@uca.ac.ma)"
@@ -38,10 +38,11 @@ const registerSchemaTeacher = yup.object().shape({
   picture: yup.string().required("Obligatoire"),
   password: yup
     .string()
-    .required("Obligatoire")
+    .required("Le mot de passe est obligatoire")
+    .min(8, "Le mot de passe doit contenir au moins 8 caractères")
     .matches(
-      /^(?=.*[a-z])(?=.*[A-Z])(?=.*[!@#$%^&])/,
-      "Mot de passe doit contenir au moin une lettre minuscule, majuscule et un charactére spéciale !"
+      /^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[!@#$%^&*])/,
+      "Le mot de passe doit contenir au moins une lettre minuscule, une lettre majuscule, un chiffre et un caractère spécial"
     ),
   verifyPassword: yup
     .string()
@@ -56,10 +57,11 @@ const registerSchemaStudent = yup.object().shape({
   phoneNumber: yup.number().positive().integer().required("Obligatoire"),
   password: yup
     .string()
-    .required("Obligatoire")
+    .required("Le mot de passe est obligatoire")
+    .min(8, "Le mot de passe doit contenir au moins 8 caractères")
     .matches(
-      /^(?=.[a-z])(?=.[A-Z])(?=.[!@#$%^&])/,
-      "Mot de passe doit contenir au moin une lettre minuscule, majuscule et un charactére spéciale !"
+      /^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[!@#$%^&*])/,
+      "Le mot de passe doit contenir au moins une lettre minuscule, une lettre majuscule, un chiffre et un caractère spécial"
     ),
   verifyPassword: yup
     .string()
@@ -96,33 +98,34 @@ function FormRegister() {
   const { isLoading, mutate } = useMutation(signUp, {
     mutationKey: "signUp",
     onSuccess: (data) => {
-      navigate("/auth/verifycode");
       dispatch(authActions.signUp({ user: data.data, userType: userType }));
+      navigate("/auth/verifycode");
     },
     onError: (error) => {
+      console.log(error.response.data.message);
       setEror(error.response.data.message);
       setOpen(true);
     },
   });
 
   const handleFormSubmit = (values, { setSubmitting }) => {
-    let formData = new FormData();
-
     if (userType === "Teacher") {
+      let formData = new FormData();
       formData.append("fullName", values.fullName);
       formData.append("email", values.email);
       formData.append("password", values.password);
       formData.append("image", picture);
+      mutate({ data: formData, userType });
     } else {
-      formData = {
+      const data = {
         fullName: values.fullName,
         codeMassar: values.codeMassar,
         cin: values.cin,
         phoneNumber: values.phoneNumber,
         password: values.password,
       };
+      mutate({ data, userType });
     }
-    mutate({ data: formData, userType });
   };
   return (
     <>
@@ -159,7 +162,7 @@ function FormRegister() {
             <Form onSubmit={handleSubmit}>
               <Box
                 sx={{
-                  marginTop: 8,
+                  marginTop: userType === "" ? 1 : 20,
                   marginBottom: "30px",
                   display: "flex",
                   flexDirection: "column",
@@ -187,7 +190,7 @@ function FormRegister() {
                 }}
               >
                 <TextField
-                  label="Full Name"
+                  label="Nom complet"
                   onBlur={handleBlur}
                   onChange={handleChange}
                   value={values.fullName}
@@ -265,7 +268,7 @@ function FormRegister() {
                             {values.picture ? (
                               <Typography>{values.picture.name}</Typography>
                             ) : (
-                              <p>Add Picture Here</p>
+                              <p>Ajouter votre photo</p>
                             )}
                           </Box>
                         )}
@@ -300,7 +303,7 @@ function FormRegister() {
                       }}
                     />
                     <TextField
-                      label="Phone Number"
+                      label="Numéro de téléphone"
                       onBlur={handleBlur}
                       onChange={handleChange}
                       value={values.phoneNumber}
@@ -317,7 +320,7 @@ function FormRegister() {
                   </>
                 )}
                 <TextField
-                  label="Password"
+                  label="Mot de passe"
                   type="password"
                   onBlur={handleBlur}
                   onChange={handleChange}
@@ -330,7 +333,7 @@ function FormRegister() {
                   }}
                 />
                 <TextField
-                  label="Confirm Password"
+                  label="Cofirmer mot de passe"
                   type="Password"
                   onBlur={handleBlur}
                   onChange={handleChange}
@@ -374,7 +377,7 @@ function FormRegister() {
         </Box>
         <OurCopyright />
       </Box>
-      {open && <SnackBar message={eror} open={open} />}
+      {open && <SnackBar message={eror} open={open} setOpen={setOpen} />}
     </>
   );
 }

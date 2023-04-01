@@ -18,7 +18,7 @@ function OurCopyright() {
       }}
     >
       {"Copyright"} <Copyright sx={{ m: 0.5 }} />
-      HHHHHHHHHHHHHHHHHh
+      Campus Numérique
       {" " + new Date().getFullYear()}
       {"."}
     </Typography>
