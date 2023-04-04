@@ -306,6 +306,11 @@ export default function LoginPage() {
                 </Grid>
               </Grid>
             </Form>
+            <Box
+              sx={{
+                mt: 20,
+              }}
+            ></Box>
             <OurCopyright />
           </Container>
           {open && <SnackBar message={error} open={open} setOpen={setOpen} />}

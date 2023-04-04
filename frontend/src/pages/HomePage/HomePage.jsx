@@ -4,9 +4,7 @@ import HeroSectionHomePage from "./HeroSectionHomePage";
 
 function HomePage() {
   const { isLogin } = useSelector((state) => state.auth);
-  return (
-    <div>{isLogin ? <BoardPage></BoardPage> : <HeroSectionHomePage />}</div>
-  );
+  return <div>{isLogin ? <BoardPage /> : <HeroSectionHomePage />}</div>;
 }
 
 export default HomePage;
