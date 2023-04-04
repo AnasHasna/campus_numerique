@@ -2,22 +2,41 @@ const asyncHandler = require("express-async-handler");
 const Comment = require("../models/commentsModel");
 const { find } = require("../models/pubModel");
 const Pub = require("../models/pubModel");
+const path = require("path");
+const File = require("../models/filesModel");
 
 /**
  * @description     Add pub 
- * @router          /pub/
+ * @router          /pubs
  * @method          POST
  * @access          public
 
 */
 
 module.exports.createPubController = asyncHandler(async (req, res) => {
-  const { moduleId, content } = req.body;
+  const { content } = req.body;
+  const { moduleId } = req.params;
 
   const pub = await Pub.create({
     moduleId,
     content,
   });
+
+  if (req.file) {
+    // get the path to the image
+    const filePath = path.join(__dirname, `../files/${req.file.filename}`);
+
+    const file = new File({
+      module: moduleId,
+      name: req.file.originalname,
+      type: req.body.type,
+      path: filePath,
+    });
+    await file.save();
+
+    pub.file = file._id;
+    await pub.save();
+  }
 
   res
     .status(201)
@@ -26,14 +45,14 @@ module.exports.createPubController = asyncHandler(async (req, res) => {
 
 /**
  * @description     Get all pub
- * @router          /pub/
+ * @router          /pubs
  * @method          GET
  * @access          public
  */
 
 module.exports.getAllPubController = asyncHandler(async (req, res) => {
-  const { moduleId } = req.body;
-  const pubs = await Pub.find({ moduleId });
+  const { moduleId } = req.params;
+  const pubs = await Pub.find({ moduleId }).sort({ createdAt: -1 });
 
   res.status(200).json({ status: true, pubs });
 });

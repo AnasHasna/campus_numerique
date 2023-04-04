@@ -1,6 +1,5 @@
 import {
   Avatar,
-  Box,
   Button,
   Card,
   Icon,
@@ -11,22 +10,41 @@ import {
   Tooltip,
   Typography,
 } from "@mui/material";
+import LoadingButton from "@mui/lab/LoadingButton";
 import UploadIcon from "@mui/icons-material/Upload";
-import LinkIcon from "@mui/icons-material/Link";
+import DeleteOutlineIcon from "@mui/icons-material/DeleteOutline";
 import PictureAsPdfIcon from "@mui/icons-material/PictureAsPdf";
 import { useRef, useState } from "react";
-import CustomModal from "../CustomModal";
+import { useMutation } from "react-query";
+import { addPub } from "../../redux/api/pubApi";
+import { useSelector } from "react-redux";
+import CustomDropDawn from "../CustomDropDawn";
+import SnackBar from "../SnackBar";
 
-function CardAddPubBoard() {
-  const [isHover, setIsHover] = useState(false);
-  const [isCardClicked, setIsCardClicked] = useState(false);
+function CardAddPubBoard(props) {
+  const { user } = useSelector((state) => state.auth);
 
   const fileInputRef = useRef(null);
 
-  const [file, setFile] = useState();
-  const [text, setText] = useState("");
+  const [isHover, setIsHover] = useState(false);
+  const [isCardClicked, setIsCardClicked] = useState(false);
 
-  const [openModal, setOpenModal] = useState(false);
+  const [file, setFile] = useState();
+  const [content, setContent] = useState("");
+  const [type, setType] = useState("cours");
+
+  const [openSnackBar, setOpenSnackBar] = useState(false);
+
+  const { isLoading, mutate } = useMutation(addPub, {
+    mutationKey: "addPub",
+    onSuccess: (data) => {
+      console.log(data.data);
+      props.refetch();
+    },
+    onError: (error) => {
+      console.log(error.response.data);
+    },
+  });
 
   const handleUploadButtonClick = () => {
     if (fileInputRef.current) {
@@ -34,10 +52,12 @@ function CardAddPubBoard() {
     }
   };
 
+  const handleDeleteFile = () => {
+    setFile(null);
+  };
+
   const handleFileInputChange = (event) => {
     setFile(event.target.files[0]);
-    //TODO: something with the file
-    console.log(file);
   };
 
   const handleClickCard = () => {
@@ -47,26 +67,40 @@ function CardAddPubBoard() {
     }
   };
 
-  const handleOpenModal = () => setOpenModal(true);
+  const handleAddPub = () => {
+    const formData = new FormData();
+    formData.append("file", file);
+    formData.append("type", type);
+    formData.append("content", content);
+    //TODO: make it dynamic
+    formData.append("moduleId", "642c07cdc09d7b7544de87f0");
+    formData.append("teacherId", "642844e021bb6dc06e928dd7");
+    mutate(formData, user.token);
+    setOpenSnackBar(true);
+
+    // close
+    setIsHover(false);
+    setIsCardClicked(false);
+    setContent("");
+    setFile(null);
+  };
 
   return (
     <Card
       onClick={handleClickCard}
       sx={{
-        pr: 2,
-        pl: 2,
-        pt: 1.3,
-        pb: 1.3,
+        p: 2.5,
         "&:hover": !isHover && {
           backgroundColor: "lightgrey",
           cursor: "pointer",
         },
       }}
     >
-      <CustomModal
-        open={openModal}
-        setOpen={setOpenModal}
-        children=<Box>czeczec</Box>
+      <SnackBar
+        open={openSnackBar}
+        setOpen={setOpenSnackBar}
+        message="Publication ajoutée avec succès"
+        type="success"
       />
       {!isHover ? (
         <Stack direction="row">
@@ -91,8 +125,8 @@ function CardAddPubBoard() {
       ) : (
         <Paper
           sx={{
-            backgroundColor: "lightgrey",
-
+            // backgroundColor:grey[100],
+            backgroundColor: "#F8F8FB",
             pt: 1.3,
             pb: 1.3,
             pr: 2,
@@ -115,8 +149,8 @@ function CardAddPubBoard() {
               placeholder="Ecrivez quelque chose..."
               minRows={10}
               maxRows={30}
-              value={text}
-              onChange={(e) => setText(e.target.value)}
+              value={content}
+              onChange={(e) => setContent(e.target.value)}
               style={{
                 width: "100%",
                 resize: "none",
@@ -141,15 +175,39 @@ function CardAddPubBoard() {
                 }}
               >
                 <Typography>{file.name}</Typography>
-                <Avatar>
-                  <Icon>
-                    <PictureAsPdfIcon />
-                  </Icon>
-                </Avatar>
+                <Stack
+                  direction="row"
+                  spacing={2}
+                  sx={{
+                    alignItems: "center",
+                  }}
+                >
+                  <CustomDropDawn
+                    options={["COURS", "TD", "EXAM"]}
+                    setOption={setType}
+                    option={type}
+                  />
+                  <Avatar>
+                    <Icon>
+                      <PictureAsPdfIcon />
+                    </Icon>
+                  </Avatar>
+                  <Avatar
+                    sx={{
+                      backgroundColor: "white",
+                      borderRadius: "50%",
+                      border: "1px solid red",
+                    }}
+                  >
+                    <IconButton onClick={handleDeleteFile}>
+                      <DeleteOutlineIcon sx={{ color: "red" }} />
+                    </IconButton>
+                  </Avatar>
+                </Stack>
               </Stack>
             )}
-            <Stack direction="row" spacing={1}>
-              <>
+            <Stack direction="row" spacing={1} justifyContent="space-between">
+              <div>
                 <Tooltip title="Importer un fichier">
                   <Avatar
                     sx={{
@@ -172,22 +230,25 @@ function CardAddPubBoard() {
                   onChange={handleFileInputChange}
                   style={{ display: "none" }}
                 />
-              </>
-              <Tooltip title="Ajouter un lien">
-                <Avatar
-                  sx={{
-                    backgroundColor: "white",
-                  }}
+              </div>
+              <Stack direction="row" spacing={1}>
+                <LoadingButton
+                  loading={isLoading}
+                  variant="contained"
+                  onClick={handleAddPub}
                 >
-                  <IconButton onClick={handleOpenModal}>
-                    <LinkIcon
-                      sx={{
-                        color: "black",
-                      }}
-                    />
-                  </IconButton>
-                </Avatar>
-              </Tooltip>
+                  Publier
+                </LoadingButton>
+                <Button
+                  onClick={() => {
+                    setIsHover(false);
+                    setIsCardClicked(false);
+                  }}
+                  variant="outlined"
+                >
+                  Annuler
+                </Button>
+              </Stack>
             </Stack>
           </Stack>
         </Paper>

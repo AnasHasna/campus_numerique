@@ -1,4 +1,7 @@
 const verifyAuthorizationTeacher = (req, res, next) => {
+  console.log("====================================");
+  console.log(req.body);
+
   if (req.user.id !== req.body.teacherId) {
     return res.status(401).json({
       status: false,

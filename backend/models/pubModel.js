@@ -12,6 +12,12 @@ const pubSchema = new mongoose.Schema(
       required: true,
       trim: true,
     },
+    file: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "File",
+      default: null,
+      autopopulate: true,
+    },
     comments: [
       {
         type: mongoose.Schema.Types.ObjectId,

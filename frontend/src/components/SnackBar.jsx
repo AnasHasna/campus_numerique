@@ -1,6 +1,5 @@
 import * as React from "react";
 import Stack from "@mui/material/Stack";
-import Button from "@mui/material/Button";
 import Snackbar from "@mui/material/Snackbar";
 import MuiAlert from "@mui/material/Alert";
 
@@ -28,7 +27,11 @@ function SnackBar(props) {
           horizontal: "right",
         }}
       >
-        <Alert onClose={handleClose} severity="error" sx={{ width: "100%" }}>
+        <Alert
+          onClose={handleClose}
+          severity={props.type === null ? "error" : props.type}
+          sx={{ width: "100%" }}
+        >
           {props.message}
         </Alert>
       </Snackbar>
