@@ -6,6 +6,7 @@ const {
 } = require("../models/moduleModel");
 const { Student } = require("../models/studentModel");
 const Mark = require("../models/markModel");
+const File = require("../models/filesModel");
 
 /**
  * @description     Get all modules
@@ -103,6 +104,10 @@ module.exports.getStatistiquesModuleController = asyncHandler(
     let min = 20;
     let avg = 0;
 
+    if (students.length === 0) {
+      min = 0;
+    }
+
     for (let i = 0; i < students.length; i++) {
       let mark = await Mark.findOne({
         studentId: students[i],
@@ -128,5 +133,28 @@ module.exports.getStatistiquesModuleController = asyncHandler(
       }
     }
     avg = avg / students.length;
+
+    res.status(200).json({
+      status: true,
+      statistiques: {
+        files: {
+          cours,
+          tds,
+          tps,
+          exams,
+        },
+        students: {
+          students,
+          studentsValidated,
+          studentsNotValidated,
+          studentLessThan7,
+        },
+        marks: {
+          max,
+          min,
+          avg,
+        },
+      },
+    });
   }
 );

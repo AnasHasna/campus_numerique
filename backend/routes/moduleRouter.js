@@ -1,6 +1,7 @@
 const {
   createModuleController,
   getAllModulesController,
+  getStatistiquesModuleController,
 } = require("../controllers/moduleController");
 const {
   getAllPubController,

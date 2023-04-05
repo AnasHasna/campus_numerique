@@ -5,8 +5,8 @@ import CardPubBoard from "../../components/board/CardPubBoard";
 import CardTopPageBoard from "../../components/board/CardTopPageBoard";
 import { useQuery } from "react-query";
 import { getAllPubs } from "../../redux/api/pubApi";
-import Loading from "../../components/Loading";
 import CustomPageWithDrawer from "../../components/CustomPageWithDrawer";
+import LoadingPage from "../../components/LoadingPage/LoadingPage";
 
 function BoardPage() {
   const { isLoading, data, refetch } = useQuery({
@@ -14,19 +14,7 @@ function BoardPage() {
     queryFn: getAllPubs,
   });
 
-  if (isLoading)
-    return (
-      <Box
-        sx={{
-          display: "flex",
-          justifyContent: "center",
-          alignItems: "center",
-          height: "100vh",
-        }}
-      >
-        <Loading />
-      </Box>
-    );
+  if (isLoading) return <LoadingPage />;
 
   return (
     <CustomPageWithDrawer>
