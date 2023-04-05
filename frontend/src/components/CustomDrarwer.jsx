@@ -12,6 +12,7 @@ import {
 } from "@mui/material";
 
 import InboxIcon from "@mui/icons-material/MoveToInbox";
+import BuildIcon from "@mui/icons-material/Build";
 import ListIcon from "@mui/icons-material/List";
 import TableChartIcon from "@mui/icons-material/TableChart";
 import AppsIcon from "@mui/icons-material/Apps";
@@ -40,6 +41,11 @@ const sections = [
     title: "TDS",
     url: "tds",
     icon: <TableChartIcon />,
+  },
+  {
+    title: "TPS",
+    url: "tps",
+    icon: <BuildIcon />,
   },
   {
     title: "Exams",

@@ -29,4 +29,8 @@ moduleRouter
     createPubController
   );
 
+moduleRouter
+  .route("/:moduleId/statistiques")
+  .get(verifyToken, getStatistiquesModuleController);
+
 module.exports = moduleRouter;

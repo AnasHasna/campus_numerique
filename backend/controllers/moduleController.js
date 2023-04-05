@@ -4,6 +4,8 @@ const {
   Module,
   validateGetALLModules,
 } = require("../models/moduleModel");
+const { Student } = require("../models/studentModel");
+const Mark = require("../models/markModel");
 
 /**
  * @description     Get all modules
@@ -46,3 +48,85 @@ module.exports.createModuleController = asyncHandler(async (req, res) => {
   await module.save();
   res.status(201).json({ status: true, message: "Module créer avec succès" });
 });
+
+/**
+ * @description     Get statistiques module
+ * @router          /:moduleId/statistiques
+ * @method          GET
+ * @access          private (teacher)
+ */
+module.exports.getStatistiquesModuleController = asyncHandler(
+  async (req, res) => {
+    const { moduleId } = req.params;
+
+    const module = await Module.findById(moduleId);
+    if (!module)
+      return res
+        .status(400)
+        .json({ status: false, message: "Module introuvable" });
+
+    // ====================================
+    // get the number of docs
+    const files = await File.find({
+      module: moduleId,
+    });
+    // get the number of cours/tds/tps/exams
+    let cours = 0;
+    let tds = 0;
+    let tps = 0;
+    let exams = 0;
+    //TODO: get the number of downloads
+    for (let i = 0; i < files.length; i++) {
+      if (files[i].type === "cours") {
+        cours++;
+      }
+      if (files[i].type === "td") {
+        tds++;
+      }
+      if (files[i].type === "tp") {
+        tps++;
+      }
+      if (files[i].type === "exam") {
+        exams++;
+      }
+    }
+
+    // ====================================
+    // get the students
+    let students = module.students;
+    // get the students who have validated/not validate/less than 7
+    // get note max/min/avg
+    let studentsValidated = [];
+    let studentsNotValidated = [];
+    let studentLessThan7 = [];
+    let max = 0;
+    let min = 20;
+    let avg = 0;
+
+    for (let i = 0; i < students.length; i++) {
+      let mark = await Mark.findOne({
+        studentId: students[i],
+        moduleId,
+      });
+      if (mark) {
+        if (mark.mark >= 12) {
+          studentsValidated.push(students[i]);
+        }
+        if (mark.mark < 12) {
+          studentsNotValidated.push(students[i]);
+        }
+        if (mark.mark < 7) {
+          studentLessThan7.push(students[i]);
+        }
+        if (mark.mark > max) {
+          max = mark.mark;
+        }
+        if (mark.mark < min) {
+          min = mark.mark;
+        }
+        avg += mark.mark;
+      }
+    }
+    avg = avg / students.length;
+  }
+);
