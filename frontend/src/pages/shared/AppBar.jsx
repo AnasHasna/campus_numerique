@@ -5,23 +5,17 @@ import Toolbar from "@mui/material/Toolbar";
 import IconButton from "@mui/material/IconButton";
 import Typography from "@mui/material/Typography";
 import Menu from "@mui/material/Menu";
-import MenuIcon from "@mui/icons-material/Menu";
 import Container from "@mui/material/Container";
 import Avatar from "@mui/material/Avatar";
 import Button from "@mui/material/Button";
 import Tooltip from "@mui/material/Tooltip";
 import MenuItem from "@mui/material/MenuItem";
 import AdbIcon from "@mui/icons-material/Adb";
-import { Link, useNavigate } from "react-router-dom";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 import { primaryColor } from "../../utils/colors";
 import { useDispatch, useSelector } from "react-redux";
 import { authActions } from "../../redux/slices/authSlice";
 
-const pages = [
-  { page: "Cours", route: "/cours" },
-  { page: "TDS", route: "/tds" },
-  { page: "EXAMENS", route: "/examens" },
-];
 const settings = [
   { setting: "Compte", route: "profile" },
   { setting: "Paramètres", route: "dashboard" },
@@ -29,24 +23,17 @@ const settings = [
 ];
 
 function MyAppBar() {
-  const [anchorElNav, setAnchorElNav] = React.useState(null);
   const [anchorElUser, setAnchorElUser] = React.useState(null);
   const navigate = useNavigate();
 
   const dispatch = useDispatch();
+  const location = useLocation();
 
   // get the user from store
   const { user, isLogin } = useSelector((state) => state.auth);
 
-  const handleOpenNavMenu = (event) => {
-    setAnchorElNav(event.currentTarget);
-  };
   const handleOpenUserMenu = (event) => {
     setAnchorElUser(event.currentTarget);
-  };
-
-  const handleCloseNavMenu = () => {
-    setAnchorElNav(null);
   };
 
   const handleGoToRoute = (e, page) => {
@@ -63,8 +50,19 @@ function MyAppBar() {
     navigate("/");
   };
 
+  // check if location.pathname contains "auth"
+  const isAuthRoute = location.pathname.includes("auth");
+
   return (
-    <AppBar position="static" sx={{ backgroundColor: primaryColor }}>
+    <AppBar
+      position={isAuthRoute ? "static" : "fixed"}
+      sx={{
+        backgroundColor: primaryColor,
+        boxShadow: "none",
+        borderBottom: "1px solid #e0e0e0",
+        zIndex: (theme) => theme.zIndex.drawer + 1,
+      }}
+    >
       <Container maxWidth="xl">
         <Toolbar
           disableGutters
@@ -95,56 +93,6 @@ function MyAppBar() {
             </Typography>
           </Link>
 
-          <Box
-            sx={{
-              flexGrow: 1,
-              display: { xs: user && isLogin ? "none" : "flex", md: "none" },
-            }}
-          >
-            <IconButton
-              size="large"
-              aria-label="account of current user"
-              aria-controls="menu-appbar"
-              aria-haspopup="true"
-              onClick={handleOpenNavMenu}
-              color="inherit"
-              sx={{ display: user && isLogin ? "flex" : "none" }}
-            >
-              <MenuIcon />
-            </IconButton>
-            <Menu
-              id="menu-appbar"
-              anchorEl={anchorElNav}
-              anchorOrigin={{
-                vertical: "bottom",
-                horizontal: "left",
-              }}
-              keepMounted
-              transformOrigin={{
-                vertical: "top",
-                horizontal: "left",
-              }}
-              open={Boolean(anchorElNav)}
-              onClose={handleCloseNavMenu}
-              sx={{
-                display: { xs: user && isLogin ? "block" : "none", md: "none" },
-              }}
-            >
-              {pages.map((page) => (
-                <MenuItem
-                  key={page.page}
-                  onClick={(e) => {
-                    handleCloseNavMenu();
-                    handleGoToRoute(e, page.page);
-                  }}
-                >
-                  <Typography textAlign="center" variant="6">
-                    {page.page}
-                  </Typography>
-                </MenuItem>
-              ))}
-            </Menu>
-          </Box>
           <AdbIcon
             sx={{
               display: { xs: user && isLogin ? "flex" : "none", md: "none" },
@@ -167,27 +115,8 @@ function MyAppBar() {
               textDecoration: "none",
             }}
           >
-            LOGO
+            Campus Numérique
           </Typography>
-          <Box
-            sx={{
-              flexGrow: 1,
-              display: { xs: "none", md: user && isLogin ? "flex" : "none" },
-            }}
-          >
-            {pages.map((page) => (
-              <Button
-                key={page.page}
-                onClick={(e) => {
-                  handleCloseNavMenu();
-                  handleGoToRoute(e, page.page);
-                }}
-                sx={{ my: 1, color: "white", display: "block", fontSize: 16 }}
-              >
-                {page.page}
-              </Button>
-            ))}
-          </Box>
 
           <Box sx={{ flexGrow: 0 }}>
             <Box display={user && isLogin ? "none" : "flex"}>

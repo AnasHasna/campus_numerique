@@ -1,7 +1,7 @@
-import React from "react";
+import CustomPageWithDrawer from "../../components/CustomPageWithDrawer";
 
 function ExamensPage() {
-  return <div>ExamensPage</div>;
+  return <CustomPageWithDrawer>Examens Page</CustomPageWithDrawer>;
 }
 
 export default ExamensPage;

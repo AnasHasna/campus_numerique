@@ -8,7 +8,6 @@ const moduleSlice = createSlice({
   reducers: {
     selectModule(state, action) {},
     selectPub(state, action) {},
-    changePassword() {},
   },
 });
 

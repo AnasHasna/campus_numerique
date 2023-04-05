@@ -11,8 +11,12 @@ import CoursPage from "./pages/CoursPage/CoursPage";
 import ExamensPage from "./pages/ExamensPage/ExamensPage";
 import HomePage from "./pages/HomePage/HomePage";
 import NotFoundPage from "./pages/NotFound/NotFoundPage";
-import TdsPages from "./pages/TdsPage/TdsPages";
 import MyAppBar from "./pages/shared/AppBar";
+import StatiquePage from "./pages/statiques/StatiquePage";
+import BoardPage from "./pages/board/BoardPage";
+import StudentsPage from "./pages/StudentsPages/StudentsPage";
+import TdsPages from "./pages/TdsPage/TdsPages";
+import NotesPage from "./pages/NotesPage/NotesPage";
 
 const queryClient = new QueryClient();
 
@@ -26,9 +30,17 @@ function App() {
 
           <Routes>
             <Route index element={<HomePage />} />
-            <Route path="cours" element={<CoursPage />} />
-            <Route path="tds" element={<TdsPages />} />
-            <Route path="examens" element={<ExamensPage />} />
+            <Route path="modules" element={<HomePage />} />
+            <Route path="modules/:id">
+              <Route index element={<BoardPage />} />
+              <Route path="boards" element={<BoardPage />} />
+              <Route path="etudiants" element={<StudentsPage />} />
+              <Route path="notes" element={<NotesPage />} />
+              <Route path="cours" element={<CoursPage />} />
+              <Route path="tds" element={<TdsPages />} />
+              <Route path="exams" element={<ExamensPage />} />
+              <Route path="statistiques" element={<StatiquePage />} />
+            </Route>
             <Route path="auth">
               <Route path="login" element={<LoginPage />} />
               <Route path="register" element={<RegisterPage />} />

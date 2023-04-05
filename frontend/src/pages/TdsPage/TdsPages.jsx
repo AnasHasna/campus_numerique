@@ -1,7 +1,7 @@
-import React from "react";
+import CustomPageWithDrawer from "../../components/CustomPageWithDrawer";
 
-function TdsPages() {
-  return <div>TdsPages</div>;
+function TdsPage() {
+  return <CustomPageWithDrawer>TdsPages</CustomPageWithDrawer>;
 }
 
-export default TdsPages;
+export default TdsPage;

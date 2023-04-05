@@ -1,16 +1,19 @@
-import { Avatar, Box, Card, Stack, Typography } from "@mui/material";
+import { Avatar, Box, Card, Icon, Stack, Typography } from "@mui/material";
 import Paper from "@mui/icons-material/StickyNote2Outlined";
 import { useNavigate } from "react-router-dom";
 import { formatDistanceToNow, isBefore, subDays } from "date-fns";
 import { fr } from "date-fns/locale";
+import FileDownloadIcon from "@mui/icons-material/FileDownload";
 
 function CardPubBoard(props) {
   const navigate = useNavigate();
 
   const date = new Date(props.pub.createdAt);
-  console.log(props.pub.createdAt);
-  console.log(date); // "2023-04-02T00:00:00.000Z"
   const now = new Date();
+
+  const downloadLink = props.pub.file
+    ? `http://localhost:5000/files/download/${props.pub.file._id}`
+    : null;
 
   let formattedDate;
 
@@ -41,38 +44,69 @@ function CardPubBoard(props) {
         },
       }}
     >
-      <Box
+      <Stack
+        direction="row"
         sx={{
-          display: "flex",
+          justifyContent: "space-between",
         }}
       >
-        <Avatar
-          sx={{
-            mr: 2,
-            backgroundColor: "blueviolet",
-          }}
-        >
-          <Paper />
-        </Avatar>
-        <Stack direction="column">
-          <Typography
+        <Stack direction="row">
+          <Avatar
             sx={{
-              fontSize: "1rem",
-              color: "black",
+              mr: 2,
+              backgroundColor: "blueviolet",
             }}
           >
-            {props.pub.content}
-          </Typography>
-          <Typography
-            sx={{
-              fontSize: "0.8rem",
-              color: "grey",
-            }}
-          >
-            {formattedDate}
-          </Typography>
+            <Paper />
+          </Avatar>
+          <Stack>
+            <Typography
+              sx={{
+                fontSize: "1rem",
+                color: "black",
+              }}
+            >
+              {props.pub.content}
+            </Typography>
+            <Typography
+              sx={{
+                fontSize: "0.8rem",
+                color: "grey",
+              }}
+            >
+              {formattedDate}
+            </Typography>
+          </Stack>
         </Stack>
-      </Box>
+        {props.pub.file && (
+          <Box
+            sx={{
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+            }}
+          >
+            <a
+              href={downloadLink}
+              onClick={(e) => {
+                e.stopPropagation();
+              }}
+              download
+            >
+              <Icon
+                sx={{
+                  color: "grey",
+                  "&:hover": {
+                    color: "black",
+                  },
+                }}
+              >
+                <FileDownloadIcon />
+              </Icon>
+            </a>
+          </Box>
+        )}
+      </Stack>
     </Card>
   );
 }
