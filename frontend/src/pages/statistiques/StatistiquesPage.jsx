@@ -9,21 +9,25 @@ import { getStatistiques } from "../../redux/api/moduleApi";
 import LoadingPage from "../../components/LoadingPage/LoadingPage";
 
 function StatistiquePage() {
-  const { isLoading, data, refetch } = useQuery({
+  const { isLoading, data } = useQuery({
     queryKey: "getStatistiques",
     queryFn: getStatistiques,
+    onSuccess: (data) => {
+      console.log(data.data.statistiques);
+    },
   });
 
   if (isLoading) return <LoadingPage />;
 
-  console.log(data.data);
-
   return (
     <CustomPageWithDrawer>
       <Stack direction="column" spacing={2}>
-        <ApercuSection />
-        <StudentsStatistiques />
-        <StatistiquesNotes />
+        <ApercuSection files={data.data.statistiques.files} />
+        <StudentsStatistiques students={data.data.statistiques.students} />
+        <StatistiquesNotes
+          marks={data.data.statistiques.marks}
+          students={data.data.statistiques.students}
+        />
       </Stack>
     </CustomPageWithDrawer>
   );

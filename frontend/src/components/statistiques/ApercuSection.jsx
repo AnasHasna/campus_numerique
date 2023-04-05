@@ -7,7 +7,7 @@ import AssignmentIcon from "@mui/icons-material/Assignment";
 import CloudDownloadIcon from "@mui/icons-material/CloudDownload";
 import ArticleIcon from "@mui/icons-material/Article";
 
-function ApercuSection() {
+function ApercuSection(props) {
   return (
     <Stack
       direction="column"
@@ -31,31 +31,31 @@ function ApercuSection() {
       <Box>
         <Grid container rowSpacing={1} columnSpacing={{ xs: 1, sm: 2, md: 3 }}>
           <CustomCardApercu
-            number={45}
+            number={props.files.docs}
             text="Nombre de documents"
             backgroundColor="#606c38"
             icon={<ArticleIcon />}
           />
           <CustomCardApercu
-            number={34}
+            number={props.files.cours}
             text="Nombre de cours"
             backgroundColor="#e76f51"
             icon={<LocalLibraryIcon />}
           />
           <CustomCardApercu
-            number={22}
+            number={props.files.tds}
             text="Nombre de TDs"
             backgroundColor="#f4a261"
             icon={<BookmarksIcon />}
           />
           <CustomCardApercu
-            number={2}
-            text="Nombre d'examens"
+            number={props.files.exams}
+            text="Nombre d'exams"
             backgroundColor="#e9c46a"
             icon={<AssignmentIcon />}
           />
           <CustomCardApercu
-            number={21}
+            number={props.files.tps}
             text="Nombre de Tps"
             backgroundColor="#264653"
             icon={<AssignmentIcon />}

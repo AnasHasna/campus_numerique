@@ -9,7 +9,10 @@ import WarningIcon from "@mui/icons-material/Warning";
 import ThumbUpIcon from "@mui/icons-material/ThumbUp";
 import ThumbDownIcon from "@mui/icons-material/ThumbDown";
 
-function StatistiquesNotes() {
+function StatistiquesNotes(props) {
+  const { max, min, avg } = props.marks;
+  const { studentLessThan7, studentsNotValidated, studentsValidated } =
+    props.students;
   return (
     <Stack
       direction="column"
@@ -33,37 +36,37 @@ function StatistiquesNotes() {
       <Box>
         <Grid container rowSpacing={1} columnSpacing={{ xs: 1, sm: 2, md: 3 }}>
           <CustomCardApercu
-            number={12.3}
+            number={avg ? avg : 0}
             text="Note Moyenne"
             backgroundColor="#606c38"
             icon={<BarChartIcon />}
           />
           <CustomCardApercu
-            number={18}
+            number={max ? max.mark : 0}
             text="Note Max"
             backgroundColor="#e76f51"
             icon={<TrendingUpIcon />}
           />
           <CustomCardApercu
-            number={6}
+            number={min ? min.mark : 0}
             text="Note Min"
             backgroundColor="#f4a261"
             icon={<TrendingDownIcon />}
           />
           <CustomCardApercu
-            number={24}
-            text="Nombre de notes inférieures à 10"
+            number={studentsNotValidated ? studentsNotValidated.length : 0}
+            text="Nombre de notes inférieures à 12"
             backgroundColor="#e9c46a"
             icon={<WarningIcon />}
           />
           <CustomCardApercu
-            number={21}
-            text="Nombre de notes supérieures à 10"
+            number={studentsValidated ? studentsValidated.length : 0}
+            text="Nombre de notes supérieures à 12"
             backgroundColor="#264653"
             icon={<ThumbUpIcon />}
           />
           <CustomCardApercu
-            number={7}
+            number={studentLessThan7 ? studentLessThan7.length : 0}
             text="Nombre de notes eliminatoires"
             backgroundColor="#2a9d8f"
             icon={<ThumbDownIcon />}

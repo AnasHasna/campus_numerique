@@ -7,7 +7,14 @@ import CheckCircleOutlineIcon from "@mui/icons-material/CheckCircleOutline";
 import RestorePageIcon from "@mui/icons-material/RestorePage";
 import CancelIcon from "@mui/icons-material/Cancel";
 
-function StudentsStatistiques() {
+function StudentsStatistiques(props) {
+  const {
+    students,
+    studentLessThan7,
+    studentsNotValidated,
+    studentsValidated,
+  } = props.students;
+
   return (
     <Stack
       direction="column"
@@ -31,25 +38,25 @@ function StudentsStatistiques() {
       <Box>
         <Grid container rowSpacing={1} columnSpacing={{ xs: 1, sm: 2, md: 3 }}>
           <CustomCardApercu
-            number={45}
+            number={students ? students.length : 0}
             text="Elèves inscrits"
             backgroundColor="#bc4749"
             icon={<GroupIcon />}
           />
           <CustomCardApercu
-            number={34}
+            number={studentsValidated ? studentsValidated.length : 0}
             text="Elèves validés"
             backgroundColor="#a7c957"
             icon={<CheckCircleOutlineIcon />}
           />
           <CustomCardApercu
-            number={22}
+            number={studentLessThan7 ? studentLessThan7.length : 0}
             text="Elèves en rattrapage"
             backgroundColor="#6a994e"
             icon={<RestorePageIcon />}
           />
           <CustomCardApercu
-            number={2}
+            number={studentsNotValidated ? studentsNotValidated.length : 0}
             text="Elèves non validés"
             backgroundColor="#386641"
             icon={<CancelIcon />}

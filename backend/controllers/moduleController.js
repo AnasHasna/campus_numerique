@@ -101,43 +101,48 @@ module.exports.getStatistiquesModuleController = asyncHandler(
     let studentsNotValidated = [];
     let studentLessThan7 = [];
     let max = 0;
+    let maxMark;
     let min = 20;
+    let minMark;
     let avg = 0;
 
     if (students.length === 0) {
       min = 0;
-    }
-
-    for (let i = 0; i < students.length; i++) {
-      let mark = await Mark.findOne({
-        studentId: students[i],
-        moduleId,
-      });
-      if (mark) {
-        if (mark.mark >= 12) {
-          studentsValidated.push(students[i]);
+    } else {
+      for (let i = 0; i < students.length; i++) {
+        let mark = await Mark.findOne({
+          studentId: students[i],
+          moduleId,
+        });
+        if (mark) {
+          if (mark.mark >= 12) {
+            studentsValidated.push(students[i]);
+          }
+          if (mark.mark < 12) {
+            studentsNotValidated.push(students[i]);
+          }
+          if (mark.mark < 7) {
+            studentLessThan7.push(students[i]);
+          }
+          if (mark.mark > max) {
+            max = mark.mark;
+            maxMark = mark;
+          }
+          if (mark.mark < min) {
+            min = mark.mark;
+            minMark = mark;
+          }
+          avg += mark.mark;
         }
-        if (mark.mark < 12) {
-          studentsNotValidated.push(students[i]);
-        }
-        if (mark.mark < 7) {
-          studentLessThan7.push(students[i]);
-        }
-        if (mark.mark > max) {
-          max = mark.mark;
-        }
-        if (mark.mark < min) {
-          min = mark.mark;
-        }
-        avg += mark.mark;
       }
+      avg = avg / students.length;
     }
-    avg = avg / students.length;
 
     res.status(200).json({
       status: true,
       statistiques: {
         files: {
+          docs: files.length,
           cours,
           tds,
           tps,
@@ -150,8 +155,8 @@ module.exports.getStatistiquesModuleController = asyncHandler(
           studentLessThan7,
         },
         marks: {
-          max,
-          min,
+          max: maxMark,
+          min: minMark,
           avg,
         },
       },
