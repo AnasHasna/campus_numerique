@@ -29,7 +29,7 @@ function SnackBar(props) {
       >
         <Alert
           onClose={handleClose}
-          severity={props.type === null ? "error" : props.type}
+          severity={props.type === undefined ? "error" : props.type}
           sx={{ width: "100%" }}
         >
           {props.message}

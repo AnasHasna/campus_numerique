@@ -7,17 +7,32 @@ import StatistiquesNotes from "../../components/statistiques/StatistiquesNotes";
 import { useQuery } from "react-query";
 import { getStatistiques } from "../../redux/api/moduleApi";
 import LoadingPage from "../../components/LoadingPage/LoadingPage";
+import { useParams } from "react-router-dom";
+import { useSelector } from "react-redux";
+import ErrorPage from "../ErrorPage/ErrorPage";
 
 function StatistiquePage() {
-  const { isLoading, data } = useQuery({
+  const { id } = useParams();
+  const { user } = useSelector((state) => state.auth);
+
+  const { isLoading, data, error } = useQuery({
     queryKey: "getStatistiques",
-    queryFn: getStatistiques,
+    queryFn: () => getStatistiques(id, user.token),
     onSuccess: (data) => {
       console.log(data.data.statistiques);
     },
   });
 
   if (isLoading) return <LoadingPage />;
+
+  if (error)
+    return (
+      <ErrorPage
+        message={
+          "Une erreur est survenue lors de la récupération des statistiques du module"
+        }
+      />
+    );
 
   return (
     <CustomPageWithDrawer>

@@ -13,8 +13,10 @@ module.exports.downloadFileController = asyncHandler(async (req, res) => {
   const file = await File.findById(fileId);
 
   if (file) {
-    res.sendFile(file.path);
+    file.downloadNumber += 1;
+    await file.save();
+    res.download(file.path, file.name);
   } else {
-    res.status(404).json({ success: false, message: "Fichier introuvable" });
+    res.status(404).json({ status: false, message: "Fichier introuvable" });
   }
 });

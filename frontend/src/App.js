@@ -1,5 +1,5 @@
 import { CssBaseline } from "@mui/material";
-import { BrowserRouter, Route, Routes } from "react-router-dom";
+import { BrowserRouter, Navigate, Route, Routes } from "react-router-dom";
 import { QueryClientProvider, QueryClient } from "react-query";
 
 import ChangePasswordPage from "./pages/auth/changePasswordPage/ChangePasswordPage";
@@ -18,10 +18,14 @@ import TdsPages from "./pages/TdsPage/TdsPages";
 import NotesPage from "./pages/NotesPage/NotesPage";
 import StatistiquePage from "./pages/statistiques/StatistiquesPage";
 import TpsPage from "./pages/TpsPage/TpsPage";
+import { useSelector } from "react-redux";
+import ModulesPage from "./pages/ModulesPage/ModulesPage";
 
 const queryClient = new QueryClient();
 
 function App() {
+  const { isLogin } = useSelector((state) => state.auth);
+
   return (
     <div className="App">
       <CssBaseline />
@@ -30,10 +34,22 @@ function App() {
           <MyAppBar />
 
           <Routes>
-            <Route index element={<HomePage />} />
-            <Route path="modules" element={<HomePage />} />
+            <Route
+              path="/"
+              element={isLogin ? <Navigate to="modules" /> : <HomePage />}
+            />
+            <Route
+              path="modules"
+              element={
+                isLogin ? (
+                  <ModulesPage />
+                ) : (
+                  <Navigate replace to="/auth/login" />
+                )
+              }
+            />
             <Route path="modules/:id">
-              <Route index element={<BoardPage />} />
+              <Route index element={<Navigate to="boards" />} />
               <Route path="boards" element={<BoardPage />} />
               <Route path="etudiants" element={<StudentsPage />} />
               <Route path="notes" element={<NotesPage />} />

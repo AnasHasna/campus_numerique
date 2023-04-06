@@ -76,7 +76,7 @@ module.exports.getStatistiquesModuleController = asyncHandler(
     let tds = 0;
     let tps = 0;
     let exams = 0;
-    //TODO: get the number of downloads
+    let downloads = 0;
     for (let i = 0; i < files.length; i++) {
       if (files[i].type === "cours") {
         cours++;
@@ -90,6 +90,7 @@ module.exports.getStatistiquesModuleController = asyncHandler(
       if (files[i].type === "exam") {
         exams++;
       }
+      downloads += files[i].downloadNumber;
     }
 
     // ====================================
@@ -147,6 +148,7 @@ module.exports.getStatistiquesModuleController = asyncHandler(
           tds,
           tps,
           exams,
+          downloads,
         },
         students: {
           students,

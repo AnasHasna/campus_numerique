@@ -4,16 +4,48 @@ import { useNavigate } from "react-router-dom";
 import { formatDistanceToNow, isBefore, subDays } from "date-fns";
 import { fr } from "date-fns/locale";
 import FileDownloadIcon from "@mui/icons-material/FileDownload";
+import { useState } from "react";
+import { downloadFile } from "../../redux/api/pubApi";
+import axios from "axios";
 
 function CardPubBoard(props) {
   const navigate = useNavigate();
 
-  const date = new Date(props.pub.createdAt);
+  const { _id: pubId, content, file, createdAt } = props.pub;
+
+  const date = new Date(createdAt);
   const now = new Date();
 
-  const downloadLink = props.pub.file
-    ? `http://localhost:5000/files/download/${props.pub.file._id}`
-    : null;
+  const [isDownloading, setIsDownloading] = useState(false);
+
+  const handleClickDownload = async (event) => {
+    event.preventDefault();
+    event.stopPropagation();
+
+    if (!isDownloading) {
+      setIsDownloading(true);
+
+      try {
+        console.log("download");
+        const response = await axios.get(
+          `http://localhost:5000/files/download/${file._id}`,
+          {
+            responseType: "blob",
+          }
+        );
+        const url = window.URL.createObjectURL(new Blob([response.data]));
+        const link = document.createElement("a");
+        link.href = url;
+        link.setAttribute("download", file.name);
+        document.body.appendChild(link);
+        link.click();
+      } catch (error) {
+        console.log(error);
+      } finally {
+        setIsDownloading(false);
+      }
+    }
+  };
 
   let formattedDate;
 
@@ -27,7 +59,7 @@ function CardPubBoard(props) {
   }
 
   const handleClick = () => {
-    navigate(`/${props.pub._id}`);
+    navigate(`/${pubId}`);
   };
 
   return (
@@ -66,7 +98,7 @@ function CardPubBoard(props) {
                 color: "black",
               }}
             >
-              {props.pub.content}
+              {content}
             </Typography>
             <Typography
               sx={{
@@ -78,32 +110,27 @@ function CardPubBoard(props) {
             </Typography>
           </Stack>
         </Stack>
-        {props.pub.file && (
+        {file && (
           <Box
+            onClick={handleClickDownload}
             sx={{
               display: "flex",
               alignItems: "center",
               justifyContent: "center",
+              cursor: isDownloading ? "not-allowed" : "pointer",
+              opacity: isDownloading ? 0.5 : 1,
             }}
           >
-            <a
-              href={downloadLink}
-              onClick={(e) => {
-                e.stopPropagation();
+            <Icon
+              sx={{
+                color: "grey",
+                "&:hover": {
+                  color: "black",
+                },
               }}
-              download
             >
-              <Icon
-                sx={{
-                  color: "grey",
-                  "&:hover": {
-                    color: "black",
-                  },
-                }}
-              >
-                <FileDownloadIcon />
-              </Icon>
-            </a>
+              <FileDownloadIcon />
+            </Icon>
           </Box>
         )}
       </Stack>

@@ -71,7 +71,6 @@ function MyAppBar() {
           <Link to="/" style={{ textDecoration: "none", display: "flex" }}>
             <AdbIcon
               sx={{
-                display: { xs: user && isLogin ? "none" : "flex", md: "flex" },
                 mr: 1,
                 color: "white",
               }}
@@ -81,7 +80,6 @@ function MyAppBar() {
               noWrap
               sx={{
                 mr: 2,
-                display: { xs: user && isLogin ? "none" : "none", md: "flex" },
                 fontFamily: "monospace",
                 fontWeight: 700,
                 letterSpacing: ".3rem",
@@ -92,31 +90,6 @@ function MyAppBar() {
               Campus Numérique
             </Typography>
           </Link>
-
-          <AdbIcon
-            sx={{
-              display: { xs: user && isLogin ? "flex" : "none", md: "none" },
-              mr: 1,
-            }}
-          />
-          <Typography
-            variant="h5"
-            noWrap
-            component="a"
-            href=""
-            sx={{
-              mr: 2,
-              display: { xs: user && isLogin ? "flex" : "none", md: "none" },
-              flexGrow: 1,
-              fontFamily: "monospace",
-              fontWeight: 700,
-              letterSpacing: ".3rem",
-              color: "inherit",
-              textDecoration: "none",
-            }}
-          >
-            Campus Numérique
-          </Typography>
 
           <Box sx={{ flexGrow: 0 }}>
             <Box display={user && isLogin ? "none" : "flex"}>

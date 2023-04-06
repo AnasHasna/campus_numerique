@@ -20,8 +20,10 @@ import { addPub } from "../../redux/api/pubApi";
 import { useSelector } from "react-redux";
 import CustomDropDawn from "../CustomDropDawn";
 import SnackBar from "../SnackBar";
+import { useParams } from "react-router-dom";
 
 function CardAddPubBoard(props) {
+  const { id } = useParams();
   const { user } = useSelector((state) => state.auth);
 
   const fileInputRef = useRef(null);
@@ -38,7 +40,13 @@ function CardAddPubBoard(props) {
   const { isLoading, mutate } = useMutation(addPub, {
     mutationKey: "addPub",
     onSuccess: (data) => {
-      console.log(data.data);
+      setOpenSnackBar(true);
+
+      // close
+      setIsHover(false);
+      setIsCardClicked(false);
+      setContent("");
+      setFile(null);
       props.refetch();
     },
     onError: (error) => {
@@ -72,17 +80,10 @@ function CardAddPubBoard(props) {
     formData.append("file", file);
     formData.append("type", type);
     formData.append("content", content);
+    formData.append("moduleId", id);
     //TODO: make it dynamic
-    formData.append("moduleId", "642c07cdc09d7b7544de87f0");
     formData.append("teacherId", "642844e021bb6dc06e928dd7");
-    mutate(formData, user.token);
-    setOpenSnackBar(true);
-
-    // close
-    setIsHover(false);
-    setIsCardClicked(false);
-    setContent("");
-    setFile(null);
+    mutate({ id, data: formData, token: user.token });
   };
 
   return (

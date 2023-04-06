@@ -7,11 +7,16 @@ import { useQuery } from "react-query";
 import { getAllPubs } from "../../redux/api/pubApi";
 import CustomPageWithDrawer from "../../components/CustomPageWithDrawer";
 import LoadingPage from "../../components/LoadingPage/LoadingPage";
+import { useParams } from "react-router-dom";
+import { useSelector } from "react-redux";
 
 function BoardPage() {
+  const { id } = useParams();
+  const { user } = useSelector((state) => state.auth);
+
   const { isLoading, data, refetch } = useQuery({
     queryKey: "getAllPubs",
-    queryFn: getAllPubs,
+    queryFn: () => getAllPubs(id, user.token),
   });
 
   if (isLoading) return <LoadingPage />;
