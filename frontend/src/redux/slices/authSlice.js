@@ -9,7 +9,7 @@ const authSlice = createSlice({
         : null,
     userType:
       localStorage.getItem("userType") !== null
-        ? localStorage.getItem("userType")
+        ? JSON.parse(localStorage.getItem("userType"))
         : null,
     isLogin: localStorage.getItem("isLogin") ? true : false,
     verificationType: null,

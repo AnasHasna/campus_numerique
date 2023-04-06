@@ -1,7 +1,5 @@
 import {
   Box,
-  Container,
-  Divider,
   Drawer,
   List,
   ListItem,
@@ -20,8 +18,10 @@ import EqualizerIcon from "@mui/icons-material/Equalizer";
 import InsertChartOutlinedIcon from "@mui/icons-material/InsertChartOutlined";
 import GroupIcon from "@mui/icons-material/Group";
 import { useLocation, useNavigate } from "react-router-dom";
+import { useSelector } from "react-redux";
+import { useEffect, useState } from "react";
 
-const sections = [
+let allSections = [
   {
     title: "Boards",
     url: "boards",
@@ -69,6 +69,17 @@ const drawerWidth = 200;
 function CustomDrarwer() {
   const location = useLocation();
   const navigate = useNavigate();
+
+  const { userType } = useSelector((state) => state.auth);
+  const [sections, setSections] = useState([]);
+
+  useEffect(() => {
+    if (userType === "Student") {
+      setSections(allSections.slice(0, allSections.length - 2));
+    } else {
+      setSections(allSections);
+    }
+  }, [userType]);
 
   const handleClick = (url) => {
     const pathArray = location.pathname.split("/");

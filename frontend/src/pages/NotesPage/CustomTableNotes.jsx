@@ -1,6 +1,6 @@
 import * as React from "react";
 import Box from "@mui/material/Box";
-import { DataGrid, GridRowModes } from "@mui/x-data-grid";
+import { DataGrid } from "@mui/x-data-grid";
 import CustomNoDataTable from "./NoDataTable";
 import { useParams } from "react-router-dom";
 import { useSelector } from "react-redux";
@@ -72,6 +72,7 @@ export default function CustomTableNotes() {
     queryFn: () => getNotes(id, user.token),
     enabled: false,
     onSuccess: (data) => {
+      console.log(data.data);
       setNotes(data.data.notes);
       let newRows = [];
       let row = {};
