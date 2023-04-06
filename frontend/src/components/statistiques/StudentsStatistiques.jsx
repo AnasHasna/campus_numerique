@@ -4,24 +4,18 @@ import CustomCardApercu from "./CustomCardApercu";
 
 import GroupIcon from "@mui/icons-material/Group";
 import CheckCircleOutlineIcon from "@mui/icons-material/CheckCircleOutline";
-import RestorePageIcon from "@mui/icons-material/RestorePage";
 import CancelIcon from "@mui/icons-material/Cancel";
 import CustomModalForStudentsStatistiques from "./CustomModalForStatistiques";
+import { useNavigate } from "react-router-dom";
 
 function StudentsStatistiques(props) {
-  const {
-    students,
-    studentLessThan7,
-    studentsNotValidated,
-    studentsValidated,
-  } = props.students;
+  const { students, studentsNotValidated, studentsValidated } = props.students;
+
+  const navigate = useNavigate();
 
   const [openStuentNotValidated, setOpenStuentNotValidated] =
     React.useState(false);
   const [rowsStudentValidated, setRowsStudentValidated] = React.useState([]);
-
-  const [openStudentLessThan7, setOpenStudentLessThan7] = React.useState(false);
-  const [rowsStudentLessThan7, setRowsStudentLessThan7] = React.useState([]);
 
   const [openStudentValidated, setOpenStudentValidated] = React.useState(false);
   const [rowsStudentNotValidated, setRowsStudentNotValidated] = React.useState(
@@ -43,20 +37,6 @@ function StudentsStatistiques(props) {
   }, [studentsValidated]);
 
   useEffect(() => {
-    if (studentLessThan7) {
-      const rows = studentLessThan7.map((mark) => {
-        return {
-          id: mark._id,
-          cne: mark.student.codeMassar,
-          name: mark.student.fullName,
-          note: mark.mark,
-        };
-      });
-      setRowsStudentLessThan7(rows);
-    }
-  }, [studentLessThan7]);
-
-  useEffect(() => {
     if (studentsNotValidated) {
       const rows = studentsNotValidated.map((mark) => {
         return {
@@ -70,10 +50,10 @@ function StudentsStatistiques(props) {
     }
   }, [studentsNotValidated]);
 
-  const handleClickStudent = () => {};
-  const handleClickStudentLessThan7 = () => {
-    setOpenStudentLessThan7(true);
+  const handleClickStudent = () => {
+    navigate("../etudiants");
   };
+
   const handleClickStudentNotValidat = () => {
     setOpenStuentNotValidated(true);
   };
@@ -127,20 +107,6 @@ function StudentsStatistiques(props) {
             rows={rowsStudentValidated}
           />
 
-          <CustomCardApercu
-            number={studentLessThan7 ? studentLessThan7.length : 0}
-            text="Elèves en rattrapage"
-            backgroundColor="#6a994e"
-            enabled={true}
-            onClick={handleClickStudentLessThan7}
-            icon={<RestorePageIcon />}
-          />
-          <CustomModalForStudentsStatistiques
-            open={openStudentLessThan7}
-            setOpen={setOpenStudentLessThan7}
-            title="Elèves en rattrapage"
-            rows={rowsStudentLessThan7}
-          />
           <CustomCardApercu
             number={studentsNotValidated ? studentsNotValidated.length : 0}
             text="Elèves non validés"
