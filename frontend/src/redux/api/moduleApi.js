@@ -11,4 +11,24 @@ const getStatistiques = async (moduleId, token) => {
   );
 };
 
-export { getStatistiques };
+const getNotes = async (moduleId, token) => {
+  return await axios.get(`http://localhost:5000/modules/${moduleId}/notes`, {
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+  });
+};
+
+const updateNotes = async (moduleId, token, data) => {
+  return await axios.put(
+    `http://localhost:5000/modules/${moduleId}/notes`,
+    data,
+    {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    }
+  );
+};
+
+export { getStatistiques, getNotes, updateNotes };

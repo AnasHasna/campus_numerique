@@ -2,13 +2,14 @@ const mongoose = require("mongoose");
 
 const markSchema = new mongoose.Schema({
   mark: { type: Number, required: true, trim: true },
-  studentId: {
+  student: {
     type: mongoose.Schema.Types.ObjectId,
     required: true,
     trim: true,
+    ref: "Student",
     autopopulate: true,
   },
-  moduleId: {
+  module: {
     type: mongoose.Schema.Types.ObjectId,
     required: true,
     trim: true,

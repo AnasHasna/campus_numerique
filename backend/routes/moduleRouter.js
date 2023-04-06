@@ -2,6 +2,11 @@ const {
   createModuleController,
   getAllModulesController,
   getStatistiquesModuleController,
+  getNotesModuleController,
+  addStudentToModuleController,
+  getAllStudentsInModuleController,
+  addNoteModuleController,
+  updateNoteModuleController,
 } = require("../controllers/moduleController");
 const {
   getAllPubController,
@@ -21,6 +26,11 @@ moduleRouter
   .get(verifyToken, verifyAuthorizationTeacher, getAllModulesController);
 
 moduleRouter
+  .route("/:moduleId/students")
+  .get(verifyToken, getAllStudentsInModuleController)
+  .post(verifyToken, addStudentToModuleController);
+
+moduleRouter
   .route("/:moduleId/pubs")
   .get(verifyToken, getAllPubController)
   .post(
@@ -33,5 +43,11 @@ moduleRouter
 moduleRouter
   .route("/:moduleId/statistiques")
   .get(verifyToken, getStatistiquesModuleController);
+
+moduleRouter
+  .route("/:moduleId/notes")
+  .post(verifyToken, addNoteModuleController)
+  .put(verifyToken, updateNoteModuleController)
+  .get(verifyToken, getNotesModuleController);
 
 module.exports = moduleRouter;

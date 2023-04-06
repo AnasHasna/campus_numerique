@@ -112,8 +112,8 @@ module.exports.getStatistiquesModuleController = asyncHandler(
     } else {
       for (let i = 0; i < students.length; i++) {
         let mark = await Mark.findOne({
-          studentId: students[i],
-          moduleId,
+          student: students[i],
+          module: moduleId,
         });
         if (mark) {
           if (mark.mark >= 12) {
@@ -165,3 +165,114 @@ module.exports.getStatistiquesModuleController = asyncHandler(
     });
   }
 );
+
+/**
+ * @description     Add Student to module
+ * @router          /:moduleId/students
+ * @method          POST
+ * @access          private (teacher)
+ */
+
+module.exports.addStudentToModuleController = asyncHandler(async (req, res) => {
+  const { moduleId } = req.params;
+  const { studentId } = req.body;
+  // search for the student if he is in module
+
+  const module = await Module.findById(moduleId);
+  if (!module)
+    return res
+      .status(400)
+      .json({ status: false, message: "Module introuvable" });
+
+  const students = module.students;
+  for (let i = 0; i < students.length; i++) {
+    if (students[i] === studentId) {
+      return res
+        .status(400)
+        .json({ status: false, message: "Etudiant déja inscrit" });
+    }
+  }
+
+  // add student to module
+  await students.push(studentId);
+  await module.save();
+  res
+    .status(200)
+    .json({ status: true, message: "Etudiant inscrit avec succès" });
+});
+/**
+ * @description     Get all Student to module
+ * @router          /:moduleId/students
+ * @method          GET
+ * @access          private (teacher)
+ */
+
+module.exports.getAllStudentsInModuleController = asyncHandler(
+  async (req, res) => {
+    const { moduleId } = req.params;
+
+    const module = await Module.findById(moduleId);
+    if (!module)
+      return res
+        .status(400)
+        .json({ status: false, message: "Module introuvable" });
+
+    const students = module.students;
+
+    res.status(200).json({ status: true, students });
+  }
+);
+
+/**
+ * @description     Get Notes module
+ * @router          /:moduleId/notes
+ * @method          GET
+ * @access          private (teacher)
+ */
+module.exports.getNotesModuleController = asyncHandler(async (req, res) => {
+  const { moduleId } = req.params;
+  const notes = await Mark.find({
+    module: moduleId,
+  });
+  res.status(200).json({ status: true, notes });
+});
+
+/**
+ * @description     Add Note module
+ * @router          /:moduleId/notes
+ * @method          POST
+ * @access          private (teacher)
+ */
+
+module.exports.addNoteModuleController = asyncHandler(async (req, res) => {
+  const { moduleId } = req.params;
+  const { studentId, mark } = req.body;
+  await Mark.create({
+    student: studentId,
+    module: moduleId,
+    mark,
+  });
+  res.status(201).json({ status: true, message: "Note ajoutée avec succès" });
+});
+
+/**
+ * @description     Update Note module
+ * @router          /:moduleId/notes
+ * @method          PUT
+ * @access          private (teacher)
+ */
+
+module.exports.updateNoteModuleController = asyncHandler(async (req, res) => {
+  const { moduleId } = req.params;
+  const { studentId, mark } = req.body;
+  await Mark.findOneAndUpdate(
+    {
+      student: studentId,
+      module: moduleId,
+    },
+    {
+      mark,
+    }
+  );
+  res.status(201).json({ status: true, message: "Note modifiée avec succès" });
+});
