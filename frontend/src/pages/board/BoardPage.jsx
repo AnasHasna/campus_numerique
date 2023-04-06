@@ -13,6 +13,7 @@ import { useSelector } from "react-redux";
 function BoardPage() {
   const { id } = useParams();
   const { user } = useSelector((state) => state.auth);
+  const { userType } = useSelector((state) => state.auth);
 
   const { isLoading, data, refetch } = useQuery({
     queryKey: "getAllPubs",
@@ -33,9 +34,15 @@ function BoardPage() {
 
           <Divider sx={{ height: 20 }} />
 
-          <CardAddPubBoard refetch={refetch} />
+          <Stack
+            sx={{
+              display: userType === "Student" ? "none" : "block",
+            }}
+          >
+            <CardAddPubBoard refetch={refetch} />
 
-          <Divider sx={{ height: 20 }} />
+            <Divider sx={{ height: 20 }} />
+          </Stack>
 
           {data.data.pubs.map((e, i) => {
             return (
