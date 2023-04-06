@@ -133,13 +133,13 @@ module.exports.getStatistiquesModuleController = asyncHandler(
         });
         if (mark) {
           if (mark.mark >= 12) {
-            studentsValidated.push(students[i]);
+            studentsValidated.push(mark);
           }
           if (mark.mark < 12) {
-            studentsNotValidated.push(students[i]);
+            studentsNotValidated.push(mark);
           }
           if (mark.mark < 7) {
-            studentLessThan7.push(students[i]);
+            studentLessThan7.push(mark);
           }
           if (mark.mark > max) {
             max = mark.mark;

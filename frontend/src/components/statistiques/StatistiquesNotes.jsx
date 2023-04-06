@@ -45,17 +45,20 @@ function StatistiquesNotes(props) {
             number={max ? max.mark : 0}
             text="Note Max"
             backgroundColor="#e76f51"
+            enabled={true}
             icon={<TrendingUpIcon />}
           />
           <CustomCardApercu
             number={min ? min.mark : 0}
             text="Note Min"
+            enabled={true}
             backgroundColor="#f4a261"
             icon={<TrendingDownIcon />}
           />
           <CustomCardApercu
             number={studentsNotValidated ? studentsNotValidated.length : 0}
             text="Nombre de notes inférieures à 12"
+            enabled={true}
             backgroundColor="#e9c46a"
             icon={<WarningIcon />}
           />
@@ -63,12 +66,14 @@ function StatistiquesNotes(props) {
             number={studentsValidated ? studentsValidated.length : 0}
             text="Nombre de notes supérieures à 12"
             backgroundColor="#264653"
+            enabled={true}
             icon={<ThumbUpIcon />}
           />
           <CustomCardApercu
             number={studentLessThan7 ? studentLessThan7.length : 0}
             text="Nombre de notes eliminatoires"
             backgroundColor="#2a9d8f"
+            enabled={true}
             icon={<ThumbDownIcon />}
           />
         </Grid>

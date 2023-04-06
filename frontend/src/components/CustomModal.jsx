@@ -44,7 +44,7 @@ const Backdrop = styled(BackdropUnstyled)`
 `;
 
 const style = (theme) => ({
-  width: 400,
+  width: 800,
   bgcolor: theme.palette.mode === "dark" ? "#0A1929" : "white",
   border: ".2px solid currentColor",
   borderRadius: "5px",
@@ -62,6 +62,7 @@ export default function CustomModal(props) {
         open={props.open}
         onClose={handleClose}
         slots={{ backdrop: Backdrop }}
+        sx={{}}
       >
         <Box sx={style}>{props.children}</Box>
       </Modal>

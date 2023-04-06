@@ -32,7 +32,6 @@ function App() {
       <QueryClientProvider client={queryClient}>
         <BrowserRouter>
           <MyAppBar />
-
           <Routes>
             <Route
               path="/"
