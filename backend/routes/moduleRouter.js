@@ -7,6 +7,7 @@ const {
   getAllStudentsInModuleController,
   addNoteModuleController,
   updateNoteModuleController,
+  getModuleInfoController,
 } = require("../controllers/moduleController");
 const {
   getAllPubController,
@@ -24,6 +25,8 @@ moduleRouter
   .route("/")
   .post(verifyToken, verifyAuthorizationTeacher, createModuleController)
   .get(verifyToken, verifyAuthorizationTeacher, getAllModulesController);
+
+moduleRouter.route("/:moduleId").get(verifyToken, getModuleInfoController);
 
 moduleRouter
   .route("/:moduleId/students")

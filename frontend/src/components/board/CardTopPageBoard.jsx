@@ -1,10 +1,14 @@
 import { Box, Card, Typography } from "@mui/material";
-import React from "react";
+import React, { useEffect } from "react";
 import R1 from "../../static/images/r1.jpg";
 import R2 from "../../static/images/r2.jpg";
 import R3 from "../../static/images/r3.jpg";
 
 import { useSelector } from "react-redux";
+import { getModuleInfo } from "../../redux/api/moduleApi";
+import { useParams } from "react-router-dom";
+import { useQuery } from "react-query";
+import LoadingPage from "../LoadingPage/LoadingPage";
 
 const randomNumber = Math.floor(Math.random() * 3);
 
@@ -31,7 +35,26 @@ const styles = {
 };
 
 function CardTopPageBoard() {
-  const module = useSelector((state) => state.module.module);
+  // const module = useSelector((state) => state.module.module);
+  const [moduleName, setModuleName] = React.useState("");
+
+  const { id } = useParams();
+  const { user } = useSelector((state) => state.auth);
+
+  const { isLoading, refetch } = useQuery({
+    queryKey: "getModuleInfo",
+    queryFn: () => getModuleInfo(id, user.token),
+    onSuccess: (data) => {
+      setModuleName(data.data.module.name);
+    },
+    enabled: false,
+  });
+
+  useEffect(() => {
+    refetch();
+  }, [refetch]);
+
+  if (isLoading) return <LoadingPage />;
 
   switch (randomNumber) {
     case 0:
@@ -66,8 +89,8 @@ function CardTopPageBoard() {
           ...styles.demoContent,
         }}
       >
-        <Typography variant="h4" sx={{ color: "white" }}>
-          {module !== null ? module.name : "Module name"}
+        <Typography variant="h3" sx={{ color: "white", pb: 2 }}>
+          {moduleName}
         </Typography>
       </Box>
     </Card>

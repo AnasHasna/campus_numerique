@@ -10,7 +10,7 @@ const File = require("../models/filesModel");
 
 /**
  * @description     Get all modules
- * @router          /
+ * @router          /modules
  * @method          GET
  * @access          public
  */
@@ -30,7 +30,7 @@ module.exports.getAllModulesController = asyncHandler(async (req, res) => {
 
 /**
  * @description     create module
- * @router          /
+ * @router          /modules
  * @method          POST
  * @access          private (teacher)
  */
@@ -51,8 +51,24 @@ module.exports.createModuleController = asyncHandler(async (req, res) => {
 });
 
 /**
+ * @description     Get module info
+ * @router          /modules/:moduleId
+ * @method          GET
+ * @access          public
+ */
+module.exports.getModuleInfoController = asyncHandler(async (req, res) => {
+  const { moduleId } = req.params;
+  const module = await Module.findById(moduleId);
+  if (!module)
+    return res
+      .status(404)
+      .json({ status: false, message: "Module introuvable" });
+  res.status(200).json({ status: true, module });
+});
+
+/**
  * @description     Get statistiques module
- * @router          /:moduleId/statistiques
+ * @router          /modules/:moduleId/statistiques
  * @method          GET
  * @access          private (teacher)
  */
@@ -168,7 +184,7 @@ module.exports.getStatistiquesModuleController = asyncHandler(
 
 /**
  * @description     Add Student to module
- * @router          /:moduleId/students
+ * @router          /modules/:moduleId/students
  * @method          POST
  * @access          private (teacher)
  */
@@ -202,7 +218,7 @@ module.exports.addStudentToModuleController = asyncHandler(async (req, res) => {
 });
 /**
  * @description     Get all Student to module
- * @router          /:moduleId/students
+ * @router          /modules/:moduleId/students
  * @method          GET
  * @access          private (teacher)
  */
@@ -225,7 +241,7 @@ module.exports.getAllStudentsInModuleController = asyncHandler(
 
 /**
  * @description     Get Notes module
- * @router          /:moduleId/notes
+ * @router          /modules/:moduleId/notes
  * @method          GET
  * @access          private (teacher)
  */
@@ -239,7 +255,7 @@ module.exports.getNotesModuleController = asyncHandler(async (req, res) => {
 
 /**
  * @description     Add Note module
- * @router          /:moduleId/notes
+ * @router          /modules/:moduleId/notes
  * @method          POST
  * @access          private (teacher)
  */
@@ -257,7 +273,7 @@ module.exports.addNoteModuleController = asyncHandler(async (req, res) => {
 
 /**
  * @description     Update Note module
- * @router          /:moduleId/notes
+ * @router          /modules/:moduleId/notes
  * @method          PUT
  * @access          private (teacher)
  */
