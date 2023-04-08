@@ -17,8 +17,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { authActions } from "../../redux/slices/authSlice";
 
 const settings = [
-  { setting: "Compte", route: "profile" },
-  { setting: "Paramètres", route: "dashboard" },
+  { setting: "Paramètres", route: "settings" },
   { setting: "Se déconnecter", route: "Logout" },
 ];
 
@@ -30,7 +29,19 @@ function MyAppBar() {
   const location = useLocation();
 
   // get the user from store
-  const { user, isLogin } = useSelector((state) => state.auth);
+  const { user, isLogin, userType } = useSelector((state) => state.auth);
+
+  const baseUrl = "http://localhost:5000/images/";
+
+  const [fileName, setFileName] = React.useState(null);
+  const [fullUrl, setFullUrl] = React.useState(null);
+
+  React.useEffect(() => {
+    if (userType === "Teacher") {
+      setFileName(user.imageUrl.substring(user.imageUrl.lastIndexOf("\\") + 1));
+      setFullUrl(baseUrl + fileName);
+    }
+  }, [userType, fileName, baseUrl]);
 
   const handleOpenUserMenu = (event) => {
     setAnchorElUser(event.currentTarget);
@@ -48,6 +59,10 @@ function MyAppBar() {
   const handleLogout = () => {
     dispatch(authActions.logout());
     navigate("/");
+  };
+
+  const handleGoToSettings = () => {
+    navigate("settings");
   };
 
   // check if location.pathname contains "auth"
@@ -115,7 +130,10 @@ function MyAppBar() {
             <Box display={isLogin === true ? "flex" : "none"}>
               <Tooltip title="Open settings">
                 <IconButton onClick={handleOpenUserMenu} sx={{ p: 0 }}>
-                  <Avatar alt="Remy Sharp" src="/static/images/avatar/2.jpg" />
+                  <Avatar
+                    alt={user.fullName}
+                    src={userType === "Teacher" ? fullUrl : null}
+                  />
                 </IconButton>
               </Tooltip>
               <Menu
@@ -141,6 +159,9 @@ function MyAppBar() {
                       handleCloseUserMenu();
                       if (setting.route === "Logout") {
                         handleLogout();
+                      }
+                      if (setting.route === "settings") {
+                        handleGoToSettings();
                       }
                     }}
                   >

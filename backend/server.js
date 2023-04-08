@@ -9,8 +9,13 @@ const studentRouter = require("./routes/studentRouter.js");
 const moduleRouter = require("./routes/moduleRouter.js");
 const filesRouter = require("./routes/filesRouter.js");
 const commentRouter = require("./routes/commentRouter.js");
+const path = require("path");
 
 const app = express();
+
+// to access to image
+
+app.use("/images", express.static(path.join(__dirname, "assets")));
 
 // dotenv
 require("dotenv").config();

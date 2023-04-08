@@ -220,3 +220,53 @@ module.exports.changePasswordCodeStudentController = asyncHandler(
     res.status(200).json({ status: true, user: student });
   }
 );
+
+/**
+ * @description     update student
+ * @router          /students/:studentId
+ * @method          PUT
+ * @access          private(only student)
+ */
+
+module.exports.updateStudentController = asyncHandler(async (req, res) => {
+  console.log(req.body);
+  const { fullName, cin, codeMassar, phoneNumber, password } = req.body;
+
+  // check if cin or codeMassar or phoneNumber is used
+
+  let student = await Student.findOne({
+    $or: [{ cin }, { codeMassar }, { phoneNumber }],
+  })
+
+    .select("-password")
+    .select("-verifyCode");
+
+  if (student && student._id != req.params.studentId) {
+    return res.status(400).json({
+      status: false,
+      message: "Cin ou code massar ou numéro de téléphone déja utilisé",
+    });
+  }
+
+  if (password) {
+    const salt = await bcrypt.genSalt(10);
+    const hashedPassword = await bcrypt.hash(password, salt);
+    req.body.password = hashedPassword;
+  }
+
+  student = await Student.findByIdAndUpdate(
+    req.params.studentId,
+    {
+      $set: req.body,
+    },
+    {
+      new: true,
+    }
+  )
+    .select("-password")
+    .select("-verifyCode");
+  // generate token for student
+  const token = jwt.sign({ id: student._id }, process.env.JWT_SECRET);
+  let result = { ...student.toObject(), token };
+  res.status(200).json({ status: true, student: result });
+});

@@ -60,7 +60,10 @@ const authSlice = createSlice({
         state.user = action.payload.user.student;
       }
     },
-    changePassword() {},
+    updateUser(state, action) {
+      state.user = action.payload.user;
+      localStorage.setItem("user", JSON.stringify(action.payload.user));
+    },
   },
 });
 

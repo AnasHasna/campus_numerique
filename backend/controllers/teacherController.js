@@ -12,6 +12,7 @@ const jwt = require("jsonwebtoken");
 const path = require("path");
 const { JsonWebTokenError } = require("jsonwebtoken");
 const sendMail = require("../utils/sendmail");
+const fs = require("fs");
 
 /**
  * @description     register teacher
@@ -187,7 +188,7 @@ module.exports.verifyCodeTeacherController = asyncHandler(async (req, res) => {
 
 /**
  * @description     verify code teacher
- * @router          /students/changepassword
+ * @router          /teachers/changepassword
  * @method          PUT
  * @access          public
  */
@@ -217,3 +218,100 @@ module.exports.changePasswordCodeTeacherController = asyncHandler(
     res.status(200).json({ status: true, user: teacher });
   }
 );
+
+/**
+ * @description     update teacher
+ * @router          /teachers/:teacherId
+ * @method          PUT
+ * @access          private(only teacher)
+ */
+
+module.exports.updateTeacherController = asyncHandler(async (req, res) => {
+  console.log(req.body);
+  const { fullName, email, password } = req.body;
+
+  // check if email is exist
+
+  let teacher = await Teacher.findOne({
+    email,
+  });
+
+  if (teacher && teacher._id != req.params.teacherId) {
+    return res.status(400).json({
+      status: false,
+      message: "Email déja utilisé",
+    });
+  }
+
+  if (password) {
+    const salt = await bcrypt.genSalt(10);
+    const hashedPassword = await bcrypt.hash(password, salt);
+    req.body.password = hashedPassword;
+  }
+
+  teacher = await Teacher.findByIdAndUpdate(
+    req.params.teacherId,
+    {
+      $set: req.body,
+    },
+    {
+      new: true,
+    }
+  );
+
+  // generate token for teacher
+  const token = jwt.sign({ id: teacher._id }, process.env.JWT_SECRET);
+  let result = { ...teacher.toObject(), token };
+
+  res.status(200).json({ status: true, teacher: result });
+});
+
+/**
+ * @description     update teacher image
+ * @router          /teachers/:teacherId/image
+ * @method          PUT
+ * @access          private(only teacher)
+ */
+
+module.exports.updateTeacherImageController = asyncHandler(async (req, res) => {
+  const teacher = await Teacher.findById(req.params.teacherId);
+  if (!teacher) {
+    return res.status(404).json({
+      status: false,
+      message: "Professeur non trouvé",
+    });
+  }
+
+  let imageUrl = teacher.imageUrl;
+
+  const unixPath = path.posix.join(...imageUrl.split(path.sep));
+
+  fs.unlink(unixPath, (err) => {
+    if (err) {
+      console.error(err);
+      return;
+    }
+    console.log("File removed!");
+  });
+
+  imageUrl = path.join(__dirname, `../assets/${req.file.filename}`);
+
+  const updatedTeacher = await Teacher.findByIdAndUpdate(
+    req.params.teacherId,
+    {
+      $set: { imageUrl },
+    },
+    {
+      new: true,
+    }
+  );
+
+  // generate token for teacher
+  const token = jwt.sign({ id: teacher._id }, process.env.JWT_SECRET);
+  let result = { ...updatedTeacher.toObject(), token };
+
+  res.status(200).json({
+    status: true,
+    teacher: result,
+  });
+});

@@ -4,12 +4,19 @@ const {
   forgetPasswordTeacherController,
   verifyCodeTeacherController,
   changePasswordCodeTeacherController,
+  updateTeacherController,
+  updateTeacherImageController,
 } = require("../controllers/teacherController");
 const { photoUpload } = require("../middleware/fileUpload");
+const verifyToken = require("../middleware/verifyToken");
 
 const teacherRouter = require("express").Router();
 
-// teacherRouter.route("/:id").put().get().delete();
+teacherRouter.route("/:teacherId").put(verifyToken, updateTeacherController);
+
+teacherRouter
+  .route("/:teacherId/image")
+  .put(verifyToken, photoUpload.single("image"), updateTeacherImageController);
 
 teacherRouter.post(
   "/register",
