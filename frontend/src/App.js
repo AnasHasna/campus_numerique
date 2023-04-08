@@ -20,6 +20,7 @@ import StatistiquePage from "./pages/statistiques/StatistiquesPage";
 import TpsPage from "./pages/TpsPage/TpsPage";
 import { useSelector } from "react-redux";
 import ModulesPage from "./pages/ModulesPage/ModulesPage";
+import SettingsPage from "./pages/Settings/SettingsPage";
 
 const queryClient = new QueryClient();
 
@@ -32,7 +33,6 @@ function App() {
       <QueryClientProvider client={queryClient}>
         <BrowserRouter>
           <MyAppBar />
-
           <Routes>
             <Route
               path="/"
@@ -43,6 +43,16 @@ function App() {
               element={
                 isLogin ? (
                   <ModulesPage />
+                ) : (
+                  <Navigate replace to="/auth/login" />
+                )
+              }
+            />
+            <Route
+              path="settings"
+              element={
+                isLogin ? (
+                  <SettingsPage />
                 ) : (
                   <Navigate replace to="/auth/login" />
                 )

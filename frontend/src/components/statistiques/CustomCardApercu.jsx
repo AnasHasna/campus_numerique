@@ -1,11 +1,17 @@
-import { Avatar, Grid, Icon, Stack, Typography } from "@mui/material";
+import {
+  Avatar,
+  ButtonBase,
+  Grid,
+  Icon,
+  Stack,
+  Typography,
+} from "@mui/material";
 
 function CustomCardApercu(props) {
   return (
     <Grid item xs={6}>
       <Stack
         direction="row"
-        spacing={2}
         sx={{
           border: "1px solid #eaeaea",
           borderRadius: "5px",
@@ -14,35 +20,56 @@ function CustomCardApercu(props) {
           height: { xs: "150px", sm: "110px", md: "80px" },
         }}
       >
-        <Avatar
+        <ButtonBase
+          disabled={!props.enabled}
+          onClick={props.onClick}
           sx={{
-            width: "50px",
-            height: "50px",
-            backgroundColor: "#231942",
+            width: "100%",
           }}
         >
-          <Icon>{props.icon}</Icon>
-        </Avatar>
-        <Stack>
-          <Typography
+          <Stack
+            direction="row"
+            spacing={2}
             sx={{
-              color: "#ffffff",
-              fontSize: "20px",
-              fontWeight: "bold",
+              width: "100%",
             }}
           >
-            {props.number}
-          </Typography>
-          <Typography
-            sx={{
-              color: "#ffffff",
-              fontSize: "15px",
-              fontWeight: "bold",
-            }}
-          >
-            {props.text}
-          </Typography>
-        </Stack>
+            <Avatar
+              sx={{
+                width: "50px",
+                height: "50px",
+                backgroundColor: "#231942",
+              }}
+            >
+              <Icon>{props.icon}</Icon>
+            </Avatar>
+            <Stack
+              direction="column"
+              sx={{
+                alignItems: "flex-start",
+              }}
+            >
+              <Typography
+                sx={{
+                  color: "#ffffff",
+                  fontSize: "20px",
+                  fontWeight: "bold",
+                }}
+              >
+                {props.number}
+              </Typography>
+              <Typography
+                sx={{
+                  color: "#ffffff",
+                  fontSize: "15px",
+                  fontWeight: "bold",
+                }}
+              >
+                {props.text}
+              </Typography>
+            </Stack>
+          </Stack>
+        </ButtonBase>
       </Stack>
     </Grid>
   );

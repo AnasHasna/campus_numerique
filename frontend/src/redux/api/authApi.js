@@ -65,4 +65,34 @@ const resetPassword = async ({ newPassword, userType, id }) => {
   }
 };
 
-export { signUp, login, forgetPassword, verifyCode, resetPassword };
+const updateTeacher = async ({ id, data, token }) => {
+  return await axios.put(`http://localhost:5000/teachers/${id}`, data, {
+    headers: { Authorization: `Bearer ${token}` },
+  });
+};
+
+const updateStudent = async ({ id, data, token }) => {
+  return await axios.put(`http://localhost:5000/students/${id}`, data, {
+    headers: { Authorization: `Bearer ${token}` },
+  });
+};
+
+const changeTeacherPicture = async ({ id, data, token }) => {
+  return await axios.put(`http://localhost:5000/teachers/${id}/image`, data, {
+    headers: {
+      Authorization: `Bearer ${token}`,
+      "Content-Type": "multipart/form-data",
+    },
+  });
+};
+
+export {
+  signUp,
+  login,
+  forgetPassword,
+  verifyCode,
+  resetPassword,
+  updateTeacher,
+  updateStudent,
+  changeTeacherPicture,
+};

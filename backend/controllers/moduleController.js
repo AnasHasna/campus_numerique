@@ -118,9 +118,7 @@ module.exports.getStatistiquesModuleController = asyncHandler(
     let studentsNotValidated = [];
     let studentLessThan7 = [];
     let max = 0;
-    let maxMark;
     let min = 20;
-    let minMark;
     let avg = 0;
 
     if (students.length === 0) {
@@ -133,27 +131,35 @@ module.exports.getStatistiquesModuleController = asyncHandler(
         });
         if (mark) {
           if (mark.mark >= 12) {
-            studentsValidated.push(students[i]);
+            studentsValidated.push(mark);
           }
           if (mark.mark < 12) {
-            studentsNotValidated.push(students[i]);
+            studentsNotValidated.push(mark);
           }
           if (mark.mark < 7) {
-            studentLessThan7.push(students[i]);
+            studentLessThan7.push(mark);
           }
           if (mark.mark > max) {
             max = mark.mark;
-            maxMark = mark;
           }
           if (mark.mark < min) {
             min = mark.mark;
-            minMark = mark;
           }
           avg += mark.mark;
         }
       }
       avg = avg / students.length;
     }
+
+    // get etudiants who whave the max / min
+    const maxMark = await Mark.find({
+      module: moduleId,
+      mark: max,
+    });
+    const minMark = await Mark.find({
+      module: moduleId,
+      mark: min,
+    });
 
     res.status(200).json({
       status: true,

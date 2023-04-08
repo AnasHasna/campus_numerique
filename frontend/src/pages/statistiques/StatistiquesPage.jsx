@@ -18,9 +18,7 @@ function StatistiquePage() {
   const { isLoading, data, error } = useQuery({
     queryKey: "getStatistiques",
     queryFn: () => getStatistiques(id, user.token),
-    onSuccess: (data) => {
-      console.log(data.data.statistiques);
-    },
+    onSuccess: (data) => {},
   });
 
   if (isLoading) return <LoadingPage />;
