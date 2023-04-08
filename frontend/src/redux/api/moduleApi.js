@@ -59,9 +59,8 @@ const getInvitations = async (moduleId, token) => {
 
 const confirmInvitations = async (moduleId, token, invitId) => {
   return await axios.post(
-    `http://localhost:5000/modules/${moduleId}/invitations`,
-    { invitationId: invitId },
-
+    `http://localhost:5000/modules/${moduleId}/invitations/${invitId}`,
+    {},
     {
       headers: {
         Authorization: `Bearer ${token}`,
@@ -69,11 +68,9 @@ const confirmInvitations = async (moduleId, token, invitId) => {
     }
   );
 };
-const rejetInvitations = async (moduleId, token, invitId) => {
+const rejectInvitations = async (moduleId, token, invitId) => {
   return await axios.delete(
-    `http://localhost:5000/modules/${moduleId}/invitations`,
-    { invitationId: invitId },
-
+    `http://localhost:5000/modules/${moduleId}/invitations/${invitId}`,
     {
       headers: {
         Authorization: `Bearer ${token}`,
@@ -89,5 +86,6 @@ export {
   getModuleInfo,
   getInvitations,
   confirmInvitations,
-  rejetInvitations,
+  rejectInvitations,
+  getStudents,
 };

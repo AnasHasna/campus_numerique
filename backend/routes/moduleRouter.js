@@ -10,6 +10,7 @@ const {
   rejectInvitationController,
   confirmInvitationController,
   getAllInvitationsController,
+  SendInvitationToModuleController,
 } = require("../controllers/moduleController");
 const {
   getAllPubController,
@@ -56,11 +57,12 @@ moduleRouter
 
 moduleRouter
   .route("/:moduleId/invitations")
-  .get(verifyToken, getAllInvitationsController);
+  .get(verifyToken, getAllInvitationsController)
+  .post(verifyToken, SendInvitationToModuleController);
 
 moduleRouter
   .route("/:moduleId/invitations/:invitationId")
-  .post(verifyToken, confirmInvitationController)
-  .delete(verifyToken, rejectInvitationController);
+  .delete(verifyToken, rejectInvitationController)
+  .post(verifyToken, confirmInvitationController);
 
 module.exports = moduleRouter;

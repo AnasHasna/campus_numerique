@@ -6,12 +6,13 @@ import { useSelector } from "react-redux";
 import { getStudents } from "../../redux/api/moduleApi";
 import { useQuery } from "react-query";
 import { useParams } from "react-router-dom";
+import LoadingPage from "../../components/LoadingPage/LoadingPage";
 
 function StudentsPage() {
   const { user } = useSelector((state) => state.auth);
   const { id } = useParams();
   const [studentArr, setStudentArr] = useState([]);
-  const { isLoading, error, refetch } = useQuery({
+  const { isLoading, refetch } = useQuery({
     queryKey: "getStudents",
     queryFn: () => getStudents(id, user.token),
     enabled: false,
@@ -26,6 +27,9 @@ function StudentsPage() {
   React.useEffect(() => {
     refetch();
   }, [refetch]);
+
+  if (isLoading) return <LoadingPage />;
+
   return (
     <CustomPageWithDrawer>
       <Box
@@ -33,13 +37,15 @@ function StudentsPage() {
         justifyContent="center"
         alignItems="center"
         sx={{ minWidth: 600 }}
-        mb={6}>
+        mb={6}
+      >
         <Box
           display="flex"
           flexDirection="column"
           sx={{ gap: 3 }}
           minWidth="800px"
-          justifyContent="left">
+          justifyContent="left"
+        >
           <Typography variant="h4" ml={3} style={{ color: "#071A2F" }}>
             Ensaignants
           </Typography>
@@ -51,13 +57,15 @@ function StudentsPage() {
         display="flex"
         justifyContent="center"
         alignItems="center"
-        sx={{ minWidth: 600 }}>
+        sx={{ minWidth: 600 }}
+      >
         <Box
           display="flex"
           flexDirection="column"
           sx={{ gap: 3 }}
           minWidth="800px"
-          justifyContent="left">
+          justifyContent="left"
+        >
           <Typography variant="h4" ml={3} style={{ color: "#071A2F" }}>
             Etudiants
           </Typography>

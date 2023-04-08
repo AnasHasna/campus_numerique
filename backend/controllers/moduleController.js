@@ -283,6 +283,31 @@ module.exports.getAllInvitationsController = asyncHandler(async (req, res) => {
 });
 
 /**
+ * @description     Send invit to module
+ * @router          /modules/:moduleId/invitations
+ * @method          POST
+ * @access          private (teacher)
+ */
+
+module.exports.SendInvitationToModuleController = asyncHandler(
+  async (req, res) => {
+    const { moduleId } = req.params;
+
+    const { studentId } = req.body;
+
+    const invitation = await Invitation.create({
+      module: moduleId,
+      student: studentId,
+    });
+
+    res.status(201).json({
+      status: true,
+      message: "Invitation envoyée avec succès",
+    });
+  }
+);
+
+/**
  * @description     Confirm invitation
  * @router          /modules/:moduleId/invitations/:invitationId
  * @method          POST
@@ -290,17 +315,23 @@ module.exports.getAllInvitationsController = asyncHandler(async (req, res) => {
  */
 
 module.exports.confirmInvitationController = asyncHandler(async (req, res) => {
-  const { moduleId, invitationId } = req.params;
+  const { invitationId } = req.params;
 
-  const { studentId } = req.body;
+  const invitation = await Invitation.findById(invitationId);
 
-  const module = await Module.findById(moduleId);
+  const module = await Module.findById(invitation.module);
   const students = module.students;
 
-  students.push(studentId);
+  students.push(invitation.student);
   await module.save();
 
-  await Invitation.findByIdAndDelete(invitId);
+  // add Student to marks
+  await Mark.create({
+    student: invitation.student,
+    module: invitation.module,
+  });
+
+  await Invitation.findByIdAndDelete(invitationId);
 
   res.status(200).json({
     status: true,
@@ -318,7 +349,7 @@ module.exports.confirmInvitationController = asyncHandler(async (req, res) => {
 module.exports.rejectInvitationController = asyncHandler(async (req, res) => {
   const { invitationId } = req.params;
 
-  await Invitation.findByIdAndDelete(invitId);
+  await Invitation.findByIdAndDelete(invitationId);
 
   res.status(200).json({
     status: true,
