@@ -8,7 +8,7 @@ const { Student } = require("../models/studentModel");
 const Mark = require("../models/markModel");
 const File = require("../models/filesModel");
 const Invitation = require("../models/invitationModel");
-
+const Teacher = require("../models/teacherModel");
 /**
  * @description     Get all modules
  * @router          /modules
@@ -207,8 +207,10 @@ module.exports.getAllStudentsInModuleController = asyncHandler(
         .json({ status: false, message: "Module introuvable" });
 
     const students = module.students;
+    const teacherId = module.teacherId;
+    const teacher = await Teacher.Teacher.findById(teacherId);
 
-    res.status(200).json({ status: true, students });
+    res.status(200).json({ status: true, students, teacher });
   }
 );
 

@@ -12,12 +12,14 @@ function StudentsPage() {
   const { user } = useSelector((state) => state.auth);
   const { id } = useParams();
   const [studentArr, setStudentArr] = useState([]);
+  const [teacher, setTeacher] = useState({});
   const { isLoading, refetch } = useQuery({
     queryKey: "getStudents",
     queryFn: () => getStudents(id, user.token),
     enabled: false,
     onSuccess: (data) => {
       setStudentArr(data.data.students);
+      setTeacher(data.data.teacher);
     },
     onError: (error) => {
       console.log(error);
@@ -29,7 +31,6 @@ function StudentsPage() {
   }, [refetch]);
 
   if (isLoading) return <LoadingPage />;
-
   return (
     <CustomPageWithDrawer>
       <Box
@@ -37,35 +38,34 @@ function StudentsPage() {
         justifyContent="center"
         alignItems="center"
         sx={{ minWidth: 600 }}
-        mb={6}
-      >
+        mb={6}>
         <Box
           display="flex"
           flexDirection="column"
           sx={{ gap: 3 }}
           minWidth="800px"
-          justifyContent="left"
-        >
+          justifyContent="left">
           <Typography variant="h4" ml={3} style={{ color: "#071A2F" }}>
             Ensaignants
           </Typography>
           <Divider sx={{ backgroundColor: "#071A2F" }} variant="fullWidth" />
-          <PersonComponent name={user.fullName} imageUrl={user.imageUrl} />
+          <PersonComponent
+            name={teacher.fullName}
+            imageUrl={teacher.imageUrl}
+          />
         </Box>
       </Box>
       <Box
         display="flex"
         justifyContent="center"
         alignItems="center"
-        sx={{ minWidth: 600 }}
-      >
+        sx={{ minWidth: 600 }}>
         <Box
           display="flex"
           flexDirection="column"
           sx={{ gap: 3 }}
           minWidth="800px"
-          justifyContent="left"
-        >
+          justifyContent="left">
           <Typography variant="h4" ml={3} style={{ color: "#071A2F" }}>
             Etudiants
           </Typography>
