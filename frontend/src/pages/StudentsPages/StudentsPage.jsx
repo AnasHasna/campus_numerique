@@ -38,7 +38,7 @@ function StudentsPage() {
           display="flex"
           flexDirection="column"
           sx={{ gap: 3 }}
-          minWidth="600px"
+          minWidth="800px"
           justifyContent="left">
           <Typography variant="h4" ml={3} style={{ color: "#071A2F" }}>
             Ensaignants
@@ -56,7 +56,7 @@ function StudentsPage() {
           display="flex"
           flexDirection="column"
           sx={{ gap: 3 }}
-          minWidth="600px"
+          minWidth="800px"
           justifyContent="left">
           <Typography variant="h4" ml={3} style={{ color: "#071A2F" }}>
             Etudiants
