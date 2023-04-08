@@ -26,6 +26,13 @@ const getNotes = async (moduleId, token) => {
     },
   });
 };
+const getStudents = async (moduleId, token) => {
+  return await axios.get(`http://localhost:5000/modules/${moduleId}/students`, {
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+  });
+};
 
 const updateNotes = async (moduleId, token, data) => {
   return await axios.put(
@@ -39,4 +46,4 @@ const updateNotes = async (moduleId, token, data) => {
   );
 };
 
-export { getStatistiques, getNotes, updateNotes, getModuleInfo };
+export { getStatistiques, getNotes, updateNotes, getModuleInfo, getStudents };
