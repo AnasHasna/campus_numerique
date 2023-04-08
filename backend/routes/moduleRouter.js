@@ -3,11 +3,13 @@ const {
   getAllModulesController,
   getStatistiquesModuleController,
   getNotesModuleController,
-  addStudentToModuleController,
   getAllStudentsInModuleController,
   addNoteModuleController,
   updateNoteModuleController,
   getModuleInfoController,
+  rejectInvitationController,
+  confirmInvitationController,
+  getAllInvitationsController,
 } = require("../controllers/moduleController");
 const {
   getAllPubController,
@@ -30,8 +32,7 @@ moduleRouter.route("/:moduleId").get(verifyToken, getModuleInfoController);
 
 moduleRouter
   .route("/:moduleId/students")
-  .get(verifyToken, getAllStudentsInModuleController)
-  .post(verifyToken, addStudentToModuleController);
+  .get(verifyToken, getAllStudentsInModuleController);
 
 moduleRouter
   .route("/:moduleId/pubs")
@@ -52,5 +53,14 @@ moduleRouter
   .post(verifyToken, addNoteModuleController)
   .put(verifyToken, updateNoteModuleController)
   .get(verifyToken, getNotesModuleController);
+
+moduleRouter
+  .route("/:moduleId/invitations")
+  .get(verifyToken, getAllInvitationsController);
+
+moduleRouter
+  .route("/:moduleId/invitations/:invitationId")
+  .post(verifyToken, confirmInvitationController)
+  .delete(verifyToken, rejectInvitationController);
 
 module.exports = moduleRouter;

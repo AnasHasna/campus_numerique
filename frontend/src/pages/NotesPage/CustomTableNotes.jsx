@@ -70,9 +70,7 @@ export default function CustomTableNotes() {
   } = useQuery({
     queryKey: "getNotes",
     queryFn: () => getNotes(id, user.token),
-    enabled: false,
     onSuccess: (data) => {
-      console.log(data.data);
       setNotes(data.data.notes);
       let newRows = [];
       let row = {};
@@ -91,7 +89,7 @@ export default function CustomTableNotes() {
 
   React.useEffect(() => {
     refetch();
-  }, [refetch]);
+  }, [refetch, setNotes]);
 
   const processRowUpdate = React.useCallback(
     async (newRow) => {
@@ -123,11 +121,13 @@ export default function CustomTableNotes() {
     <Box sx={{ height: 800, width: "100%" }}>
       <DataGrid
         aria-label="Notes"
-        autoHeight
         disableColumnMenu
         editMode="row"
+        autoHeight
         slots={{
-          noRowsOverlay: CustomNoDataTable,
+          noRowsOverlay: () => (
+            <CustomNoDataTable message="Aucun Etudiant trouvé" />
+          ),
         }}
         localeText={{
           MuiTablePagination: {

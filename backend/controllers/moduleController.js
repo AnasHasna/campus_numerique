@@ -7,6 +7,7 @@ const {
 const { Student } = require("../models/studentModel");
 const Mark = require("../models/markModel");
 const File = require("../models/filesModel");
+const Invitation = require("../models/invitationModel");
 
 /**
  * @description     Get all modules
@@ -189,41 +190,7 @@ module.exports.getStatistiquesModuleController = asyncHandler(
 );
 
 /**
- * @description     Add Student to module
- * @router          /modules/:moduleId/students
- * @method          POST
- * @access          private (teacher)
- */
-
-module.exports.addStudentToModuleController = asyncHandler(async (req, res) => {
-  const { moduleId } = req.params;
-  const { studentId } = req.body;
-  // search for the student if he is in module
-
-  const module = await Module.findById(moduleId);
-  if (!module)
-    return res
-      .status(400)
-      .json({ status: false, message: "Module introuvable" });
-
-  const students = module.students;
-  for (let i = 0; i < students.length; i++) {
-    if (students[i] === studentId) {
-      return res
-        .status(400)
-        .json({ status: false, message: "Etudiant déja inscrit" });
-    }
-  }
-
-  // add student to module
-  await students.push(studentId);
-  await module.save();
-  res
-    .status(200)
-    .json({ status: true, message: "Etudiant inscrit avec succès" });
-});
-/**
- * @description     Get all Student to module
+ * @description     Get all Student in module
  * @router          /modules/:moduleId/students
  * @method          GET
  * @access          private (teacher)
@@ -297,4 +264,64 @@ module.exports.updateNoteModuleController = asyncHandler(async (req, res) => {
     }
   );
   res.status(201).json({ status: true, message: "Note modifiée avec succès" });
+});
+
+/**
+ * @description     Get all invitations
+ * @router          /modules/:moduleId/invitations
+ * @method          GET
+ * @access          private (teacher)
+ */
+
+module.exports.getAllInvitationsController = asyncHandler(async (req, res) => {
+  const { moduleId } = req.params;
+
+  const invitations = await Invitation.find({
+    module: moduleId,
+  });
+  res.status(200).json({ status: true, invitations });
+});
+
+/**
+ * @description     Confirm invitation
+ * @router          /modules/:moduleId/invitations/:invitationId
+ * @method          POST
+ * @access          private (teacher)
+ */
+
+module.exports.confirmInvitationController = asyncHandler(async (req, res) => {
+  const { moduleId, invitationId } = req.params;
+
+  const { studentId } = req.body;
+
+  const module = await Module.findById(moduleId);
+  const students = module.students;
+
+  students.push(studentId);
+  await module.save();
+
+  await Invitation.findByIdAndDelete(invitId);
+
+  res.status(200).json({
+    status: true,
+    message: "Invitation confirmée avec succès",
+  });
+});
+
+/**
+ * @description     Rejet invitation
+ * @router          /modules/:moduleId/invitations/:invitationId
+ * @method          DELETE
+ * @access          private (teacher)
+ */
+
+module.exports.rejectInvitationController = asyncHandler(async (req, res) => {
+  const { invitationId } = req.params;
+
+  await Invitation.findByIdAndDelete(invitId);
+
+  res.status(200).json({
+    status: true,
+    message: "Invitation rejetée avec succès",
+  });
 });

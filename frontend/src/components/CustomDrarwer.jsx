@@ -16,6 +16,7 @@ import TableChartIcon from "@mui/icons-material/TableChart";
 import AppsIcon from "@mui/icons-material/Apps";
 import EqualizerIcon from "@mui/icons-material/Equalizer";
 import InsertChartOutlinedIcon from "@mui/icons-material/InsertChartOutlined";
+import GroupAddIcon from "@mui/icons-material/GroupAdd";
 import GroupIcon from "@mui/icons-material/Group";
 import { useLocation, useNavigate } from "react-router-dom";
 import { useSelector } from "react-redux";
@@ -31,6 +32,11 @@ let allSections = [
     title: "Etudiants",
     url: "etudiants",
     icon: <GroupIcon />,
+  },
+  {
+    title: "Invitations",
+    url: "invitations",
+    icon: <GroupAddIcon />,
   },
   {
     title: "Cours",
@@ -64,7 +70,7 @@ let allSections = [
   },
 ];
 
-const drawerWidth = 200;
+const drawerWidth = 210;
 
 function CustomDrarwer() {
   const location = useLocation();
@@ -75,7 +81,14 @@ function CustomDrarwer() {
 
   useEffect(() => {
     if (userType === "Student") {
-      setSections(allSections.slice(0, allSections.length - 2));
+      setSections(
+        allSections.filter(
+          (e) =>
+            e.title !== "Statistiques" &&
+            e.title !== "Notes" &&
+            e.title !== "Invitations"
+        )
+      );
     } else {
       setSections(allSections);
     }

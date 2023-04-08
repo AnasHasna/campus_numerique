@@ -26,7 +26,7 @@ const StyledGridOverlay = styled("div")(({ theme }) => ({
   },
 }));
 
-export default function CustomNoDataTable() {
+export default function CustomNoDataTable(props) {
   return (
     <StyledGridOverlay>
       <svg
@@ -68,7 +68,9 @@ export default function CustomNoDataTable() {
           </g>
         </g>
       </svg>
-      <Box sx={{ mt: 1 }}>Aucun Etudiant trouvé</Box>
+      <Box sx={{ mt: 1 }}>
+        {props.message ? props.message : "Aucun Etudiant trouvé"}
+      </Box>
     </StyledGridOverlay>
   );
 }

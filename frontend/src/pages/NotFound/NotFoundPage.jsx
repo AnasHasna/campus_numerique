@@ -1,5 +1,7 @@
+import CustomPageWithoutDrawer from "../../components/CustomPageWithoutDrawer";
+
 function NotFoundPage() {
-  return <div>NotFoundPage</div>;
+  return <CustomPageWithoutDrawer>NotFoundPage</CustomPageWithoutDrawer>;
 }
 
 export default NotFoundPage;

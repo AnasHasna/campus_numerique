@@ -21,6 +21,7 @@ import TpsPage from "./pages/TpsPage/TpsPage";
 import { useSelector } from "react-redux";
 import ModulesPage from "./pages/ModulesPage/ModulesPage";
 import SettingsPage from "./pages/Settings/SettingsPage";
+import InvitationsPage from "./pages/invitations/InvitationsPage";
 
 const queryClient = new QueryClient();
 
@@ -68,6 +69,7 @@ function App() {
               <Route path="tps" element={<TpsPage />} />
               <Route path="exams" element={<ExamensPage />} />
               <Route path="statistiques" element={<StatistiquePage />} />
+              <Route path="invitations" element={<InvitationsPage />} />
             </Route>
             <Route path="auth">
               <Route path="login" element={<LoginPage />} />

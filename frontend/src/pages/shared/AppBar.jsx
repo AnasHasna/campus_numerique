@@ -127,51 +127,54 @@ function MyAppBar() {
                 S'inscrire
               </Button>
             </Box>
-            <Box display={isLogin === true ? "flex" : "none"}>
-              <Tooltip title="Open settings">
-                <IconButton onClick={handleOpenUserMenu} sx={{ p: 0 }}>
-                  <Avatar
-                    alt={user.fullName}
-                    src={userType === "Teacher" ? fullUrl : null}
-                  />
-                </IconButton>
-              </Tooltip>
-              <Menu
-                sx={{ mt: "45px" }}
-                id="menu-appbar"
-                anchorEl={anchorElUser}
-                anchorOrigin={{
-                  vertical: "top",
-                  horizontal: "right",
-                }}
-                keepMounted
-                transformOrigin={{
-                  vertical: "top",
-                  horizontal: "right",
-                }}
-                open={Boolean(anchorElUser)}
-                onClose={handleCloseUserMenu}
-              >
-                {settings.map((setting) => (
-                  <MenuItem
-                    key={setting.setting}
-                    onClick={() => {
-                      handleCloseUserMenu();
-                      if (setting.route === "Logout") {
-                        handleLogout();
-                      }
-                      if (setting.route === "settings") {
-                        handleGoToSettings();
-                      }
-                    }}
-                  >
-                    <Typography textAlign="center">
-                      {setting.setting}
-                    </Typography>
-                  </MenuItem>
-                ))}
-              </Menu>
-            </Box>
+
+            {isLogin === true && (
+              <Box display="flex">
+                <Tooltip title="Open settings">
+                  <IconButton onClick={handleOpenUserMenu} sx={{ p: 0 }}>
+                    <Avatar
+                      alt={user.fullName}
+                      src={userType === "Teacher" ? fullUrl : null}
+                    />
+                  </IconButton>
+                </Tooltip>
+                <Menu
+                  sx={{ mt: "45px" }}
+                  id="menu-appbar"
+                  anchorEl={anchorElUser}
+                  anchorOrigin={{
+                    vertical: "top",
+                    horizontal: "right",
+                  }}
+                  keepMounted
+                  transformOrigin={{
+                    vertical: "top",
+                    horizontal: "right",
+                  }}
+                  open={Boolean(anchorElUser)}
+                  onClose={handleCloseUserMenu}
+                >
+                  {settings.map((setting) => (
+                    <MenuItem
+                      key={setting.setting}
+                      onClick={() => {
+                        handleCloseUserMenu();
+                        if (setting.route === "Logout") {
+                          handleLogout();
+                        }
+                        if (setting.route === "settings") {
+                          handleGoToSettings();
+                        }
+                      }}
+                    >
+                      <Typography textAlign="center">
+                        {setting.setting}
+                      </Typography>
+                    </MenuItem>
+                  ))}
+                </Menu>
+              </Box>
+            )}
           </Box>
         </Toolbar>
       </Container>

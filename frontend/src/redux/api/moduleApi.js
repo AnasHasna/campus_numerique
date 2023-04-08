@@ -39,4 +39,48 @@ const updateNotes = async (moduleId, token, data) => {
   );
 };
 
-export { getStatistiques, getNotes, updateNotes, getModuleInfo };
+const getInvitations = async (moduleId, token) => {
+  return await axios.get(
+    `http://localhost:5000/modules/${moduleId}/invitations`,
+    {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    }
+  );
+};
+
+const confirmInvitations = async (moduleId, token, invitId) => {
+  return await axios.post(
+    `http://localhost:5000/modules/${moduleId}/invitations`,
+    { invitationId: invitId },
+
+    {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    }
+  );
+};
+const rejetInvitations = async (moduleId, token, invitId) => {
+  return await axios.delete(
+    `http://localhost:5000/modules/${moduleId}/invitations`,
+    { invitationId: invitId },
+
+    {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    }
+  );
+};
+
+export {
+  getStatistiques,
+  getNotes,
+  updateNotes,
+  getModuleInfo,
+  getInvitations,
+  confirmInvitations,
+  rejetInvitations,
+};
