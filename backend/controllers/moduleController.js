@@ -9,6 +9,8 @@ const Mark = require("../models/markModel");
 const File = require("../models/filesModel");
 const Invitation = require("../models/invitationModel");
 const Teacher = require("../models/teacherModel");
+const { Chat } = require("../models/chatModel");
+const { Message } = require("../models/messageModel");
 /**
  * @description     Get all modules
  * @router          /modules
@@ -333,6 +335,12 @@ module.exports.confirmInvitationController = asyncHandler(async (req, res) => {
     module: invitation.module,
   });
 
+  // create chat for that student
+  await Chat.create({
+    module: invitation.module,
+    student: invitation.student,
+  });
+
   await Invitation.findByIdAndDelete(invitationId);
 
   res.status(200).json({
@@ -357,4 +365,71 @@ module.exports.rejectInvitationController = asyncHandler(async (req, res) => {
     status: true,
     message: "Invitation rejetée avec succès",
   });
+});
+
+/**
+ * @description     Get all conversations
+ * @router          /modules/:moduleId/chats
+ * @method          POST
+ * @access          private (teacher)
+ */
+
+module.exports.getAllConversationsController = asyncHandler(
+  async (req, res) => {
+    const { moduleId } = req.params;
+    const { id: userId } = req.user;
+    const { isTeacher } = req.body;
+
+    const chats =
+      isTeacher === "true"
+        ? await Chat.find({
+            module: moduleId,
+          })
+        : await Chat.find({
+            module: moduleId,
+            student: userId,
+          });
+
+    res.status(200).json({ status: true, chats });
+  }
+);
+
+/**
+ * @description     Send message
+ * @router          /modules/:moduleId/chats/:chatId
+ * @method          POST
+ * @access          private (teacher)
+ */
+
+module.exports.sendMessageController = asyncHandler(async (req, res) => {
+  // get the user id (from verifyToken middle)
+  const { id: userId } = req.user;
+
+  const { chatId } = req.params;
+  const { isTeacher, message } = req.body;
+
+  const senderType = isTeacher ? "Teacher" : "Student";
+
+  const recipientType = isTeacher ? "Student" : "Teacher";
+
+  // Find the chat by ID
+  const chat = await Chat.findById(chatId);
+  const module = await Module.findById(chat.module);
+
+  // Create a new message
+  const newMessage = new Message({
+    message,
+    sender: isTeacher ? module.teacherId : chat.student,
+    senderType,
+    recipient: isTeacher ? chat.student : module.teacherId,
+    recipientType,
+  });
+
+  // Add the message to the chat messages array
+  chat.messages.push(newMessage);
+
+  // Save the new message and the updated chat
+  await Promise.all([newMessage.save(), chat.save()]);
+
+  res.status(201).json({ status: true, message: "Message envoyé avec succès" });
 });

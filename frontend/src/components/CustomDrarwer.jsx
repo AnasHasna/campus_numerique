@@ -103,8 +103,11 @@ function CustomDrarwer() {
   const handleClick = (url) => {
     const pathArray = location.pathname.split("/");
     pathArray.pop();
-    // if he is finished by boards then pop again
-    if (pathArray[pathArray.length - 1] === "boards") {
+    // if he is finished by boards or messages then pop again
+    if (
+      pathArray[pathArray.length - 1] === "boards" ||
+      pathArray[pathArray.length - 1] === "messages"
+    ) {
       pathArray.pop();
     }
     pathArray.push(url);

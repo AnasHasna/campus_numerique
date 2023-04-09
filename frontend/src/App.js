@@ -24,6 +24,7 @@ import SettingsPage from "./pages/Settings/SettingsPage";
 import InvitationsPage from "./pages/invitations/InvitationsPage";
 import MessagesPages from "./pages/messages/MessagesPages";
 import PubDetailsPage from "./pages/pubDetails/PubDetailsPage";
+import ChatDetailsPage from "./pages/messages/ChatDetailsPage";
 
 const queryClient = new QueryClient();
 
@@ -75,7 +76,10 @@ function App() {
               <Route path="exams" element={<ExamensPage />} />
               <Route path="statistiques" element={<StatistiquePage />} />
               <Route path="invitations" element={<InvitationsPage />} />
-              <Route path="messages" element={<MessagesPages />} />
+              <Route path="messages">
+                <Route index element={<MessagesPages />} />
+                <Route path=":chatId" element={<ChatDetailsPage />} />
+              </Route>
             </Route>
             <Route path="auth">
               <Route path="login" element={<LoginPage />} />

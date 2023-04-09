@@ -154,7 +154,7 @@ function StatistiquesNotes(props) {
             icon={<BarChartIcon />}
           />
           <CustomCardApercu
-            number={max ? max[0].mark : 0}
+            number={max.length ? max[0].mark : 0}
             text="Note Max"
             backgroundColor="#e76f51"
             enabled={true}
@@ -168,7 +168,7 @@ function StatistiquesNotes(props) {
             title="Liste des étudiants ayant la note maximale"
           />
           <CustomCardApercu
-            number={min ? min[0].mark : 0}
+            number={min.length ? min[0].mark : 0}
             text="Note Min"
             enabled={true}
             onClick={handleOpenStudentMinNote}

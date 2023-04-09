@@ -11,6 +11,8 @@ const {
   confirmInvitationController,
   getAllInvitationsController,
   SendInvitationToModuleController,
+  getAllConversationsController,
+  sendMessageController,
 } = require("../controllers/moduleController");
 const {
   getAllPubController,
@@ -64,5 +66,13 @@ moduleRouter
   .route("/:moduleId/invitations/:invitationId")
   .delete(verifyToken, rejectInvitationController)
   .post(verifyToken, confirmInvitationController);
+
+moduleRouter
+  .route("/:moduleId/chats")
+  .post(verifyToken, getAllConversationsController);
+
+moduleRouter
+  .route("/:moduleId/chats/:chatId")
+  .post(verifyToken, sendMessageController);
 
 module.exports = moduleRouter;
