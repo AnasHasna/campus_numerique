@@ -5,7 +5,6 @@ import { formatDistanceToNow, isBefore, subDays } from "date-fns";
 import { fr } from "date-fns/locale";
 import FileDownloadIcon from "@mui/icons-material/FileDownload";
 import { useState } from "react";
-import { downloadFile } from "../../redux/api/pubApi";
 import axios from "axios";
 
 function CardPubBoard(props) {
@@ -59,7 +58,7 @@ function CardPubBoard(props) {
   }
 
   const handleClick = () => {
-    navigate(`/${pubId}/details`);
+    navigate(`${pubId}`);
   };
 
   return (
@@ -74,18 +73,21 @@ function CardPubBoard(props) {
           backgroundColor: "lightgrey",
           cursor: "pointer",
         },
-      }}>
+      }}
+    >
       <Stack
         direction="row"
         sx={{
           justifyContent: "space-between",
-        }}>
+        }}
+      >
         <Stack direction="row">
           <Avatar
             sx={{
               mr: 2,
               backgroundColor: "blueviolet",
-            }}>
+            }}
+          >
             <Paper />
           </Avatar>
           <Stack>
@@ -93,14 +95,16 @@ function CardPubBoard(props) {
               sx={{
                 fontSize: "1rem",
                 color: "black",
-              }}>
+              }}
+            >
               {content}
             </Typography>
             <Typography
               sx={{
                 fontSize: "0.8rem",
                 color: "grey",
-              }}>
+              }}
+            >
               {formattedDate}
             </Typography>
           </Stack>
@@ -114,14 +118,16 @@ function CardPubBoard(props) {
               justifyContent: "center",
               cursor: isDownloading ? "not-allowed" : "pointer",
               opacity: isDownloading ? 0.5 : 1,
-            }}>
+            }}
+          >
             <Icon
               sx={{
                 color: "grey",
                 "&:hover": {
                   color: "black",
                 },
-              }}>
+              }}
+            >
               <FileDownloadIcon />
             </Icon>
           </Box>

@@ -17,6 +17,7 @@ import AppsIcon from "@mui/icons-material/Apps";
 import EqualizerIcon from "@mui/icons-material/Equalizer";
 import InsertChartOutlinedIcon from "@mui/icons-material/InsertChartOutlined";
 import GroupAddIcon from "@mui/icons-material/GroupAdd";
+import MessageIcon from "@mui/icons-material/Message";
 import GroupIcon from "@mui/icons-material/Group";
 import { useLocation, useNavigate } from "react-router-dom";
 import { useSelector } from "react-redux";
@@ -59,6 +60,11 @@ let allSections = [
     icon: <InsertChartOutlinedIcon />,
   },
   {
+    title: "Messages",
+    url: "messages",
+    icon: <MessageIcon />,
+  },
+  {
     title: "Notes",
     url: "notes",
     icon: <AppsIcon />,
@@ -97,6 +103,10 @@ function CustomDrarwer() {
   const handleClick = (url) => {
     const pathArray = location.pathname.split("/");
     pathArray.pop();
+    // if he is finished by boards then pop again
+    if (pathArray[pathArray.length - 1] === "boards") {
+      pathArray.pop();
+    }
     pathArray.push(url);
     navigate(pathArray.join("/"));
   };
