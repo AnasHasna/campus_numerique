@@ -1,36 +1,137 @@
-import React from "react";
+import React, { useState } from "react";
 import CustomPageWithDrawer from "../../components/CustomPageWithDrawer";
 import { MessageList, Input } from "react-chat-elements";
-import { Button, Stack } from "@mui/material";
-
-const teacherMessages = Array.from({ length: 10 }, (_, index) => ({
-  position: "left",
-  type: "text",
-  title: "Teacher",
-  text: `Message ${index + 1} from teacher`,
-  date: new Date(new Date().getTime() - index * 60 * 1000), // set date to X minutes ago
-}));
-
-const studentMessages = Array.from({ length: 10 }, (_, index) => ({
-  position: "right",
-  type: "text",
-  title: "Student",
-  text: `Message ${index + 1} from student`,
-  date: new Date(new Date().getTime() - index * 60 * 1000), // set date to X minutes ago
-}));
-
-const messages = [...teacherMessages, ...studentMessages].sort((a, b) => {
-  return a.date.getTime() - b.date.getTime();
-});
+import { Stack } from "@mui/material";
+import { useParams } from "react-router-dom";
+import { useSelector } from "react-redux";
+import { useMutation, useQuery } from "react-query";
+import { getSingleChat, sendMessage } from "../../redux/api/moduleApi";
+import LoadingPage from "../../components/LoadingPage/LoadingPage";
+import LoadingButton from "@mui/lab/LoadingButton/LoadingButton";
+import { formatDistanceToNow, isBefore, subDays } from "date-fns";
+import { fr } from "date-fns/locale";
 
 function ChatDetailsPage() {
-  React.useEffect(() => {
-    scrollToBottom();
-  }, []);
+  const { id } = useParams();
+  const { chatId } = useParams();
+  const { user, userType } = useSelector((state) => state.auth);
+
+  const [messages, setMessages] = useState([]);
+  const [message, setMessage] = useState("");
 
   const scrollToBottom = () => {
     window.scrollTo(0, document.body.scrollHeight);
   };
+
+  const { isLoading: isLoadingPut, mutate } = useMutation({
+    mutationKey: "sendMessage",
+
+    mutationFn: (message) => {
+      return sendMessage(
+        id,
+        user.token,
+        userType === "Teacher",
+        message,
+        chatId
+      );
+    },
+    onSuccess: (data) => {
+      refetch();
+      scrollToBottom();
+    },
+    onError: (error) => {
+      console.log(error);
+    },
+  });
+
+  const { isLoading, refetch } = useQuery({
+    queryKey: "getSingleChat",
+    queryFn: () => getSingleChat(id, user.token, chatId),
+    refetchInterval: 1000,
+    onSuccess: (data) => {
+      console.log("refetch");
+      const tempData = [];
+      data.data.chat.messages.forEach((message) => {
+        const date = new Date(message.createdAt);
+        const now = new Date();
+        let formattedDate;
+        if (isBefore(date, subDays(now, 1))) {
+          formattedDate = date.toLocaleDateString("fr-FR");
+        } else {
+          formattedDate = formatDistanceToNow(date, {
+            addSuffix: true,
+            locale: fr,
+          });
+        }
+        if (userType === "Teacher") {
+          if (message.senderType === "Teacher") {
+            tempData.push({
+              position: "right",
+              type: "text",
+              title: message.sender.fullName,
+              text: message.message,
+              date: new Date(message.createdAt),
+              dateString: formattedDate,
+            });
+          } else {
+            tempData.push({
+              position: "left",
+              type: "text",
+              title: message.sender.fullName,
+              text: message.message,
+              date: new Date(message.createdAt),
+              dateString: formattedDate,
+            });
+          }
+        } else {
+          if (message.senderType === "Student") {
+            tempData.push({
+              position: "right",
+              type: "text",
+              title: message.sender.fullName,
+              text: message.message,
+              date: new Date(message.createdAt),
+              dateString: formattedDate,
+            });
+          } else {
+            tempData.push({
+              position: "left",
+              type: "text",
+              title: message.sender.fullName,
+              text: message.message,
+              date: new Date(message.createdAt),
+              dateString: formattedDate,
+            });
+          }
+        }
+      });
+      setMessages(tempData);
+    },
+
+    onError: (error) => {
+      console.log(error);
+    },
+  });
+
+  const handleSendMessage = () => {
+    if (
+      message !== "" &&
+      message !== null &&
+      message !== undefined &&
+      message.trim() !== " "
+    ) {
+      mutate(message);
+      handleClear();
+      scrollToBottom();
+    }
+  };
+
+  const handleClear = () => {
+    setMessage("");
+    document.querySelector(".rce-input").value = "";
+  };
+
+  if (isLoading) return <LoadingPage />;
 
   return (
     <CustomPageWithDrawer>
@@ -48,15 +149,22 @@ function ChatDetailsPage() {
           className="message-list"
           lockable={true}
           toBottomHeight={"100%"}
-          dataSource={messages.sort(
-            (a, b) => a.date.getTime() - b.date.getTime()
-          )}
+          dataSource={messages}
         />
         <Input
           placeholder="Entrer un message..."
-          multiline={true}
+          multiline={false}
+          onChange={(e) => {
+            setMessage(e.target.value);
+          }}
+          onKeyPress={(e) => {
+            if (e.key === "Enter") {
+              handleSendMessage();
+            }
+          }}
           rightButtons={
-            <Button
+            <LoadingButton
+              loading={isLoadingPut}
               color="primary"
               variant="contained"
               sx={{
@@ -67,9 +175,12 @@ function ChatDetailsPage() {
                   backgroundColor: "#3f51b5",
                 },
               }}
+              onClick={() => {
+                handleSendMessage();
+              }}
             >
               Envoyer
-            </Button>
+            </LoadingButton>
           }
         />
       </Stack>

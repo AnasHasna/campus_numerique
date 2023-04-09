@@ -1,74 +1,85 @@
-import React from "react";
+import React, { useState } from "react";
 import { ChatList } from "react-chat-elements";
 import "react-chat-elements/dist/main.css";
-import { useNavigate } from "react-router-dom";
-
-const chats = [
-  {
-    avatar:
-      "https://randomwordgenerator.com/img/picture-generator/tree-2127699_640.jpg",
-    alt: "Reactjs",
-    title: "BENSALTANA HASSAN",
-    subtitle: "Bonjour monsieur",
-    date: new Date(),
-    unread: 0,
-    dateString: "2 minute HHHH",
-  },
-  {
-    avatar:
-      "https://randomwordgenerator.com/img/picture-generator/tree-2127699_640.jpg",
-    alt: "Reactjs",
-    title: "BENSALTANA HASSAN",
-    subtitle: "Bonjour monsieur",
-    date: new Date(),
-    unread: 0,
-    dateString: "2 minute HHHH",
-  },
-  {
-    avatar:
-      "https://randomwordgenerator.com/img/picture-generator/tree-2127699_640.jpg",
-    alt: "Reactjs",
-    title: "BENSALTANA HASSAN",
-    subtitle: "Bonjour monsieur",
-    date: new Date(),
-    unread: 0,
-    dateString: "2 minute HHHH",
-  },
-  {
-    avatar:
-      "https://randomwordgenerator.com/img/picture-generator/tree-2127699_640.jpg",
-    alt: "Reactjs",
-    title: "BENSALTANA HASSAN",
-    subtitle: "Bonjour monsieur",
-    date: new Date(),
-    unread: 0,
-    dateString: "2 minute HHHH",
-  },
-  {
-    avatar:
-      "https://randomwordgenerator.com/img/picture-generator/tree-2127699_640.jpg",
-    alt: "Reactjs",
-    title: "BENSALTANA HASSAN",
-    subtitle: "Bonjour monsieur",
-    date: new Date(),
-    unread: 0,
-    dateString: "2 minute HHHH",
-  },
-];
+import { useNavigate, useParams } from "react-router-dom";
+import { getChats } from "../../redux/api/moduleApi";
+import { useQuery } from "react-query";
+import { useSelector } from "react-redux";
+import LoadingPage from "../../components/LoadingPage/LoadingPage";
+import { formatDistanceToNow, isBefore, subDays } from "date-fns";
+import { fr } from "date-fns/locale";
 
 function CustomChatList() {
   const navigate = useNavigate();
+  const { id } = useParams();
+  const { user, userType } = useSelector((state) => state.auth);
 
-  const handleNavigateToChat = () => {
-    navigate("1");
+  const [chatsData, setChatsData] = useState([]);
+
+  const { isLoading } = useQuery({
+    queryKey: "getChats",
+    queryFn: () => getChats(id, user.token, userType === "Teacher"),
+    onSuccess: (data) => {
+      const tempData = [];
+      data.data.chats.forEach((chat) => {
+        let formattedDate;
+        if (chat.messages.length) {
+          const date = new Date(
+            chat.messages[chat.messages.length - 1].createdAt
+          );
+          const now = new Date();
+          if (isBefore(date, subDays(now, 1))) {
+            formattedDate = date.toLocaleDateString("fr-FR");
+          } else {
+            formattedDate = formatDistanceToNow(date, {
+              addSuffix: true,
+              locale: fr,
+            });
+          }
+        }
+
+        tempData.push({
+          avatar:
+            "https://cdn.icon-icons.com/icons2/1919/PNG/512/avatarinsideacircle_122011.png",
+          alt:
+            userType === "Teacher"
+              ? chat.student.fullName
+              : chat.teacher.fullName,
+          title:
+            userType === "Teacher"
+              ? chat.student.fullName
+              : chat.teacher.fullName,
+          subtitle: chat.messages.length
+            ? chat.messages[chat.messages.length - 1].message
+            : "",
+          date: chat.messages.length
+            ? new Date(chat.messages[chat.messages.length - 1].createdAt)
+            : new Date(),
+          unread: 0,
+          dateString: formattedDate,
+          id: chat._id,
+        });
+      });
+      setChatsData(tempData);
+    },
+
+    onError: (error) => {
+      console.log(error);
+    },
+  });
+
+  const handleNavigateToChat = (e) => {
+    navigate(`${e.id}`);
   };
+
+  if (isLoading) return <LoadingPage />;
 
   return (
     <ChatList
       className="chat-list"
-      dataSource={chats}
+      dataSource={chatsData}
       onClick={(e) => {
-        handleNavigateToChat();
+        handleNavigateToChat(e);
       }}
     />
   );

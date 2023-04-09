@@ -13,6 +13,7 @@ const {
   SendInvitationToModuleController,
   getAllConversationsController,
   sendMessageController,
+  getSingleChatController,
 } = require("../controllers/moduleController");
 const {
   getAllPubController,
@@ -73,6 +74,7 @@ moduleRouter
 
 moduleRouter
   .route("/:moduleId/chats/:chatId")
+  .get(verifyToken, getSingleChatController)
   .post(verifyToken, sendMessageController);
 
 module.exports = moduleRouter;

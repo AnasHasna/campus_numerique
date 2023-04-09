@@ -13,6 +13,12 @@ const chatSchema = new mongoose.Schema(
       ref: "Student",
       autopopulate: true,
     },
+    teacher: {
+      type: mongoose.Schema.Types.ObjectId,
+      required: true,
+      ref: "Teacher",
+      autopopulate: true,
+    },
     messages: [
       {
         type: mongoose.Schema.Types.ObjectId,

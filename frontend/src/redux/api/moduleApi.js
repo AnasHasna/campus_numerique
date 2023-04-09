@@ -79,6 +79,46 @@ const rejectInvitations = async (moduleId, token, invitId) => {
   );
 };
 
+const getChats = async (moduleId, token, isTeacher) => {
+  return await axios.post(
+    `http://localhost:5000/modules/${moduleId}/chats`,
+    {
+      isTeacher,
+    },
+    {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    }
+  );
+};
+const getSingleChat = async (moduleId, token, chatId) => {
+  return await axios.get(
+    `http://localhost:5000/modules/${moduleId}/chats/${chatId}`,
+
+    {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    }
+  );
+};
+
+const sendMessage = async (moduleId, token, isTeacher, message, chatId) => {
+  return await axios.post(
+    `http://localhost:5000/modules/${moduleId}/chats/${chatId}`,
+    {
+      isTeacher,
+      message,
+    },
+    {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    }
+  );
+};
+
 export {
   getStatistiques,
   getNotes,
@@ -88,4 +128,7 @@ export {
   confirmInvitations,
   rejectInvitations,
   getStudents,
+  getChats,
+  getSingleChat,
+  sendMessage,
 };

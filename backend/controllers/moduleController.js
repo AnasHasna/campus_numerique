@@ -339,6 +339,7 @@ module.exports.confirmInvitationController = asyncHandler(async (req, res) => {
   await Chat.create({
     module: invitation.module,
     student: invitation.student,
+    teacher: module.teacherId,
   });
 
   await Invitation.findByIdAndDelete(invitationId);
@@ -380,19 +381,33 @@ module.exports.getAllConversationsController = asyncHandler(
     const { id: userId } = req.user;
     const { isTeacher } = req.body;
 
-    const chats =
-      isTeacher === "true"
-        ? await Chat.find({
-            module: moduleId,
-          })
-        : await Chat.find({
-            module: moduleId,
-            student: userId,
-          });
+    const chats = isTeacher
+      ? await Chat.find({
+          module: moduleId,
+        })
+      : await Chat.find({
+          module: moduleId,
+          student: userId,
+        });
 
     res.status(200).json({ status: true, chats });
   }
 );
+
+/**
+ * @description     GET single chat
+ * @router          /modules/:moduleId/chats/:chatId
+ * @method          GET
+ * @access          private (only logged in)
+ */
+
+module.exports.getSingleChatController = asyncHandler(async (req, res) => {
+  const { chatId } = req.params;
+
+  const chat = await Chat.findById(chatId);
+
+  res.status(200).json({ status: true, chat });
+});
 
 /**
  * @description     Send message
@@ -414,14 +429,13 @@ module.exports.sendMessageController = asyncHandler(async (req, res) => {
 
   // Find the chat by ID
   const chat = await Chat.findById(chatId);
-  const module = await Module.findById(chat.module);
 
   // Create a new message
   const newMessage = new Message({
     message,
-    sender: isTeacher ? module.teacherId : chat.student,
+    sender: isTeacher ? chat.teacher : chat.student,
     senderType,
-    recipient: isTeacher ? chat.student : module.teacherId,
+    recipient: isTeacher ? chat.student : chat.teacher,
     recipientType,
   });
 
