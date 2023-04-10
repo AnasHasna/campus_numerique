@@ -8,14 +8,13 @@ import {
   Icon,
   IconButton,
   InputAdornment,
-  List,
   Stack,
   TextField,
   Typography,
 } from "@mui/material";
 import InfoIcon from "@mui/icons-material/Info";
 import AccessTimeIcon from "@mui/icons-material/AccessTime";
-import { FileDownload, NoEncryption, PictureAsPdf } from "@mui/icons-material";
+import { FileDownload, PictureAsPdf } from "@mui/icons-material";
 import CommentsPubDetails from "../../components/comments/CommentsPubDetails";
 import CommentIcon from "@mui/icons-material/Comment";
 import * as yup from "yup";
@@ -25,8 +24,8 @@ import { useParams } from "react-router-dom";
 import { useSelector } from "react-redux";
 import { getSinglePub } from "../../redux/api/pubApi";
 import { useQuery } from "react-query";
-import { fr } from "date-fns/locale";
 import axios from "axios";
+import { fr } from "date-fns/locale";
 import { formatDistanceToNow, isBefore, subDays } from "date-fns";
 
 const commentSchema = yup.object().shape({
@@ -101,7 +100,6 @@ function PubDetailsPage() {
     }
   };
 
-  /*
   const date = new Date(pub.createdAt);
   const now = new Date();
   let formattedDate;
@@ -114,7 +112,6 @@ function PubDetailsPage() {
       locale: fr,
     });
   }
-  */
 
   const handleFormSubmit = (values) => {};
   return (
@@ -125,7 +122,8 @@ function PubDetailsPage() {
           justifyContent="flex-start"
           alignItems="center"
           textAlign="center"
-          gap={0.5}>
+          gap={0.5}
+        >
           <InfoIcon sx={{ fontSize: 40, color: "#071A2F" }} />
           <Typography variant="h4" color="#071A2F">
             {pub.content}
@@ -138,13 +136,14 @@ function PubDetailsPage() {
             alignItems="center"
             textAlign="center"
             p="5px"
-            gap={0.5}>
+            gap={0.5}
+          >
             <Typography variant="p" color="rgb(104,109,112)">
               {teacher.fullName}
             </Typography>
             <AccessTimeIcon fontSize="5" color="rgb(104,109,112)" />
             <Typography variant="p" color="rgb(104,109,112)">
-              :
+              {formattedDate}
             </Typography>
           </Box>
           <Divider style={{ backgroundColor: "rgb(104,109,112)" }} />
@@ -162,14 +161,16 @@ function PubDetailsPage() {
               pl: 2,
               alignItems: "center",
             }}
-            mt={3}>
+            mt={3}
+          >
             <Typography>{pub.file.name}</Typography>
             <Stack
               direction="row"
               spacing={2}
               sx={{
                 alignItems: "center",
-              }}>
+              }}
+            >
               <Avatar>
                 <Icon>
                   <PictureAsPdf />
@@ -183,7 +184,8 @@ function PubDetailsPage() {
                   },
                   cursor: "pointer",
                 }}
-                onClick={handleClickDownload}>
+                onClick={handleClickDownload}
+              >
                 <FileDownload />
               </Icon>
             </Stack>
@@ -200,12 +202,16 @@ function PubDetailsPage() {
             <CommentIcon />
             <Typography variant="p">Commentaires ajoutés au cours :</Typography>
           </Box>
-          {comment.map((comment, i) => (
-            <List sx={{ width: "100%", bgcolor: "#F8F8FB" }}>
-              <CommentsPubDetails key={i} content={comment.content} />
-              <Divider variant="inset" component="li" />
-            </List>
-          ))}
+          <Stack divider={<Divider />} spacing={1}>
+            {comment.map((comment, i) => (
+              <CommentsPubDetails
+                key={i}
+                content={comment.content}
+                name={comment.studentId.fullName}
+                createdAt={comment.createdAt}
+              />
+            ))}
+          </Stack>
         </Box>
         {!addComment && (
           <Stack direction="row" spacing={2} mt={1}>
@@ -221,7 +227,8 @@ function PubDetailsPage() {
                   backgroundColor: "white",
                 },
               }}
-              onClick={handleAddComment}>
+              onClick={handleAddComment}
+            >
               Ajouter un commentaire a cette publication
             </Button>
           </Stack>
@@ -231,7 +238,8 @@ function PubDetailsPage() {
             <Formik
               initialValues={initialValuesComment}
               validationSchema={commentSchema}
-              onSubmit={() => {}}>
+              onSubmit={() => {}}
+            >
               {({
                 values,
                 errors,
@@ -246,7 +254,8 @@ function PubDetailsPage() {
                   display="flex"
                   flexDirection="row"
                   gap={1}
-                  justifyContent="center">
+                  justifyContent="center"
+                >
                   <Avatar sx={{ mt: 1 }} />
                   <TextField
                     label="Commentaire"
