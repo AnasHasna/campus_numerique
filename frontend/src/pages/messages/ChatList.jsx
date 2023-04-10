@@ -63,8 +63,8 @@ function CustomChatList() {
       setChatsData(tempData);
     },
 
-    onError: (error) => {
-      console.log(error);
+    onError: (err) => {
+      console.log(err);
     },
   });
 
