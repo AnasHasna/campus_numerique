@@ -7,19 +7,18 @@ import LoadingPage from "../../components/LoadingPage/LoadingPage";
 import { Stack, Typography } from "@mui/material";
 import { useState } from "react";
 import CustomCardFile from "../../components/Files/CustomCardFile";
+import NoFileData from "../../components/NoFile/NoFileData";
 
 function CoursPage() {
   const { id } = useParams();
   const { user } = useSelector((state) => state.auth);
-  const { userType } = useSelector((state) => state.auth);
   const [data, setData] = useState([]);
-  const { isLoading, refetch, error } = useQuery({
+  const { isLoading } = useQuery({
     queryKey: "getAllFiles",
     queryFn: () => getAllFiles(id, user.token),
     onSuccess: (d) => {
       const filtered = d.data.files.filter((file) => file.type === "cours");
       setData(filtered);
-      console.log(data);
     },
     onError: (error) => {
       console.log(error);
@@ -28,6 +27,10 @@ function CoursPage() {
 
   if (isLoading) return <LoadingPage />;
 
+  if (!data.length) {
+    return <NoFileData />;
+  }
+
   return (
     <CustomPageWithDrawer>
       <Stack spacing={2}>
@@ -35,7 +38,8 @@ function CoursPage() {
           variant="h4"
           sx={{
             fontWeight: "bold",
-          }}>
+          }}
+        >
           {" "}
           Les cours :
         </Typography>

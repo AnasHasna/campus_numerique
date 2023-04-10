@@ -7,13 +7,13 @@ import LoadingPage from "../../components/LoadingPage/LoadingPage";
 import { Stack, Typography } from "@mui/material";
 import { useState } from "react";
 import CustomCardFile from "../../components/Files/CustomCardFile";
+import NoFileData from "../../components/NoFile/NoFileData";
 
 function TdsPage() {
   const { id } = useParams();
   const { user } = useSelector((state) => state.auth);
-  const { userType } = useSelector((state) => state.auth);
   const [data, setData] = useState([]);
-  const { isLoading, refetch, error } = useQuery({
+  const { isLoading } = useQuery({
     queryKey: "getAllFiles",
     queryFn: () => getAllFiles(id, user.token),
     onSuccess: (d) => {
@@ -28,6 +28,10 @@ function TdsPage() {
 
   if (isLoading) return <LoadingPage />;
 
+  if (!data.length) {
+    return <NoFileData />;
+  }
+
   return (
     <CustomPageWithDrawer>
       <Stack spacing={2}>
@@ -35,7 +39,8 @@ function TdsPage() {
           variant="h4"
           sx={{
             fontWeight: "bold",
-          }}>
+          }}
+        >
           {" "}
           Les travaux derigés :
         </Typography>
