@@ -27,6 +27,7 @@ import { useQuery } from "react-query";
 import axios from "axios";
 import { fr } from "date-fns/locale";
 import { formatDistanceToNow, isBefore, subDays } from "date-fns";
+import LoadingPage from "../../components/LoadingPage/LoadingPage";
 
 const commentSchema = yup.object().shape({
   comment: yup
@@ -100,19 +101,22 @@ function PubDetailsPage() {
     }
   };
 
-  const date = new Date(pub.createdAt);
-  const now = new Date();
-  let formattedDate;
+  // const date = new Date(pub.createdAt);
+  // const now = new Date();
+  // let formattedDate;
 
-  if (isBefore(date, subDays(now, 1))) {
-    formattedDate = date.toLocaleDateString("fr-FR");
-  } else {
-    formattedDate = formatDistanceToNow(date, {
-      addSuffix: true,
-      locale: fr,
-    });
+  // if (isBefore(date, subDays(now, 1))) {
+  //   formattedDate = date.toLocaleDateString("fr-FR");
+  // } else {
+  //   formattedDate = formatDistanceToNow(date, {
+  //     addSuffix: true,
+  //     locale: fr,
+  //   });
+  // }
+  const { userType } = useSelector((state) => state.auth);
+  if (isLoading) {
+    return <LoadingPage />;
   }
-
   const handleFormSubmit = (values) => {};
   return (
     <CustomPageWithDrawer>
@@ -122,8 +126,7 @@ function PubDetailsPage() {
           justifyContent="flex-start"
           alignItems="center"
           textAlign="center"
-          gap={0.5}
-        >
+          gap={0.5}>
           <InfoIcon sx={{ fontSize: 40, color: "#071A2F" }} />
           <Typography variant="h4" color="#071A2F">
             {pub.content}
@@ -136,14 +139,13 @@ function PubDetailsPage() {
             alignItems="center"
             textAlign="center"
             p="5px"
-            gap={0.5}
-          >
+            gap={0.5}>
             <Typography variant="p" color="rgb(104,109,112)">
               {teacher.fullName}
             </Typography>
             <AccessTimeIcon fontSize="5" color="rgb(104,109,112)" />
             <Typography variant="p" color="rgb(104,109,112)">
-              {formattedDate}
+              {/* {formattedDate} */}
             </Typography>
           </Box>
           <Divider style={{ backgroundColor: "rgb(104,109,112)" }} />
@@ -161,16 +163,14 @@ function PubDetailsPage() {
               pl: 2,
               alignItems: "center",
             }}
-            mt={3}
-          >
+            mt={3}>
             <Typography>{pub.file.name}</Typography>
             <Stack
               direction="row"
               spacing={2}
               sx={{
                 alignItems: "center",
-              }}
-            >
+              }}>
               <Avatar>
                 <Icon>
                   <PictureAsPdf />
@@ -184,8 +184,7 @@ function PubDetailsPage() {
                   },
                   cursor: "pointer",
                 }}
-                onClick={handleClickDownload}
-              >
+                onClick={handleClickDownload}>
                 <FileDownload />
               </Icon>
             </Stack>
@@ -213,77 +212,80 @@ function PubDetailsPage() {
             ))}
           </Stack>
         </Box>
-        {!addComment && (
-          <Stack direction="row" spacing={2} mt={1}>
-            <Button
-              variant="outlined"
-              sx={{
-                color: "#071A2F",
-                border: "none",
-                "&:hover": {
-                  color: "#636364",
-                  borderRadius: "10px",
-                  border: "1px solid #636364 ",
-                  backgroundColor: "white",
-                },
-              }}
-              onClick={handleAddComment}
-            >
-              Ajouter un commentaire a cette publication
-            </Button>
-          </Stack>
-        )}
-        {addComment && (
-          <Stack direction="row" spacing={2} mt={2}>
-            <Formik
-              initialValues={initialValuesComment}
-              validationSchema={commentSchema}
-              onSubmit={() => {}}
-            >
-              {({
-                values,
-                errors,
-                touched,
-                handleBlur,
-                handleChange,
-                setFieldValue,
-                handleSubmit,
-                resetForm,
-              }) => (
-                <Box
-                  display="flex"
-                  flexDirection="row"
-                  gap={1}
-                  justifyContent="center"
-                >
-                  <Avatar sx={{ mt: 1 }} />
-                  <TextField
-                    label="Commentaire"
-                    onBlur={handleBlur}
-                    onChange={handleChange}
-                    value={values.comment}
-                    name="comment"
-                    error={Boolean(touched.comment) && Boolean(errors.comment)}
-                    helperText={touched.comment && errors.comment}
-                    placeholder="Ajouter votre commentaire"
-                    sx={{
-                      minWidth: "300px",
-                    }}
-                    InputProps={{
-                      endAdornment: (
-                        <InputAdornment position="end">
-                          <IconButton onClick={handleSubmit}>
-                            <SendIcon />
-                          </IconButton>
-                        </InputAdornment>
-                      ),
-                    }}
-                    multiline
-                  />
-                </Box>
-              )}
-            </Formik>
-          </Stack>
+        {userType === "Student" && (
+          <Box>
+            {!addComment && (
+              <Stack direction="row" spacing={2} mt={1}>
+                <Button
+                  variant="outlined"
+                  sx={{
+                    color: "#071A2F",
+                    border: "none",
+                    "&:hover": {
+                      color: "#636364",
+                      borderRadius: "10px",
+                      border: "1px solid #636364 ",
+                      backgroundColor: "white",
+                    },
+                  }}
+                  onClick={handleAddComment}>
+                  Ajouter un commentaire a cette publication
+                </Button>
+              </Stack>
+            )}
+            {addComment && (
+              <Stack direction="row" spacing={2} mt={2}>
+                <Formik
+                  initialValues={initialValuesComment}
+                  validationSchema={commentSchema}
+                  onSubmit={() => {}}>
+                  {({
+                    values,
+                    errors,
+                    touched,
+                    handleBlur,
+                    handleChange,
+                    setFieldValue,
+                    handleSubmit,
+                    resetForm,
+                  }) => (
+                    <Box
+                      display="flex"
+                      flexDirection="row"
+                      gap={1}
+                      justifyContent="center">
+                      <Avatar sx={{ mt: 1 }} />
+                      <TextField
+                        label="Commentaire"
+                        onBlur={handleBlur}
+                        onChange={handleChange}
+                        value={values.comment}
+                        name="comment"
+                        error={
+                          Boolean(touched.comment) && Boolean(errors.comment)
+                        }
+                        helperText={touched.comment && errors.comment}
+                        placeholder="Ajouter votre commentaire"
+                        sx={{
+                          minWidth: "300px",
+                        }}
+                        InputProps={{
+                          endAdornment: (
+                            <InputAdornment position="end">
+                              <IconButton onClick={handleSubmit}>
+                                <SendIcon />
+                              </IconButton>
+                            </InputAdornment>
+                          ),
+                        }}
+                        multiline
+                      />
+                    </Box>
+                  )}
+                </Formik>
+              </Stack>
+            )}
+          </Box>
         )}
       </Box>
     </CustomPageWithDrawer>
