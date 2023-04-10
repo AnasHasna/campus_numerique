@@ -4,6 +4,8 @@ const { find } = require("../models/pubModel");
 const Pub = require("../models/pubModel");
 const path = require("path");
 const File = require("../models/filesModel");
+const { Module } = require("../models/moduleModel");
+const { Teacher } = require("../models/teacherModel");
 
 /**
  * @description     Add pub 
@@ -55,4 +57,20 @@ module.exports.getAllPubController = asyncHandler(async (req, res) => {
   const pubs = await Pub.find({ moduleId }).sort({ createdAt: -1 });
 
   res.status(200).json({ status: true, pubs });
+});
+
+/**
+ * @description     Get single pub
+ * @router          /pubs
+ * @method          GET
+ * @access          public
+ */
+
+module.exports.getSinglePubController = asyncHandler(async (req, res) => {
+  const { pubId } = req.params;
+  const pub = await Pub.findById(pubId);
+  const module = await Module.findById(pub.moduleId);
+  const teacher = await Teacher.findById(module.teacherId);
+
+  res.status(200).json({ status: true, pub, teacher });
 });

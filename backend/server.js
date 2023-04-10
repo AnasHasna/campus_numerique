@@ -10,6 +10,7 @@ const moduleRouter = require("./routes/moduleRouter.js");
 const filesRouter = require("./routes/filesRouter.js");
 const commentRouter = require("./routes/commentRouter.js");
 const path = require("path");
+const pubRouter = require("./routes/pubRouter.js");
 
 const app = express();
 
@@ -32,6 +33,7 @@ app.use(express.json());
 app.use("/teachers", teacherRouter);
 app.use("/students", studentRouter);
 app.use("/modules", moduleRouter);
+app.use("/pub", pubRouter);
 app.use("/files", filesRouter);
 app.use("/comments", commentRouter);
 
