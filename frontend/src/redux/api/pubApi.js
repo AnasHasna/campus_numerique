@@ -7,6 +7,13 @@ const getAllPubs = async (id, token) => {
     },
   });
 };
+const getAllFiles = async (id, token) => {
+  return await axios.get(`http://localhost:5000/files/${id}`, {
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+  });
+};
 
 const getSinglePub = async (pubId, token) => {
   return await axios.get(`http://localhost:5000/pub/${pubId}`, {
@@ -31,4 +38,4 @@ const downloadFile = async (id) => {
   });
 };
 
-export { getAllPubs, addPub, downloadFile, getSinglePub };
+export { getAllPubs, addPub, downloadFile, getSinglePub, getAllFiles };

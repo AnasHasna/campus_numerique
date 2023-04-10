@@ -33,7 +33,7 @@ function CardAddPubBoard(props) {
 
   const [file, setFile] = useState();
   const [content, setContent] = useState("");
-  const [type, setType] = useState("cours");
+  let type = "td";
 
   const [openSnackBar, setOpenSnackBar] = useState(false);
 
@@ -178,8 +178,11 @@ function CardAddPubBoard(props) {
                     alignItems: "center",
                   }}>
                   <CustomDropDawn
-                    options={["COURS", "TD", "EXAM"]}
-                    setOption={setType}
+                    options={["COURS", "TD", "EXAM", "TP"]}
+                    setOption={(option) => {
+                      type = option;
+                      console.log(type);
+                    }}
                     option={type}
                   />
                   <Avatar>
