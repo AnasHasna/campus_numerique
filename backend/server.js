@@ -2,6 +2,7 @@ const express = require("express");
 const helmet = require("helmet");
 const hpp = require("hpp");
 const cors = require("cors");
+
 const connectToDB = require("./config/connectToDB.js");
 const { notFound, errorHandler } = require("./middleware/error.js");
 const teacherRouter = require("./routes/teacherRouter.js");
@@ -44,9 +45,26 @@ app.use(errorHandler);
 //mongoose
 connectToDB();
 
+// socket
+const http = require("http");
+const server = http.createServer(app);
+const io = require("socket.io")(server, {
+  cors: {
+    origin: "*",
+    methods: ["GET", "POST", "PUT", "DELETE"],
+  },
+});
+
+io.on("connection", (socket) => {
+  console.log("a user connected");
+  socket.on("addUser", (userId) => {
+    console.log(userId);
+  });
+});
+
 //Run the server
 const PORT = process.env.PORT || 5000;
-app.listen(PORT, () => {
+server.listen(PORT, () => {
   console.log(
     `server running on port ${PORT} on mode ${process.env.NODE_ENV}... `
   );

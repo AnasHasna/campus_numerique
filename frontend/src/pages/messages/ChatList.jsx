@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { ChatList } from "react-chat-elements";
 import "react-chat-elements/dist/main.css";
 import { useNavigate, useParams } from "react-router-dom";
@@ -9,15 +9,28 @@ import LoadingPage from "../../components/LoadingPage/LoadingPage";
 import { formatDistanceToNow, isBefore, subDays } from "date-fns";
 import { fr } from "date-fns/locale";
 
+import io from "socket.io-client";
+
 function CustomChatList() {
   const navigate = useNavigate();
   const { id } = useParams();
   const { user, userType } = useSelector((state) => state.auth);
 
+  const socket = useRef();
+
   const [chatsData, setChatsData] = useState([]);
 
-  const { isLoading } = useQuery({
+  useEffect(() => {
+    socket.current = io("ws://localhost:5000");
+  }, []);
+
+  useEffect(() => {
+    socket.current.emit("addUser", user._id);
+  }, [user]);
+
+  const { isLoading, refetch } = useQuery({
     queryKey: "getChats",
+    enabled: false,
     queryFn: () => getChats(id, user.token, userType === "Teacher"),
     onSuccess: (data) => {
       const tempData = [];
@@ -27,6 +40,17 @@ function CustomChatList() {
           const date = new Date(
             chat.messages[chat.messages.length - 1].createdAt
           );
+          const now = new Date();
+          if (isBefore(date, subDays(now, 1))) {
+            formattedDate = date.toLocaleDateString("fr-FR");
+          } else {
+            formattedDate = formatDistanceToNow(date, {
+              addSuffix: true,
+              locale: fr,
+            });
+          }
+        } else {
+          const date = new Date(chat.createdAt);
           const now = new Date();
           if (isBefore(date, subDays(now, 1))) {
             formattedDate = date.toLocaleDateString("fr-FR");
@@ -54,7 +78,7 @@ function CustomChatList() {
             : "",
           date: chat.messages.length
             ? new Date(chat.messages[chat.messages.length - 1].createdAt)
-            : new Date(),
+            : new Date(chat.createdAt),
           unread: 0,
           dateString: formattedDate,
           id: chat._id,
@@ -67,6 +91,10 @@ function CustomChatList() {
       console.log(err);
     },
   });
+
+  useEffect(() => {
+    refetch();
+  }, [chatsData, refetch]);
 
   const handleNavigateToChat = (e) => {
     navigate(`${e.id}`);
