@@ -15,6 +15,8 @@ import { Link, useLocation, useNavigate } from "react-router-dom";
 import { primaryColor } from "../../utils/colors";
 import { useDispatch, useSelector } from "react-redux";
 import { authActions } from "../../redux/slices/authSlice";
+import { Stack } from "@mui/material";
+import NotificationIcon from "./NotificationIcon";
 
 const settings = [
   { setting: "Paramètres", route: "settings" },
@@ -129,7 +131,8 @@ function MyAppBar() {
             </Box>
 
             {isLogin === true && (
-              <Box display="flex">
+              <Stack direction="row" spacing={2}>
+                <NotificationIcon />
                 <Tooltip title="Open settings">
                   <IconButton onClick={handleOpenUserMenu} sx={{ p: 0 }}>
                     <Avatar
@@ -173,7 +176,7 @@ function MyAppBar() {
                     </MenuItem>
                   ))}
                 </Menu>
-              </Box>
+              </Stack>
             )}
           </Box>
         </Toolbar>
