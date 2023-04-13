@@ -12,6 +12,7 @@ const filesRouter = require("./routes/filesRouter.js");
 const commentRouter = require("./routes/commentRouter.js");
 const path = require("path");
 const pubRouter = require("./routes/pubRouter.js");
+const notificationRouter = require("./routes/notificationsRouter.js");
 
 const app = express();
 
@@ -37,6 +38,7 @@ app.use("/modules", moduleRouter);
 app.use("/pub", pubRouter);
 app.use("/files", filesRouter);
 app.use("/comments", commentRouter);
+app.use("/notifications", notificationRouter);
 
 // error handler middleware
 app.use(notFound);
@@ -55,10 +57,32 @@ const io = require("socket.io")(server, {
   },
 });
 
+let onlineUsers = [];
+
+const addNewUser = (userId, userType, socketId) => {
+  !onlineUsers.some((user) => user.userId === userId) &&
+    onlineUsers.push({ userId, userType, socketId });
+};
+
+const removeUser = (socketId) => {
+  onlineUsers = onlineUsers.filter((user) => user.socketId !== socketId);
+};
+
+const getUser = (userId) => {
+  return onlineUsers.find((user) => user.userId === userId);
+};
+
 io.on("connection", (socket) => {
   console.log("a user connected");
-  socket.on("addUser", (userId) => {
-    console.log(userId);
+  socket.on("newUser", (userId, userType) => {
+    addNewUser(userId, userType, socket.id);
+    io.emit("getUsers", onlineUsers);
+  });
+
+  socket.on("disconnect", () => {
+    console.log("a user disconnected");
+    removeUser(socket.id);
+    io.emit("getUsers", onlineUsers);
   });
 });
 

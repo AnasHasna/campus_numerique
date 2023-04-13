@@ -2,16 +2,16 @@ const mongoose = require("mongoose");
 
 const notificationSchema = new mongoose.Schema(
   {
-    module: {
+    user: {
       type: mongoose.Schema.Types.ObjectId,
-      ref: "Module",
       required: true,
-      trim: true,
+      refPath: "userType",
       autopopulate: true,
     },
-    student: {
-      type: mongoose.Schema.Types.ObjectId,
-      ref: "Student",
+    userType: {
+      type: String,
+      required: true,
+      enum: ["Teacher", "Student"],
     },
     message: {
       type: String,

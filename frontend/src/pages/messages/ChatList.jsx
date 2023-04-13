@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from "react";
+import React, { useEffect, useState } from "react";
 import { ChatList } from "react-chat-elements";
 import "react-chat-elements/dist/main.css";
 import { useNavigate, useParams } from "react-router-dom";
@@ -9,24 +9,12 @@ import LoadingPage from "../../components/LoadingPage/LoadingPage";
 import { formatDistanceToNow, isBefore, subDays } from "date-fns";
 import { fr } from "date-fns/locale";
 
-import io from "socket.io-client";
-
 function CustomChatList() {
   const navigate = useNavigate();
   const { id } = useParams();
   const { user, userType } = useSelector((state) => state.auth);
 
-  const socket = useRef();
-
   const [chatsData, setChatsData] = useState([]);
-
-  useEffect(() => {
-    socket.current = io("ws://localhost:5000");
-  }, []);
-
-  useEffect(() => {
-    socket.current.emit("addUser", user._id);
-  }, [user]);
 
   const { isLoading, refetch } = useQuery({
     queryKey: "getChats",
