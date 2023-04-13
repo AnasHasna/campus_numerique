@@ -1,5 +1,4 @@
 import { Box, Toolbar } from "@mui/material";
-import React from "react";
 
 function CustomPageWithoutDrawer({ children }) {
   return (
