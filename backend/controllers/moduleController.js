@@ -42,11 +42,20 @@ module.exports.createModuleController = asyncHandler(async (req, res) => {
   const { error } = validateCreateModule(req.body);
   if (error) return res.status(400).send(error.details[0].message);
 
-  const { name, teacherId } = req.body;
+  const { name, teacherId, identifiant } = req.body;
 
-  const module = new Module({
+  let module = await Module.findOne({
+    identifiant,
+  });
+  if (module)
+    return res
+      .status(400)
+      .json({ status: false, message: "Module déjà existant" });
+
+  module = new Module({
     name,
     teacherId,
+    identifiant,
   });
 
   await module.save();

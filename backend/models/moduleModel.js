@@ -4,6 +4,12 @@ const mongoose = require("mongoose");
 const moduleSchema = new mongoose.Schema(
   {
     name: { type: String, required: true, trim: true },
+    identifiant: {
+      type: String,
+      required: true,
+      trim: true,
+      unique: true,
+    },
     teacherId: {
       type: mongoose.Schema.Types.ObjectId,
       required: true,
@@ -38,6 +44,7 @@ const validateCreateModule = (module) => {
   const schema = Joi.object({
     name: Joi.string().required(),
     teacherId: Joi.string().required(),
+    identifiant: Joi.string().required(),
   });
   return schema.validate(module);
 };
