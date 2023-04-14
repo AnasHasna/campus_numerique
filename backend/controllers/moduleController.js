@@ -11,6 +11,8 @@ const Invitation = require("../models/invitationModel");
 const Teacher = require("../models/teacherModel");
 const { Chat } = require("../models/chatModel");
 const { Message } = require("../models/messageModel");
+const { Notification } = require("../models/notificationModel");
+const { ObjectId } = require("mongodb");
 /**
  * @description     Get all modules
  * @router          /modules/all
@@ -43,12 +45,21 @@ module.exports.searchModuleController = asyncHandler(async (req, res) => {
   // get all modules that has identifiant and the student doesnt in
   const module = await Module.findOne({
     identifiant,
-    students: { $nin: [studentId] },
   });
   if (!module) {
     return res
       .status(404)
       .json({ status: false, message: "Module introuvable" });
+  }
+  // if student id already in
+  console.log(module.students);
+  for (let i = 0; i < module.students.length; i++) {
+    if (module.students[i]._id.toString() === studentId) {
+      return res.status(400).json({
+        status: false,
+        message: "Vous êtes déjà inscrit dans ce module",
+      });
+    }
   }
   res.status(200).json({ status: true, module });
 });
@@ -336,9 +347,22 @@ module.exports.SendInvitationToModuleController = asyncHandler(
     });
 
     if (!invitation) {
+      // send invitation
       await Invitation.create({
         module: moduleId,
         student: studentId,
+      });
+      // get studentName and moduleName
+      const student = await Student.findById(studentId);
+      const module = await Module.findById(moduleId);
+
+      // send notification
+      await Notification.create({
+        message: `${student.fullName} a envoyer une
+        invitation pour rejoindre le module ${module.name}`,
+        user: module.teacherId,
+        userType: "Teacher",
+        page: `/modules/${module.id}/invitations`,
       });
     }
 
@@ -381,6 +405,14 @@ module.exports.confirmInvitationController = asyncHandler(async (req, res) => {
   });
 
   await Invitation.findByIdAndDelete(invitationId);
+
+  // send notification
+  await Notification.create({
+    message: `Vous avez rejoint le module ${module.name}`,
+    user: invitation.student,
+    userType: "Student",
+    page: `/modules/${module.id}`,
+  });
 
   res.status(200).json({
     status: true,

@@ -6,6 +6,7 @@ const path = require("path");
 const File = require("../models/filesModel");
 const { Module } = require("../models/moduleModel");
 const { Teacher } = require("../models/teacherModel");
+const { Notification } = require("../models/notificationModel");
 
 /**
  * @description     Add pub 
@@ -39,6 +40,20 @@ module.exports.createPubController = asyncHandler(async (req, res) => {
     pub.file = file._id;
     await pub.save();
   }
+
+  const module = await Module.findById(moduleId);
+
+  // send notification to all students in the module
+  const students = module.students;
+
+  students.forEach(async (student) => {
+    Notification.create({
+      user: student,
+      userType: "Student",
+      page: `/modules/${module.id}/boards`,
+      message: `Un nouveau publication a été ajouté dans le module ${module.name}`,
+    });
+  });
 
   res
     .status(201)

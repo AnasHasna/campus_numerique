@@ -13,6 +13,11 @@ const notificationSchema = new mongoose.Schema(
       required: true,
       enum: ["Teacher", "Student"],
     },
+    page: {
+      type: String,
+      required: true,
+      trim: true,
+    },
     message: {
       type: String,
       required: true,

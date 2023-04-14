@@ -23,16 +23,20 @@ function CardModule(props) {
   const dispatch = useDispatch();
 
   // get the user from store
-  const { user, userType } = useSelector((state) => state.auth);
-  console.log(props);
+  const { userType } = useSelector((state) => state.auth);
+
   const [fullUrl, setFullUrl] = React.useState(null);
   const [fileName, setFileName] = React.useState(null);
 
   const baseUrl = "http://localhost:5000/images/";
 
   React.useEffect(() => {
-    if (userType === "Teacher") {
-      setFileName(user.imageUrl.substring(user.imageUrl.lastIndexOf("\\") + 1));
+    if (userType === "Student") {
+      setFileName(
+        props.module.teacherId.imageUrl.substring(
+          props.module.teacherId.imageUrl.lastIndexOf("\\") + 1
+        )
+      );
       setFullUrl(baseUrl + fileName);
     }
   }, [userType, fileName, baseUrl]);
@@ -95,9 +99,9 @@ function CardModule(props) {
             3ème année
           </Typography>
         </Box>
-        {userType === "Teacher" && (
+        {userType !== "Teacher" && (
           <Avatar
-            alt={user.fullName}
+            alt={props.module.teacherId.fullName}
             src={fullUrl}
             sx={{
               height: 50,

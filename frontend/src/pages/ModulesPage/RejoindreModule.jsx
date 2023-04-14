@@ -60,7 +60,7 @@ function RejoindreModule() {
       setSearchModule(data.data.module);
     },
     onError: (err) => {
-      setSnackBarMessage("Aucun module n'a été trouvé avec cet identifiant");
+      setSnackBarMessage(err.response.data.message);
       setSnackBarType("error");
       setOpenSnackBar(true);
     },
@@ -145,6 +145,8 @@ function RejoindreModule() {
               variant="outlined"
               onClick={() => {
                 setOpenModal(false);
+                setSearchModule(null);
+                setValues({ identifiant: "" });
               }}
             >
               Annuler
