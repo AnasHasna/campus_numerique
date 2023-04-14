@@ -6,8 +6,9 @@ const moduleSlice = createSlice({
     module: null,
   },
   reducers: {
-    selectModule(state, action) {},
-    selectPub(state, action) {},
+    selectModule(state, action) {
+      state.module = action.payload;
+    },
   },
 });
 

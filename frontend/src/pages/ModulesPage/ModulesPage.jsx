@@ -1,86 +1,42 @@
-import React, { useState } from "react";
 import CustomPageWithoutDrawer from "../../components/CustomPageWithoutDrawer";
-import CustomModal from "../../components/CustomModal";
-import { Box, Button, TextField } from "@mui/material";
+import { Stack } from "@mui/material";
+import AllModules from "./AllModules";
+import { useSelector } from "react-redux";
+import AddModule from "./AddModule";
+import RejoindreModule from "./RejoindreModule";
+import { useQuery } from "react-query";
+import { useState } from "react";
+import LoadingPage from "../../components/LoadingPage/LoadingPage";
+import { getAllModules } from "../../redux/api/moduleApi";
 
 function ModulesPage() {
-  const [open, setOpen] = useState(false);
-  const [values, setValues] = useState({
-    module: "",
-    id: "",
+  const { userType, user } = useSelector((state) => state.auth);
+
+  const [modules, setModules] = useState([]);
+
+  const { isLoading, refetch } = useQuery({
+    queryKey: "modules",
+    queryFn: () => {
+      return getAllModules(user._id, userType, user.token);
+    },
+
+    onSuccess: (data) => {
+      setModules(data.data.modules);
+    },
   });
-  const onSubmit = (values) => {
-    console.log("saliiiiiit");
-    console.log(values);
-  };
+
+  if (isLoading) return <LoadingPage />;
 
   return (
     <CustomPageWithoutDrawer>
-      <Button
-        onClick={() => {
-          setOpen(true);
-        }}
-      >
-        Créer un cours
-      </Button>
-      <Box
-        sx={{
-          display: "grid",
-          gridTemplateColumns: "repeat(4, 1fr)",
-          gridGap: "1rem",
-          mt: "1rem",
-        }}
-      >
-        <CustomModal open={open} setOpen={setOpen}>
-          <h3>Créer un cours</h3>
-
-          <TextField
-            margin="normal"
-            name="module"
-            required
-            fullWidth
-            id="module"
-            label="Nom du Module (obligatoire)"
-            autoFocus
-            onChange={(handleChange) => {
-              setValues({ ...values, module: handleChange.target.value });
-            }}
-            sx={{
-              gridColumn: "span 4",
-            }}
-          />
-          <TextField
-            margin="normal"
-            name="id"
-            required
-            fullWidth
-            id="id"
-            label="Identifiant"
-            autoFocus
-            onChange={(handleChange) => {
-              setValues({ ...values, id: handleChange.target.value });
-            }}
-            sx={{
-              gridColumn: "span 4",
-            }}
-          />
-          <Button
-            onClick={() => {
-              setOpen(false);
-            }}
-          >
-            Annuler
-          </Button>
-          <Button
-            onClick={() => {
-              onSubmit(values);
-              setOpen(false);
-            }}
-          >
-            Créer un cours
-          </Button>
-        </CustomModal>
-      </Box>
+      <Stack spacing={2}>
+        {userType === "Teacher" ? (
+          <AddModule refetch={refetch} />
+        ) : (
+          <RejoindreModule />
+        )}
+        <AllModules modules={modules} />
+      </Stack>
     </CustomPageWithoutDrawer>
   );
 }

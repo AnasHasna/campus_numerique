@@ -13,22 +13,44 @@ const { Chat } = require("../models/chatModel");
 const { Message } = require("../models/messageModel");
 /**
  * @description     Get all modules
- * @router          /modules
+ * @router          /modules/all
  * @method          GET
  * @access          public
  */
 module.exports.getAllModulesController = asyncHandler(async (req, res) => {
-  const { error } = validateGetALLModules(req.body);
-  if (error)
-    return res
-      .status(400)
-      .json({ status: false, message: error.details[0].message });
-  const { teacherId } = req.body;
-
-  const modules = await Module.find({
-    teacherId,
-  });
+  const { userId, userType } = req.body;
+  let modules = [];
+  if (userType === "Student") {
+    modules = await Module.find({
+      students: { $in: [userId] },
+    });
+  } else {
+    modules = await Module.find({
+      teacherId: userId,
+    });
+  }
   res.status(200).json({ status: true, modules });
+});
+
+/**
+ * @description     search module
+ * @router          /search
+ * @method          POST
+ * @access          public
+ */
+module.exports.searchModuleController = asyncHandler(async (req, res) => {
+  const { identifiant, studentId } = req.body;
+  // get all modules that has identifiant and the student doesnt in
+  const module = await Module.findOne({
+    identifiant,
+    students: { $nin: [studentId] },
+  });
+  if (!module) {
+    return res
+      .status(404)
+      .json({ status: false, message: "Module introuvable" });
+  }
+  res.status(200).json({ status: true, module });
 });
 
 /**
@@ -39,10 +61,7 @@ module.exports.getAllModulesController = asyncHandler(async (req, res) => {
  */
 
 module.exports.createModuleController = asyncHandler(async (req, res) => {
-  const { error } = validateCreateModule(req.body);
-  if (error) return res.status(400).send(error.details[0].message);
-
-  const { name, teacherId, identifiant } = req.body;
+  const { name, teacherId, identifiant, classe } = req.body;
 
   let module = await Module.findOne({
     identifiant,
@@ -50,11 +69,12 @@ module.exports.createModuleController = asyncHandler(async (req, res) => {
   if (module)
     return res
       .status(400)
-      .json({ status: false, message: "Module déjà existant" });
+      .json({ status: false, message: "Module déjà existant avec ce ID" });
 
   module = new Module({
     name,
     teacherId,
+    classe,
     identifiant,
   });
 
@@ -308,10 +328,19 @@ module.exports.SendInvitationToModuleController = asyncHandler(
 
     const { studentId } = req.body;
 
-    const invitation = await Invitation.create({
+    // check if the invitation is exist
+
+    const invitation = await Invitation.findOne({
       module: moduleId,
       student: studentId,
     });
+
+    if (!invitation) {
+      await Invitation.create({
+        module: moduleId,
+        student: studentId,
+      });
+    }
 
     res.status(201).json({
       status: true,

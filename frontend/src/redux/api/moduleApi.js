@@ -1,5 +1,66 @@
 import axios from "axios";
 
+const getAllModules = async (userId, userType, token) => {
+  return await axios.post(
+    `http://localhost:5000/modules/all`,
+    {
+      userId,
+      userType,
+    },
+    {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    }
+  );
+};
+
+const createModules = async (teacherId, name, classe, identifiant, token) => {
+  return await axios.post(
+    `http://localhost:5000/modules`,
+    {
+      teacherId,
+      identifiant,
+      name,
+      classe,
+    },
+    {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    }
+  );
+};
+
+const searchModules = async (studentId, token, identifiant) => {
+  return await axios.post(
+    `http://localhost:5000/modules/search`,
+    {
+      identifiant,
+      studentId,
+    },
+    {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    }
+  );
+};
+
+const sendInvitation = async (moduleId, studentId, token) => {
+  return await axios.post(
+    `http://localhost:5000/modules/${moduleId}/invitations`,
+    {
+      studentId,
+    },
+    {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    }
+  );
+};
+
 const getModuleInfo = async (moduleId, token) => {
   return await axios.get(`http://localhost:5000/modules/${moduleId}`, {
     headers: {
@@ -131,4 +192,8 @@ export {
   getChats,
   getSingleChat,
   sendMessage,
+  getAllModules,
+  createModules,
+  sendInvitation,
+  searchModules,
 };

@@ -4,6 +4,11 @@ const mongoose = require("mongoose");
 const moduleSchema = new mongoose.Schema(
   {
     name: { type: String, required: true, trim: true },
+    classe: {
+      type: String,
+      required: true,
+      trim: true,
+    },
     identifiant: {
       type: String,
       required: true,
@@ -13,7 +18,9 @@ const moduleSchema = new mongoose.Schema(
     teacherId: {
       type: mongoose.Schema.Types.ObjectId,
       required: true,
+      ref: "Teacher",
       trim: true,
+      autopopulate: true,
     },
     students: [
       {
@@ -39,16 +46,6 @@ moduleSchema.plugin(require("mongoose-autopopulate"));
 
 const Module = mongoose.model("Module", moduleSchema);
 
-// validate create module
-const validateCreateModule = (module) => {
-  const schema = Joi.object({
-    name: Joi.string().required(),
-    teacherId: Joi.string().required(),
-    identifiant: Joi.string().required(),
-  });
-  return schema.validate(module);
-};
-
 const validateGetALLModules = (module) => {
   const schema = Joi.object({
     teacherId: Joi.string().required(),
@@ -56,4 +53,4 @@ const validateGetALLModules = (module) => {
   return schema.validate(module);
 };
 
-module.exports = { Module, validateCreateModule, validateGetALLModules };
+module.exports = { Module, validateGetALLModules };

@@ -14,6 +14,7 @@ const {
   getAllConversationsController,
   sendMessageController,
   getSingleChatController,
+  searchModuleController,
 } = require("../controllers/moduleController");
 const {
   getAllPubController,
@@ -29,8 +30,11 @@ const moduleRouter = require("express").Router();
 
 moduleRouter
   .route("/")
-  .post(verifyToken, verifyAuthorizationTeacher, createModuleController)
-  .get(verifyToken, verifyAuthorizationTeacher, getAllModulesController);
+  .post(verifyToken, verifyAuthorizationTeacher, createModuleController);
+
+moduleRouter.route("/all").post(verifyToken, getAllModulesController);
+
+moduleRouter.route("/search").post(verifyToken, searchModuleController);
 
 moduleRouter.route("/:moduleId").get(verifyToken, getModuleInfoController);
 

@@ -103,6 +103,9 @@ function InvitationsPage() {
 
   const { isLoading, mutate } = useMutation(
     ({ accept, invitId }) => {
+      // delete element from rows where id===invitId
+      const tmp = rows.filter((row) => row.id !== invitId);
+      setRows(tmp);
       return accept
         ? confirmInvitations(id, user.token, invitId)
         : rejectInvitations(id, user.token, invitId);
