@@ -10,6 +10,6 @@ notificationRouter.route("/").get(verifyToken, getNotificationsController);
 
 notificationRouter
   .route("/:notificationId")
-  .get(verifyToken, readNotificationController);
+  .put(verifyToken, readNotificationController);
 
 module.exports = notificationRouter;

@@ -1,7 +1,7 @@
 import axios from "axios";
 
-const getNotifications = async (userId, token) => {
-  return await axios.get(`http://localhost:5000/notifications/:${userId}`, {
+const getNotifications = async (token) => {
+  return await axios.get(`http://localhost:5000/notifications`, {
     headers: {
       Authorization: `Bearer ${token}`,
     },
@@ -10,7 +10,7 @@ const getNotifications = async (userId, token) => {
 
 const readNotification = async (notificationId, token) => {
   return await axios.put(
-    `http://localhost:5000/notifications/:${notificationId}`,
+    `http://localhost:5000/notifications/${notificationId}`,
     {},
     {
       headers: {

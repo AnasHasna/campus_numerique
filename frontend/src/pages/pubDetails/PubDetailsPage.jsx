@@ -51,7 +51,7 @@ function PubDetailsPage() {
   const { user } = useSelector((state) => state.auth);
   const [teacher, setTeacher] = useState({});
   const [pub, setPub] = useState({});
-  console.log(pub);
+
   const { isLoading, refetch } = useQuery({
     queryKey: "getSinglePub",
     queryFn: () => getSinglePub(pubId, user.token),

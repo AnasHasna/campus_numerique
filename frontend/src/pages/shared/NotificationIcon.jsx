@@ -1,29 +1,40 @@
-import { Badge, Divider, IconButton, Stack, Typography } from "@mui/material";
+import {
+  Badge,
+  Button,
+  Divider,
+  IconButton,
+  Stack,
+  Typography,
+} from "@mui/material";
 import NotificationsNoneIcon from "@mui/icons-material/NotificationsNone";
-import { useQuery } from "react-query";
-import { getNotifications } from "../../redux/api/notificationsApi";
+import { useMutation, useQuery } from "react-query";
+import {
+  getNotifications,
+  readNotification,
+} from "../../redux/api/notificationsApi";
 import { useSelector } from "react-redux";
 import { useState } from "react";
 import Menu from "@mui/material/Menu";
 import MenuItem from "@mui/material/MenuItem";
+import { useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 
 function NotificationIcon() {
   const { user } = useSelector((state) => state.auth);
-
-  // const { isLoading, refetch } = useQuery({
-  //   queryKey: "getNotifications",
-  //   queryFn: () => {
-  //     return getNotifications(user._id, user.token);
-  //   },
-  //   onSuccess: (data) => {
-  //     console.log(data.data);
-  //   },
-
-  //   onError: (err) => {
-  //     console.log(err);
-  //   },
-  //   refetchInterval: 2000,
-  // });
+  const [notifications, setNotifications] = useState([]);
+  const navigate = useNavigate();
+  const { isLoading, refetch } = useQuery({
+    queryKey: "getNotifications",
+    queryFn: () => getNotifications(user.token),
+    onSuccess: (data) => {
+      setNotifications(data.data.notifications);
+      console.log(data.data.notifications);
+    },
+    onError: (error) => {
+      console.log(error);
+    },
+    // refetchInterval: 2000,
+  });
 
   const [anchorEl, setAnchorEl] = useState(null);
   const open = Boolean(anchorEl);
@@ -32,6 +43,32 @@ function NotificationIcon() {
   };
   const handleClose = () => {
     setAnchorEl(null);
+  };
+
+  const handleNavigation = (e) => {
+    navigate(e.page);
+  };
+  const [notificationId, setNotificationId] = useState(null);
+  const { mutate } = useMutation({
+    mutationKey: "readNotification",
+    mutationFn: () => {
+      // make the notifications.isRead to true
+
+      return readNotification(notificationId, user.token);
+    },
+    onSuccess: (data) => {
+      console.log(data.data);
+    },
+    onError: (err) => {
+      console.log(err.message);
+    },
+  });
+  const handleClickNotification = (e, key) => {
+    setNotificationId(e._id);
+    let newNotifications = [...notifications];
+    newNotifications[key].isRead = true;
+    setNotifications(newNotifications);
+    mutate();
   };
 
   return (
@@ -43,9 +80,10 @@ function NotificationIcon() {
           color: "white",
         }}
         size="large"
-        onClick={handleClick}
-      >
-        <Badge color="secondary" badgeContent={8}>
+        onClick={handleClick}>
+        <Badge
+          color="secondary"
+          badgeContent={notifications.filter((e) => e.isRead === false).length}>
           <NotificationsNoneIcon />
         </Badge>
       </IconButton>
@@ -85,38 +123,30 @@ function NotificationIcon() {
           },
         }}
         transformOrigin={{ horizontal: "right", vertical: "top" }}
-        anchorOrigin={{ horizontal: "right", vertical: "bottom" }}
-      >
+        anchorOrigin={{ horizontal: "right", vertical: "bottom" }}>
         <Stack spacing={1} divider={<Divider />} ml={1} mr={1}>
-          {[1, 2, 3, 4, 5].map((e) => (
-            <Typography
-              sx={{
-                fontSize: "13px",
-                color: "black",
-                "&:hover": {
-                  backgroundColor: "primary.light",
-                  color: "white",
-                  cursor: "pointer",
-                },
-              }}
-            >
-              cznecz eczcz czcczecze,; czecpzc€czecze clkzc€clkzec zecln
-            </Typography>
-          ))}
-          {[1, 2, 3, 4, 5].map((e) => (
-            <Typography
-              sx={{
-                fontSize: "13px",
-                color: "text.secondary",
-                "&:hover": {
-                  backgroundColor: "primary.light",
-                  color: "white",
-                  cursor: "pointer",
-                },
-              }}
-            >
-              cznecz eczcz czcczecze,; czecpzc€czecze clkzc€clkzec zecln
-            </Typography>
+          {notifications.map((e, key) => (
+            <Button
+              key={key}
+              onClick={() => {
+                handleNavigation(e);
+                handleClickNotification(e, key);
+              }}>
+              <Typography
+                sx={{
+                  textTransform: "none",
+                  fontSize: "16px",
+                  textAlign: "left",
+                  color: e.isRead ? "text.secondary" : "text.primary",
+                  "&:hover": {
+                    backgroundColor: "primary.light",
+                    color: "white",
+                    cursor: "pointer",
+                  },
+                }}>
+                {e.message}
+              </Typography>
+            </Button>
           ))}
         </Stack>
       </Menu>
