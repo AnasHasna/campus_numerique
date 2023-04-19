@@ -4,20 +4,6 @@ import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import { moduleActions } from "../../redux/slices/moduleSlice";
 
-const colors = [
-  "#0096c7",
-  "#c9ada7",
-  "#fcbf49",
-  "#52796f",
-  "#4cc9f0",
-  "#f72585",
-  "#76c893",
-  "#f9c74f",
-  "#f3722c",
-  "#f9844a",
-  "#f8961e",
-];
-
 function CardModule(props) {
   const navigate = useNavigate();
   const dispatch = useDispatch();
@@ -41,8 +27,6 @@ function CardModule(props) {
     }
   }, [userType, fileName, baseUrl]);
 
-  const randomColor = colors[Math.floor(Math.random() * colors.length)];
-
   const handleClickCard = () => {
     dispatch(moduleActions.selectModule(props.module));
     navigate(`${props.module._id}/boards`);
@@ -56,7 +40,7 @@ function CardModule(props) {
         padding: 2,
         borderRadius: 1,
         boxShadow: 1,
-        bgcolor: `${randomColor}70`,
+        bgcolor: `${props.module.color}70`,
         cursor: "pointer",
 
         "&:hover": {

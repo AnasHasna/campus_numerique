@@ -15,7 +15,14 @@ const getAllModules = async (userId, userType, token) => {
   );
 };
 
-const createModules = async (teacherId, name, classe, identifiant, token) => {
+const createModules = async (
+  teacherId,
+  name,
+  classe,
+  identifiant,
+  color,
+  token
+) => {
   return await axios.post(
     `http://localhost:5000/modules`,
     {
@@ -23,6 +30,7 @@ const createModules = async (teacherId, name, classe, identifiant, token) => {
       identifiant,
       name,
       classe,
+      color,
     },
     {
       headers: {

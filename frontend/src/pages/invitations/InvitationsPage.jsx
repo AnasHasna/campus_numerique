@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React, { useMemo } from "react";
 import CustomPageWithDrawer from "../../components/CustomPageWithDrawer";
 import { DataGrid, GridActionsCellItem } from "@mui/x-data-grid";
 
@@ -15,6 +15,7 @@ import { useSelector } from "react-redux";
 import LoadingPage from "../../components/LoadingPage/LoadingPage";
 import CustomNoDataTable from "../NotesPage/NoDataTable";
 import SnackBar from "../../components/SnackBar";
+import { useEffect } from "react";
 
 function InvitationsPage() {
   const { id } = useParams();
@@ -26,6 +27,7 @@ function InvitationsPage() {
   const [snackBarSeverity, setSnackBarSeverity] = React.useState("success");
 
   const [rows, setRows] = React.useState([]);
+
   const columns = [
     { field: "name", headerName: "Nom Complet", flex: 1 },
     { field: "cne", headerName: "CNE", flex: 1 },
@@ -76,25 +78,11 @@ function InvitationsPage() {
     },
   ];
 
-  const { isLoading: isLoadingGet, refetch } = useQuery({
+  const { isLoading: isLoadingGet, isFetching } = useQuery({
     queryKey: "getInvitations",
     queryFn: () => getInvitations(id, user.token),
-    enabled: false,
     onSuccess: (data) => {
       setInvitations(data.data.invitations);
-      let newRows = [];
-      let row = {};
-      for (let i = 0; i < invitations.length; i++) {
-        row = {
-          id: data.data.invitations[i]._id,
-          name: data.data.invitations[i].student.fullName,
-          cne: data.data.invitations[i].student.codeMassar,
-          cni: data.data.invitations[i].student.cin,
-          phone: data.data.invitations[i].student.phoneNumber,
-        };
-        newRows.push(row);
-      }
-      setRows(newRows);
     },
     onError: (err) => {
       console.log(err);
@@ -103,27 +91,50 @@ function InvitationsPage() {
 
   const { isLoading, mutate } = useMutation(
     ({ accept, invitId }) => {
-      // delete element from rows where id===invitId
-      const tmp = rows.filter((row) => row.id !== invitId);
-      setRows(tmp);
+      // delete it from invitations
+      const newInvitations = invitations.filter(
+        (invit) => invit._id !== invitId
+      );
+      setInvitations(newInvitations);
+
+      // delete it from rows
+      const newRows = rows.filter((row) => row.id !== invitId);
+      setRows(newRows);
+
       return accept
         ? confirmInvitations(id, user.token, invitId)
         : rejectInvitations(id, user.token, invitId);
     },
     {
-      mutationKey: "acceptInvit",
+      mutationKey: "handleInvit",
       onSuccess: (data) => {
         setOpenSnackBar(true);
         setSnackBarMessage(data.data.message);
         setSnackBarSeverity("success");
-
-        refetch();
       },
       onError: (err) => {
         console.log(err);
       },
     }
   );
+
+  // update the component when isLoadingGet is false
+  useEffect(() => {
+    if (!isLoadingGet) {
+      let newRows = [];
+      for (let i = 0; i < invitations.length; i++) {
+        const row = {
+          id: invitations[i]._id,
+          name: invitations[i].student.fullName,
+          cne: invitations[i].student.codeMassar,
+          cni: invitations[i].student.cin,
+          phone: invitations[i].student.phoneNumber,
+        };
+        newRows.push(row);
+      }
+      setRows(newRows);
+    }
+  }, [isLoadingGet, invitations]);
 
   const handleConfirmInvitation = (params) => {
     mutate({ accept: true, invitId: params?.row?.id });
@@ -132,10 +143,6 @@ function InvitationsPage() {
   const handleRefuseInvitation = (params) => {
     mutate({ accept: false, invitId: params?.row?.id });
   };
-
-  useEffect(() => {
-    refetch();
-  }, [refetch, rows, invitations]);
 
   if (isLoadingGet || isLoading) return <LoadingPage />;
 

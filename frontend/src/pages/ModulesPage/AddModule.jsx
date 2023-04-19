@@ -15,6 +15,20 @@ import { createModules } from "../../redux/api/moduleApi";
 import { useSelector } from "react-redux";
 import SnackBar from "../../components/SnackBar";
 
+const colors = [
+  "#0096c7",
+  "#c9ada7",
+  "#fcbf49",
+  "#52796f",
+  "#4cc9f0",
+  "#f72585",
+  "#76c893",
+  "#f9c74f",
+  "#f3722c",
+  "#f9844a",
+  "#f8961e",
+];
+
 function AddModule(props) {
   const { user } = useSelector((state) => state.auth);
 
@@ -22,11 +36,17 @@ function AddModule(props) {
   const [openSnackBar, setOpenSnackBar] = useState(false);
   const [snackBarMessage, setSnackBarMessage] = useState("");
   const [snackBarType, setSnackBarType] = useState("");
+
   const [values, setValues] = useState({
     name: "",
     identifiant: "",
     classe: "",
   });
+
+  // generate random color
+  const randomColor = () => {
+    return colors[Math.floor(Math.random() * colors.length)];
+  };
 
   const { isLoading, mutate } = useMutation({
     mutationKey: "addModule",
@@ -36,6 +56,7 @@ function AddModule(props) {
         values.name,
         values.classe,
         values.identifiant,
+        randomColor(),
         user.token
       );
     },

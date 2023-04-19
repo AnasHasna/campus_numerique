@@ -72,7 +72,7 @@ module.exports.searchModuleController = asyncHandler(async (req, res) => {
  */
 
 module.exports.createModuleController = asyncHandler(async (req, res) => {
-  const { name, teacherId, identifiant, classe } = req.body;
+  const { name, teacherId, identifiant, classe, color } = req.body;
 
   let module = await Module.findOne({
     identifiant,
@@ -87,6 +87,7 @@ module.exports.createModuleController = asyncHandler(async (req, res) => {
     teacherId,
     classe,
     identifiant,
+    color,
   });
 
   await module.save();

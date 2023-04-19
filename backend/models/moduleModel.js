@@ -9,6 +9,11 @@ const moduleSchema = new mongoose.Schema(
       required: true,
       trim: true,
     },
+    color: {
+      type: String,
+      required: true,
+      trim: true,
+    },
     identifiant: {
       type: String,
       required: true,
