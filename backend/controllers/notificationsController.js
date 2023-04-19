@@ -19,7 +19,7 @@ module.exports.sendNotificationController = asyncHandler(
 
 module.exports.getNotificationsController = asyncHandler(async (req, res) => {
   const notifications = await Notification.find({
-    user: req.userId,
+    user: req.user.id,
   }).sort({ createdAt: -1 });
 
   res.status(200).json({
@@ -37,8 +37,9 @@ module.exports.getNotificationsController = asyncHandler(async (req, res) => {
 
 module.exports.readNotificationController = asyncHandler(async (req, res) => {
   const { notificationId } = req.params;
-
+  console.log(notificationId);
   await Notification.findByIdAndUpdate(notificationId, {
     isRead: true,
   });
+  res.status(200).json({ status: true });
 });
