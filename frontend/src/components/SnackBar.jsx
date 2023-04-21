@@ -12,7 +12,6 @@ function SnackBar(props) {
     if (reason === "clickaway") {
       return;
     }
-
     props.setOpen(false);
   };
 
@@ -28,7 +27,11 @@ function SnackBar(props) {
         }}
       >
         <Alert
-          onClose={handleClose}
+          onClose={(e) => {
+            e.stopPropagation();
+
+            handleClose(e, "");
+          }}
           severity={props.type === undefined ? "error" : props.type}
           sx={{ width: "100%" }}
         >

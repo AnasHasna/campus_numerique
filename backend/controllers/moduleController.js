@@ -15,6 +15,8 @@ const { Notification } = require("../models/notificationModel");
 const { ObjectId } = require("mongodb");
 const Pub = require("../models/pubModel");
 const Comment = require("../models/commentsModel");
+
+const { v4: uuidv4 } = require("uuid");
 /**
  * @description     Get all modules
  * @router          /modules/all
@@ -74,7 +76,7 @@ module.exports.searchModuleController = asyncHandler(async (req, res) => {
  */
 
 module.exports.createModuleController = asyncHandler(async (req, res) => {
-  const { name, teacherId, identifiant, classe, color } = req.body;
+  const { name, teacherId, classe, color, identifiant } = req.body;
 
   let module = await Module.findOne({
     identifiant,
@@ -94,6 +96,18 @@ module.exports.createModuleController = asyncHandler(async (req, res) => {
 
   await module.save();
   res.status(201).json({ status: true, message: "Module créer avec succès" });
+});
+
+/**
+ * @description     generate auto id
+ * @router          /modules/generateAutoId
+ * @method          GET
+ * @access          private (teacher)
+ */
+
+module.exports.generateAutoIdController = asyncHandler(async (req, res) => {
+  const identifiant = uuidv4();
+  res.status(201).json({ status: true, identifiant });
 });
 
 /**

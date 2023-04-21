@@ -4,6 +4,8 @@ import {
   Card,
   Divider,
   Icon,
+  IconButton,
+  InputAdornment,
   Stack,
   TextField,
   Tooltip,
@@ -14,11 +16,12 @@ import CustomModal from "../../components/CustomModal";
 import { LoadingButton } from "@mui/lab";
 
 import { useMutation } from "react-query";
-import { createModules } from "../../redux/api/moduleApi";
+import { createModules, generateAutoId } from "../../redux/api/moduleApi";
 import { useSelector } from "react-redux";
 import SnackBar from "../../components/SnackBar";
 
 import AddIcon from "@mui/icons-material/Add";
+import AutorenewIcon from "@mui/icons-material/Autorenew";
 
 const colors = [
   "#0096c7",
@@ -52,6 +55,28 @@ function AddModule(props) {
   const randomColor = () => {
     return colors[Math.floor(Math.random() * colors.length)];
   };
+
+  const { isLoading: isGenerating, mutate: handleGenerateAutoId } = useMutation(
+    {
+      mutationKey: "generateAutoId",
+      mutationFn: () => {
+        return generateAutoId(user.token);
+      },
+      onSuccess: (data) => {
+        setValues({
+          ...values,
+          identifiant: data.data.identifiant,
+        });
+
+        console.log(values);
+      },
+      onError: (err) => {
+        setSnackBarMessage("Une erreur s'est produite");
+        setSnackBarType("error");
+        setOpenSnackBar(true);
+      },
+    }
+  );
 
   const { isLoading, mutate } = useMutation({
     mutationKey: "addModule",
@@ -191,12 +216,8 @@ function AddModule(props) {
               setValues({ ...values, classe: handleChange.target.value });
             }}
           />
+
           <TextField
-            margin="normal"
-            name="id"
-            required
-            fullWidth
-            id="id"
             label="Identifiant"
             autoFocus
             error={
@@ -209,6 +230,25 @@ function AddModule(props) {
             }
             onChange={(handleChange) => {
               setValues({ ...values, identifiant: handleChange.target.value });
+            }}
+            value={values.identifiant}
+            InputProps={{
+              endAdornment: (
+                <InputAdornment position="end">
+                  <Tooltip title="Générer un identifiant automatiquement">
+                    <IconButton
+                      onClick={() => {
+                        handleGenerateAutoId();
+                      }}
+                      sx={{
+                        pointerEvents: isGenerating ? "none" : "auto",
+                      }}
+                    >
+                      <AutorenewIcon />
+                    </IconButton>
+                  </Tooltip>
+                </InputAdornment>
+              ),
             }}
           />
           <Divider />
@@ -224,6 +264,11 @@ function AddModule(props) {
               variant="outlined"
               onClick={() => {
                 setOpenModal(false);
+                setValues({
+                  name: "",
+                  identifiant: "",
+                  classe: "",
+                });
               }}
             >
               Annuler

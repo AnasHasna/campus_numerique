@@ -119,7 +119,8 @@ function CustomDrarwer(props) {
     }
     pathArray.push(url);
     navigate(pathArray.join("/"));
-    props.setOpenDrawer(false);
+
+    if (isSmallScreen) props.setOpenDrawer(false);
   };
 
   const handleCloseDrawer = () => {

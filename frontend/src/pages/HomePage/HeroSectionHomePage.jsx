@@ -2,6 +2,7 @@ import { Box, Button, Container, Stack, Typography } from "@mui/material";
 import { useNavigate } from "react-router-dom";
 import BgHero from "../../static/images/bghero.jpg";
 import { black, orange } from "../../utils/colors";
+import AnimatedTextHeroSection from "./AnimatedTextHeroSection";
 
 const styles = {
   demoWrap: {
@@ -26,7 +27,7 @@ const styles = {
     width: { xs: "100%", sm: "100%", md: "50%", lg: "35%" },
     alignItems: { xs: "center", sm: "center", md: "start" },
     textAlign: { xs: "center", sm: "center", md: "start" },
-    pt: 10,
+    pt: 15,
   },
 };
 
@@ -44,23 +45,24 @@ function HeroSectionHomePage() {
   return (
     <Box component="div" sx={styles.demoWrap}>
       <Container>
-        <Stack direction="column" spacing={1} sx={styles.demoContent}>
+        <Stack
+          direction="column"
+          spacing={1}
+          sx={{
+            ...styles.demoContent,
+            // make items start from left and center horizontal
+            justifyContent: { xs: "center", sm: "center", md: "center" },
+            alignItems: { xs: "center", sm: "center", md: "start" },
+            justifyItems: "center",
+          }}
+        >
           <Typography
             variant="h5"
             sx={{ color: black, fontWeight: "bold", fontSize: 30 }}
           >
             Campus Numérique
           </Typography>
-          <Typography
-            variant="h5"
-            sx={{
-              color: orange,
-              alignItems: "center",
-            }}
-          >
-            Autonomiser la prochaine génération d'apprenants : rejoignez la
-            révolution des salles de classe en ligne dès aujourd'hui !
-          </Typography>
+          <AnimatedTextHeroSection />
 
           <Typography
             variant="h6"

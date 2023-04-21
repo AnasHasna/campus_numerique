@@ -18,7 +18,7 @@ import { forgetPassword } from "../../../redux/api/authApi";
 import { useDispatch } from "react-redux";
 import { authActions } from "../../../redux/slices/authSlice";
 import SnackBar from "../../../components/SnackBar";
-import Loading from "../../../components/Loading";
+import { LoadingButton } from "@mui/lab";
 
 const initialValuesTechear = {
   email: "",
@@ -40,8 +40,6 @@ function ForgetPasswordPage() {
   const dispatch = useDispatch();
 
   const [userType, setUserType] = useState("");
-  const [email, setEmail] = useState("");
-  const [cin, setCin] = useState("");
   const [open, setOpen] = useState(false);
   const [eror, setEror] = useState("");
 
@@ -98,8 +96,6 @@ function ForgetPasswordPage() {
                 : validateStudentSchema
             }
             onSubmit={(values, { setSubmitting }) => {
-              setEmail(values.email);
-              setCin(values.cin);
               handleSubmit(values);
             }}
           >
@@ -128,12 +124,12 @@ function ForgetPasswordPage() {
                   <FormControlLabel
                     value="Teacher"
                     control={<Radio />}
-                    label="Teacher"
+                    label="Professeur"
                   />
                   <FormControlLabel
                     value="Student"
                     control={<Radio />}
-                    label="Student"
+                    label="Etudiant"
                   />
                 </RadioGroup>
                 {userType === "Teacher" && (
@@ -148,7 +144,6 @@ function ForgetPasswordPage() {
                       helperText={errors.email}
                       onBlur={handleBlur}
                       onChange={(e) => {
-                        setEmail(e.target.value);
                         handleChange(e);
                       }}
                     />
@@ -164,7 +159,6 @@ function ForgetPasswordPage() {
                       label="CIN/Code Massar"
                       onChange={(e) => {
                         handleChange(e);
-                        setCin(e.target.value);
                       }}
                       onBlur={handleBlur}
                     />
@@ -187,7 +181,8 @@ function ForgetPasswordPage() {
                   >
                     Annuler
                   </Button>
-                  <Button
+                  <LoadingButton
+                    loading={isLoading}
                     variant="contained"
                     color="primary"
                     disabled={
@@ -196,8 +191,8 @@ function ForgetPasswordPage() {
                     type="submit"
                     onClick={handleSubmit}
                   >
-                    {isLoading ? <Loading /> : "Rechercher"}
-                  </Button>
+                    Rechercher
+                  </LoadingButton>
                 </Stack>
               </Form>
             )}

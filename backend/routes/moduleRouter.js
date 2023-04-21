@@ -18,6 +18,7 @@ const {
   updateModuleController,
   deleteModuleController,
   exitFromModuleController,
+  generateAutoIdController,
 } = require("../controllers/moduleController");
 const {
   getAllPubController,
@@ -38,6 +39,9 @@ moduleRouter
 moduleRouter.route("/all").post(verifyToken, getAllModulesController);
 
 moduleRouter.route("/search").post(verifyToken, searchModuleController);
+moduleRouter
+  .route("/generateAutoId")
+  .get(verifyToken, generateAutoIdController);
 
 moduleRouter
   .route("/:moduleId")

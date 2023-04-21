@@ -13,10 +13,10 @@ import { useMutation } from "react-query";
 import { Form, Formik } from "formik";
 import { verifyCode } from "../../../redux/api/authApi";
 import { useSelector } from "react-redux";
-import Loading from "../../../components/Loading";
 import { useNavigate } from "react-router-dom";
 import { useState } from "react";
 import SnackBar from "../../../components/SnackBar";
+import { LoadingButton } from "@mui/lab";
 
 const initialValues = {
   verifyCode: "",
@@ -147,15 +147,16 @@ function VerifyCodePage() {
                     >
                       Annuler
                     </Button>
-                    <Button
+                    <LoadingButton
+                      loading={isLoading}
                       variant="contained"
                       color="primary"
                       disabled={isLoading || !values.verifyCode}
                       type="submit"
                       onSubmit={handleSubmit}
                     >
-                      {isLoading ? <Loading /> : "Continuer"}
-                    </Button>
+                      Continuer
+                    </LoadingButton>
                   </Stack>
                 </Stack>
               </Form>

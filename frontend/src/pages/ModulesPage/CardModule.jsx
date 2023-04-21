@@ -1,13 +1,28 @@
-import { Avatar, Box, Card, Stack, Typography } from "@mui/material";
+import {
+  Avatar,
+  Box,
+  Card,
+  IconButton,
+  Stack,
+  Tooltip,
+  Typography,
+} from "@mui/material";
 import React from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import { moduleActions } from "../../redux/slices/moduleSlice";
 import PoperCardModel from "./PoperCardModel";
 
+import CopyIcon from "@mui/icons-material/ContentCopy";
+import SnackBar from "../../components/SnackBar";
+
 function CardModule(props) {
   const navigate = useNavigate();
   const dispatch = useDispatch();
+
+  const [openSnackBar, setOpenSnackBar] = React.useState(false);
+  const [snackBarMessage, setSnackBarMessage] = React.useState("");
+  const [snackBarType, setSnackBarType] = React.useState("");
 
   // get the user from store
   const { userType } = useSelector((state) => state.auth);
@@ -46,6 +61,12 @@ function CardModule(props) {
         },
       }}
     >
+      <SnackBar
+        open={openSnackBar}
+        setOpen={setOpenSnackBar}
+        message={snackBarMessage}
+        type={snackBarType}
+      />
       <Stack
         direction="row"
         sx={{
@@ -78,14 +99,40 @@ function CardModule(props) {
               fontSize: 13,
             }}
           >
-            {props.module.classe}
+            Classe: : {props.module.classe}
           </Typography>
+          <Stack direction="row">
+            <Typography
+              sx={{
+                fontSize: 13,
+              }}
+            >
+              ID : {props.module.identifiant}
+            </Typography>
+            <Tooltip title="Copier l'identifiant">
+              <IconButton
+                onClick={(e) => {
+                  e.stopPropagation();
+                  navigator.clipboard.writeText(props.module.identifiant);
+                  setSnackBarMessage("Identifiant copié");
+                  setSnackBarType("success");
+                  setOpenSnackBar(true);
+                }}
+              >
+                <CopyIcon
+                  sx={{
+                    fontSize: 18,
+                  }}
+                />
+              </IconButton>
+            </Tooltip>
+          </Stack>
         </Box>
         <Stack
           spacing={1}
           direction="column"
           sx={{
-            justifyContent: "space-between",
+            justifyContent: "space-evenly",
             alignItems: "center",
           }}
         >

@@ -10,27 +10,25 @@ import { useDispatch } from "react-redux";
 import {
   Avatar,
   Box,
-  Button,
+  Card,
   Checkbox,
-  Container,
-  CssBaseline,
   FormControlLabel,
-  Grid,
   IconButton,
   InputAdornment,
   Link,
   Radio,
   RadioGroup,
+  Stack,
   TextField,
   Typography,
 } from "@mui/material";
 import { useNavigate } from "react-router-dom";
-import Loading from "../../../components/Loading";
 import { authActions } from "../../../redux/slices/authSlice";
 import SnackBar from "../../../components/SnackBar";
 import VisibilityOff from "@mui/icons-material/VisibilityOff";
 import Visibility from "@mui/icons-material/Visibility";
 import OurCopyright from "../../../components/OurCopyright";
+import { LoadingButton } from "@mui/lab";
 
 export default function LoginPage() {
   const [passw, setShowPassword] = useState(false);
@@ -53,7 +51,7 @@ export default function LoginPage() {
   const isTeacher = userType === "Teacher";
   const isStudent = userType === "Student";
 
-  const handleSubmit = (values, { setSubmitting }) => {
+  const handleSubmit = (values) => {
     let data = {};
     if (userType === "Teacher") {
       data = {
@@ -106,21 +104,13 @@ export default function LoginPage() {
 
   const initialValuesStudent = { cin: "", password: "" };
 
-  const [values, setValues] = React.useState({});
-
-  const handleChange = (event) => {
-    setValues((prevValues) => ({
-      ...prevValues,
-      [event.target.name]: event.target.value,
-    }));
-  };
-
   const [open, setOpen] = useState(false);
 
   return (
     <Formik
-      onSubmit={handleSubmit}
-      onChange={handleChange}
+      onSubmit={(values, { setSubmitting }) => {
+        handleSubmit(values);
+      }}
       initialValues={isTeacher ? initialValuesTeaacher : initialValuesStudent}
       validationSchema={
         isTeacher ? validateTeacherSchema : validateStudentSchema
@@ -136,151 +126,181 @@ export default function LoginPage() {
         handleSubmit,
         resetForm,
       }) => (
-        <>
-          <Box
+        <Box
+          sx={{
+            display: "flex",
+            flexDirection: "column",
+            alignItems: "center",
+            justifyContent: "center",
+            minHeight: "100vh",
+          }}
+        >
+          <Card
             sx={{
-              marginTop: 8,
               display: "flex",
               flexDirection: "column",
               alignItems: "center",
+              justifyContent: "center",
+              p: 8,
             }}
           >
-            <Avatar
+            <Box
               sx={{
-                m: 1,
-                bgcolor: "secondary.main",
-              }}
-            >
-              <LockIcon />
-            </Avatar>
-            <Typography component="h1" variant="h5">
-              Se connecter
-            </Typography>
-
-            <RadioGroup
-              row
-              value={userType}
-              onChange={(e) => {
-                setUserType(e.target.value);
-              }}
-            >
-              <FormControlLabel
-                value="Teacher"
-                control={<Radio />}
-                label="Professeur"
-              />
-              <FormControlLabel
-                value="Student"
-                control={<Radio />}
-                label="Etudiant"
-              />
-            </RadioGroup>
-          </Box>
-          <Container component="main" maxWidth="xs">
-            <CssBaseline />
-            <Form
-              sx={{
-                marginTop: 8,
                 display: "flex",
                 flexDirection: "column",
                 alignItems: "center",
               }}
             >
-              {isStudent && (
-                <Box>
-                  <TextField
-                    margin="normal"
-                    required
-                    fullWidth
-                    id="cin"
-                    label="CIN / Code Massar"
-                    name="cin"
-                    type="cin"
-                    autoComplete="cin"
-                    autoFocus
-                    value={values.cin}
-                    onChange={handleChange}
-                    sx={{
-                      gridColumn: "span 4",
-                    }}
-                  />
-                </Box>
-              )}
-
-              {isTeacher && (
-                <Box>
-                  <TextField
-                    margin="normal"
-                    required
-                    fullWidth
-                    id="email"
-                    label="Address e-mail"
-                    name="email"
-                    type="email"
-                    autoComplete="email"
-                    autoFocus
-                    value={values.email}
-                    onChange={handleChange}
-                    error={Boolean(touched.email) && Boolean(errors.email)}
-                    helperText={errors.email}
-                    sx={{
-                      gridColumn: "span 4",
-                    }}
-                  />
-                </Box>
-              )}
-
-              <TextField
-                margin="normal"
-                fullWidth
-                required
-                name="password"
-                label="Mot de passe"
-                id="password"
-                autoComplete="current-password"
-                onChange={handleChange}
-                value={values.password}
+              <Avatar
                 sx={{
-                  gridColumn: "span 4",
+                  m: 1,
+                  bgcolor: "secondary.main",
                 }}
-                type={passw.showPassword ? "text" : "password"}
-                InputProps={{
-                  endAdornment: (
-                    <InputAdornment position="end">
-                      <IconButton
-                        onClick={handleClickShowPassword}
-                        onMouseDown={handleMouseDownPassword}
-                      >
-                        {passw.showPassword ? (
-                          <Visibility />
-                        ) : (
-                          <VisibilityOff />
-                        )}
-                      </IconButton>
-                    </InputAdornment>
-                  ),
-                }}
-              />
-              <br />
-              <FormControlLabel
-                control={<Checkbox value="remember" color="primary" />}
-                label="Se souvenir de moi"
-              />
-              <Button
-                type="submit"
-                fullWidth
-                variant="contained"
-                sx={{
-                  mt: 3,
-                  mb: 2,
-                }}
-                disabled={isLoading}
               >
-                {isLoading ? <Loading /> : "Connexion"}
-              </Button>
+                <LockIcon />
+              </Avatar>
+              <Typography component="h1" variant="h5">
+                Se connecter
+              </Typography>
 
-              <Grid container>
-                <Grid item xs>
+              <RadioGroup
+                row
+                value={userType}
+                onChange={(e) => {
+                  setUserType(e.target.value);
+                }}
+              >
+                <FormControlLabel
+                  value="Teacher"
+                  control={<Radio />}
+                  label="Professeur"
+                />
+                <FormControlLabel
+                  value="Student"
+                  control={<Radio />}
+                  label="Etudiant"
+                />
+              </RadioGroup>
+            </Box>
+            <Box
+              component="form"
+              sx={{
+                display: "flex",
+                flexDirection: "column",
+                alignItems: "center",
+              }}
+            >
+              <Form
+                sx={{
+                  marginTop: 8,
+                  display: "flex",
+                  flexDirection: "column",
+                  alignItems: "center",
+                }}
+              >
+                {isStudent && (
+                  <Box>
+                    <TextField
+                      margin="normal"
+                      required
+                      fullWidth
+                      id="cin"
+                      label="CIN / Code Massar"
+                      name="cin"
+                      type="cin"
+                      autoComplete="cin"
+                      autoFocus
+                      value={values.cin}
+                      onChange={handleChange}
+                      sx={{
+                        gridColumn: "span 4",
+                      }}
+                    />
+                  </Box>
+                )}
+
+                {isTeacher && (
+                  <Box>
+                    <TextField
+                      margin="normal"
+                      required
+                      fullWidth
+                      id="email"
+                      label="Address e-mail"
+                      name="email"
+                      type="email"
+                      autoComplete="email"
+                      autoFocus
+                      value={values.email}
+                      onChange={handleChange}
+                      error={Boolean(touched.email) && Boolean(errors.email)}
+                      helperText={errors.email}
+                      sx={{
+                        gridColumn: "span 4",
+                      }}
+                    />
+                  </Box>
+                )}
+
+                <TextField
+                  margin="normal"
+                  fullWidth
+                  required
+                  name="password"
+                  label="Mot de passe"
+                  id="password"
+                  autoComplete="current-password"
+                  onChange={handleChange}
+                  value={values.password}
+                  sx={{
+                    gridColumn: "span 4",
+                  }}
+                  type={passw.showPassword ? "text" : "password"}
+                  InputProps={{
+                    endAdornment: (
+                      <InputAdornment position="end">
+                        <IconButton
+                          onClick={handleClickShowPassword}
+                          onMouseDown={handleMouseDownPassword}
+                        >
+                          {passw.showPassword ? (
+                            <Visibility />
+                          ) : (
+                            <VisibilityOff />
+                          )}
+                        </IconButton>
+                      </InputAdornment>
+                    ),
+                  }}
+                />
+                <br />
+                <FormControlLabel
+                  control={<Checkbox value="remember" color="primary" />}
+                  label="Se souvenir de moi"
+                />
+                <LoadingButton
+                  loading={isLoading}
+                  fullWidth
+                  variant="contained"
+                  sx={{
+                    mt: 3,
+                    mb: 2,
+                  }}
+                  disabled={isLoading}
+                  onClick={(e) => {
+                    e.preventDefault();
+                    handleSubmit();
+                  }}
+                >
+                  Connexion
+                </LoadingButton>
+
+                <Stack
+                  direction="row"
+                  sx={{
+                    justifyContent: "space-between",
+                  }}
+                >
                   <Link
                     href="#"
                     variant="body2"
@@ -291,8 +311,6 @@ export default function LoginPage() {
                   >
                     Mot de passe oublié ?
                   </Link>
-                </Grid>
-                <Grid item>
                   <Link
                     href="#"
                     variant="body2"
@@ -303,18 +321,18 @@ export default function LoginPage() {
                   >
                     {"Créer nouveau compte"}
                   </Link>
-                </Grid>
-              </Grid>
-            </Form>
-            <Box
-              sx={{
-                mt: 20,
-              }}
-            ></Box>
-            <OurCopyright />
-          </Container>
+                </Stack>
+              </Form>
+            </Box>
+          </Card>
+          <Box
+            sx={{
+              mt: 2,
+            }}
+          ></Box>
+          <OurCopyright />
           {open && <SnackBar message={error} open={open} setOpen={setOpen} />}
-        </>
+        </Box>
       )}
     </Formik>
   );

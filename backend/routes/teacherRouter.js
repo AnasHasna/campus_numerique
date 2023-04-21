@@ -12,12 +12,6 @@ const verifyToken = require("../middleware/verifyToken");
 
 const teacherRouter = require("express").Router();
 
-teacherRouter.route("/:teacherId").put(verifyToken, updateTeacherController);
-
-teacherRouter
-  .route("/:teacherId/image")
-  .put(verifyToken, photoUpload.single("image"), updateTeacherImageController);
-
 teacherRouter.post(
   "/register",
   photoUpload.single("image"),
@@ -27,5 +21,11 @@ teacherRouter.post("/login", loginTeacherController);
 teacherRouter.post("/forgetpassword", forgetPasswordTeacherController);
 teacherRouter.post("/verifycode", verifyCodeTeacherController);
 teacherRouter.put("/changepassword", changePasswordCodeTeacherController);
+
+teacherRouter.route("/:teacherId").put(verifyToken, updateTeacherController);
+
+teacherRouter
+  .route("/:teacherId/image")
+  .put(verifyToken, photoUpload.single("image"), updateTeacherImageController);
 
 module.exports = teacherRouter;

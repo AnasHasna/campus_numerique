@@ -1,12 +1,7 @@
 import FormRegister from "./FormRegister";
-import { Box, Link, Typography } from "@mui/material";
 
 function RegisterPage() {
-  return (
-    <Box display="flex" justifyContent="center">
-      <FormRegister />
-    </Box>
-  );
+  return <FormRegister />;
 }
 
 export default RegisterPage;

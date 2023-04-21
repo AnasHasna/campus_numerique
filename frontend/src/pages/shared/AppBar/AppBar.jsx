@@ -41,7 +41,7 @@ function MyAppBar() {
   const [fileName, setFileName] = React.useState(null);
   const [fullUrl, setFullUrl] = React.useState(null);
 
-  const isSmallScreen = useMediaQuery("(max-width:600px)");
+  const isSmallScreen = useMediaQuery("(max-width:620px)");
 
   React.useEffect(() => {
     if (userType === "Teacher") {
@@ -124,9 +124,9 @@ function MyAppBar() {
 
           <Box sx={{ flexGrow: 0 }}>
             {!isLogin && (
-              <Box display="flex">
+              <Stack direction="row" spacing={2}>
                 <Button
-                  sx={{ color: "white", mr: 1 }}
+                  sx={{ color: "white" }}
                   variant="contained"
                   onClick={(e) => {
                     handleGoToRoute(e, "auth/login");
@@ -143,7 +143,7 @@ function MyAppBar() {
                 >
                   S'inscrire
                 </Button>
-              </Box>
+              </Stack>
             )}
 
             {isLogin === true && (

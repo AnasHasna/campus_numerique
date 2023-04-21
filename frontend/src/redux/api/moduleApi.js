@@ -225,6 +225,14 @@ const exitFromModule = async (moduleId, token, userId) => {
   );
 };
 
+const generateAutoId = (token) => {
+  return axios.get(`http://localhost:5000/modules/generateAutoId`, {
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+  });
+};
+
 export {
   getStatistiques,
   getNotes,
@@ -244,4 +252,5 @@ export {
   updateModule,
   deleteModule,
   exitFromModule,
+  generateAutoId,
 };
