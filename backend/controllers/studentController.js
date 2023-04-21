@@ -270,3 +270,36 @@ module.exports.updateStudentController = asyncHandler(async (req, res) => {
   let result = { ...student.toObject(), token };
   res.status(200).json({ status: true, student: result });
 });
+
+/**
+ * @description     resend code
+ * @router          /students/resendCode
+ * @method          POST
+ * @access          private(only student)
+ */
+
+module.exports.resendCodeController = asyncHandler(async (req, res) => {
+  const { phoneNumber } = req.body;
+
+  let student = await Student.findOne({ phoneNumber: phoneNumber });
+
+  if (!student) {
+    return res.status(400).json({
+      status: false,
+      message: "Numéro de téléphone incorrect",
+    });
+  }
+
+  const verifyCode = Math.floor(Math.random() * 90000) + 10000;
+
+  // send it to whatsap
+  await sendWhatsappMessage(student.fullName, verifyCode, student.phoneNumber);
+
+  // change verify code ond DB
+  student.verifyCode = verifyCode;
+
+  await student.save();
+
+  // send response to frontend
+  res.status(200).json({ status: true, student });
+});

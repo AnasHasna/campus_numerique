@@ -1,17 +1,9 @@
-import {
-  Box,
-  Divider,
-  Card,
-  TextField,
-  Stack,
-  Link,
-  Button,
-} from "@mui/material";
+import { Box, Divider, Card, TextField, Stack, Button } from "@mui/material";
 import * as yup from "yup";
 import React from "react";
 import { useMutation } from "react-query";
 import { Form, Formik } from "formik";
-import { verifyCode } from "../../../redux/api/authApi";
+import { resendCode, verifyCode } from "../../../redux/api/authApi";
 import { useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import { useState } from "react";
@@ -22,15 +14,20 @@ const initialValues = {
   verifyCode: "",
 };
 const validateSchema = yup.object().shape({
-  verifyCode: yup.number().required("Entrer votre code de vérification"),
+  verifyCode: yup
+    .number("Le code de vérification doit être un nombre")
+    .required("Entrer votre code de vérification"),
 });
 
 function VerifyCodePage() {
   const userType = useSelector((state) => state.auth.userType);
   const user = useSelector((state) => state.auth.user);
   const verificationType = useSelector((state) => state.auth.verificationType);
+
   const [open, setOpen] = useState(false);
-  const [eror, setEror] = useState("");
+  const [message, setMessage] = useState("");
+  const [typeSnackBar, setTypeSnackBar] = useState("error");
+
   const navigate = useNavigate();
   const { isLoading, mutate } = useMutation(verifyCode, {
     mutationKey: "verifyCode",
@@ -42,14 +39,44 @@ function VerifyCodePage() {
       }
     },
     onError: (error) => {
-      setEror(error.response.data.message);
+      setMessage(error.response.data.message);
+      setTypeSnackBar("error");
       setOpen(true);
     },
   });
+
+  const { isLoading: loadingResendCode, mutate: mutateResendCode } =
+    useMutation({
+      mutationKey: "verifyCode",
+      mutationFn: () => {
+        return resendCode(user.email, user.phoneNumber, userType);
+      },
+
+      onSuccess: (data) => {
+        setMessage("Votre code de vérification a été renvoyé");
+        setTypeSnackBar("success");
+        setOpen(true);
+      },
+      onError: (error) => {
+        setMessage(error.response.data.message);
+        setTypeSnackBar("error");
+        setOpen(true);
+      },
+    });
+
   const handleSubmit = (values) => {
     let _id = user._id;
     mutate({ ...values, userType, _id });
   };
+
+  const handleResendCode = () => {
+    if (userType === "Teacher") {
+      mutateResendCode("", user.phoneNumber);
+    } else {
+      mutateResendCode(user.email, "");
+    }
+  };
+
   return (
     <>
       <Box
@@ -111,7 +138,7 @@ function VerifyCodePage() {
                     helperText={errors.verifyCode}
                   />
                   <p>
-                    Nous avons envoyer votre code à:{" "}
+                    Nous avons envoyer votre code à:
                     {userType === "Teacher" ? user.email : user.phoneNumber}
                     <br />
                     <br /> Celui-ci est composé de 5 chiffres.
@@ -127,7 +154,17 @@ function VerifyCodePage() {
                     justifyContent: "space-between",
                   }}
                 >
-                  <Link>Code non reçu?</Link>
+                  <LoadingButton
+                    loading={loadingResendCode}
+                    variant="text"
+                    onClick={handleResendCode}
+                    sx={{
+                      textTransform: "none",
+                      fontSize: "16px",
+                    }}
+                  >
+                    Renvoyer le code
+                  </LoadingButton>
                   <Stack
                     direction="row"
                     spacing={2}
@@ -164,7 +201,12 @@ function VerifyCodePage() {
           </Formik>
         </Card>
       </Box>
-      {open && <SnackBar message={eror} open={open} setOpen={setOpen} />}
+      <SnackBar
+        message={message}
+        open={open}
+        setOpen={setOpen}
+        type={typeSnackBar}
+      />
     </>
   );
 }

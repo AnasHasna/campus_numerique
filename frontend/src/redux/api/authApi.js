@@ -86,6 +86,18 @@ const changeTeacherPicture = async ({ id, data, token }) => {
   });
 };
 
+const resendCode = async (email, phoneNumber, userType) => {
+  if (userType === "Teacher") {
+    return await axios.post(`http://localhost:5000/teachers/resendCode`, {
+      email,
+    });
+  } else {
+    return await axios.post(`http://localhost:5000/students/resendCode`, {
+      phoneNumber,
+    });
+  }
+};
+
 export {
   signUp,
   login,
@@ -95,4 +107,5 @@ export {
   updateTeacher,
   updateStudent,
   changeTeacherPicture,
+  resendCode,
 };

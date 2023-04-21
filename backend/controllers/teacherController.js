@@ -315,3 +315,34 @@ module.exports.updateTeacherImageController = asyncHandler(async (req, res) => {
     teacher: result,
   });
 });
+
+/**
+ * @description     resend Code verification
+ * @router          /teachers/resendCode
+ * @method          POST
+ * @access          private(only teacher)
+ */
+
+module.exports.resendCodeController = asyncHandler(async (req, res) => {
+  const { email } = req.body;
+
+  const teacher = await Teacher.findOne({ email });
+
+  if (!teacher) {
+    return res.status(404).json({
+      status: false,
+      message: "Professeur non trouvé",
+    });
+  }
+
+  const verifyCode = Math.floor(Math.random() * 90000) + 10000;
+
+  // send it to email
+  await sendMail(email, verifyCode);
+
+  // change verify code ond DB
+  await Teacher.findByIdAndUpdate(teacher._id, { $set: { verifyCode } });
+
+  // send response to frontend
+  res.status(200).json({ status: true, teacher });
+});
