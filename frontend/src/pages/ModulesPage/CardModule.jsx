@@ -3,6 +3,7 @@ import React from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import { moduleActions } from "../../redux/slices/moduleSlice";
+import PoperCardModel from "./PoperCardModel";
 
 function CardModule(props) {
   const navigate = useNavigate();
@@ -17,14 +18,12 @@ function CardModule(props) {
   const baseUrl = "http://localhost:5000/images/";
 
   React.useEffect(() => {
-    if (userType === "Student") {
-      setFileName(
-        props.module.teacherId.imageUrl.substring(
-          props.module.teacherId.imageUrl.lastIndexOf("\\") + 1
-        )
-      );
-      setFullUrl(baseUrl + fileName);
-    }
+    setFileName(
+      props.module.teacherId.imageUrl.substring(
+        props.module.teacherId.imageUrl.lastIndexOf("\\") + 1
+      )
+    );
+    setFullUrl(baseUrl + fileName);
   }, [userType, fileName, baseUrl]);
 
   const handleClickCard = () => {
@@ -36,13 +35,12 @@ function CardModule(props) {
     <Card
       onClick={handleClickCard}
       sx={{
-        height: 100,
+        height: 150,
         padding: 2,
         borderRadius: 1,
         boxShadow: 1,
         bgcolor: `${props.module.color}70`,
         cursor: "pointer",
-
         "&:hover": {
           boxShadow: 3,
         },
@@ -59,7 +57,7 @@ function CardModule(props) {
         <Box>
           <Typography
             sx={{
-              fontSize: 16,
+              fontSize: 18,
               fontWeight: "bold",
             }}
           >
@@ -68,7 +66,7 @@ function CardModule(props) {
 
           <Typography
             sx={{
-              fontSize: 14,
+              fontSize: 15,
               fontWeight: "bold",
             }}
           >
@@ -80,10 +78,19 @@ function CardModule(props) {
               fontSize: 13,
             }}
           >
-            3ème année
+            {props.module.classe}
           </Typography>
         </Box>
-        {userType !== "Teacher" && (
+        <Stack
+          spacing={1}
+          direction="column"
+          sx={{
+            justifyContent: "space-between",
+            alignItems: "center",
+          }}
+        >
+          <PoperCardModel module={props.module} refetch={props.refetch} />
+
           <Avatar
             alt={props.module.teacherId.fullName}
             src={fullUrl}
@@ -93,7 +100,7 @@ function CardModule(props) {
               bgcolor: "white",
             }}
           />
-        )}
+        </Stack>
       </Stack>
     </Card>
   );

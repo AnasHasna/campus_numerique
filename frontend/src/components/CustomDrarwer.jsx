@@ -1,12 +1,14 @@
 import {
   Box,
   Drawer,
+  IconButton,
   List,
   ListItem,
   ListItemButton,
   ListItemIcon,
   ListItemText,
   Toolbar,
+  useMediaQuery,
 } from "@mui/material";
 
 import InboxIcon from "@mui/icons-material/MoveToInbox";
@@ -22,6 +24,9 @@ import GroupIcon from "@mui/icons-material/Group";
 import { useLocation, useNavigate } from "react-router-dom";
 import { useSelector } from "react-redux";
 import { useEffect, useState } from "react";
+
+import CloseIcon from "@mui/icons-material/Close";
+import { primaryColor } from "../utils/colors";
 
 let allSections = [
   {
@@ -78,12 +83,14 @@ let allSections = [
 
 const drawerWidth = 210;
 
-function CustomDrarwer() {
+function CustomDrarwer(props) {
   const location = useLocation();
   const navigate = useNavigate();
 
   const { userType } = useSelector((state) => state.auth);
   const [sections, setSections] = useState([]);
+
+  const isSmallScreen = useMediaQuery("(max-width:600px)");
 
   useEffect(() => {
     if (userType === "Student") {
@@ -112,7 +119,13 @@ function CustomDrarwer() {
     }
     pathArray.push(url);
     navigate(pathArray.join("/"));
+    props.setOpenDrawer(false);
   };
+
+  const handleCloseDrawer = () => {
+    props.setOpenDrawer(false);
+  };
+
   return (
     <Drawer
       variant="permanent"
@@ -123,9 +136,40 @@ function CustomDrarwer() {
           width: drawerWidth,
           boxSizing: "border-box",
         },
+        // disable the line in the right of drawer
+        "& .MuiDrawer-paperAnchorDockedLeft": {
+          borderRight: "none",
+        },
+
+        display: isSmallScreen
+          ? props.openDrawer
+            ? "block"
+            : "none"
+          : "block",
       }}
     >
-      <Toolbar />
+      <Toolbar
+        sx={{
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "flex-start",
+          px: [1],
+          backgroundColor: primaryColor,
+        }}
+      >
+        <IconButton
+          onClick={handleCloseDrawer}
+          sx={{
+            display: {
+              xs: "flex",
+              sm: "none",
+              color: "white",
+            },
+          }}
+        >
+          <CloseIcon />
+        </IconButton>
+      </Toolbar>
       <Box sx={{ overflow: "auto" }}>
         <List>
           {sections.map((e, index) => (

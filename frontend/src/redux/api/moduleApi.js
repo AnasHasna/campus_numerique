@@ -188,6 +188,43 @@ const sendMessage = async (moduleId, token, isTeacher, message, chatId) => {
   );
 };
 
+const updateModule = async (moduleId, token, name, classe) => {
+  return await axios.put(
+    `http://localhost:5000/modules/${moduleId}`,
+    {
+      name,
+      classe,
+    },
+    {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    }
+  );
+};
+
+const deleteModule = async (moduleId, token) => {
+  return await axios.delete(`http://localhost:5000/modules/${moduleId}`, {
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+  });
+};
+
+const exitFromModule = async (moduleId, token, userId) => {
+  return await axios.post(
+    `http://localhost:5000/modules/${moduleId}/exit`,
+    {
+      userId,
+    },
+    {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    }
+  );
+};
+
 export {
   getStatistiques,
   getNotes,
@@ -204,4 +241,7 @@ export {
   createModules,
   sendInvitation,
   searchModules,
+  updateModule,
+  deleteModule,
+  exitFromModule,
 };

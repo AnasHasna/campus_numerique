@@ -1,9 +1,12 @@
 import {
   Box,
   Button,
+  Card,
   Divider,
+  Icon,
   Stack,
   TextField,
+  Tooltip,
   Typography,
 } from "@mui/material";
 import React, { useState } from "react";
@@ -13,6 +16,8 @@ import { LoadingButton } from "@mui/lab";
 import { searchModules, sendInvitation } from "../../redux/api/moduleApi";
 import { useSelector } from "react-redux";
 import SnackBar from "../../components/SnackBar";
+
+import GroupAddIcon from "@mui/icons-material/GroupAdd";
 
 function RejoindreModule() {
   const { user } = useSelector((state) => state.auth);
@@ -97,15 +102,40 @@ function RejoindreModule() {
         message={snackBarMessage}
         type={snackBarType}
       />
-      <LoadingButton
-        variant="contained"
-        onClick={() => {
-          setOpenModal(true);
-        }}
-        loading={isLoading}
-      >
-        Rejoindre un cours
-      </LoadingButton>
+      <Tooltip title="Rejoindre un module">
+        <Card
+          onClick={() => {
+            setOpenModal(true);
+          }}
+          sx={{
+            width: "100%",
+            height: 150,
+            display: "flex",
+            justifyContent: "center",
+            alignItems: "center",
+            cursor: "pointer",
+            borderRadius: 1,
+            boxShadow: 1,
+            border: "1px dashed",
+            borderColor: "primary.main",
+          }}
+        >
+          <Icon
+            sx={{
+              fontSize: 60,
+              color: "primary.main",
+            }}
+          >
+            <GroupAddIcon
+              sx={{
+                fontSize: 60,
+                color: "primary.main",
+              }}
+            />
+          </Icon>
+        </Card>
+      </Tooltip>
+
       <CustomModal open={openModal} setOpen={setOpenModal}>
         <Stack spacing={2}>
           <Typography

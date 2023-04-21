@@ -2,10 +2,8 @@ import CustomPageWithoutDrawer from "../../components/CustomPageWithoutDrawer";
 import { Stack } from "@mui/material";
 import AllModules from "./AllModules";
 import { useSelector } from "react-redux";
-import AddModule from "./AddModule";
-import RejoindreModule from "./RejoindreModule";
 import { useQuery } from "react-query";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import LoadingPage from "../../components/LoadingPage/LoadingPage";
 import { getAllModules } from "../../redux/api/moduleApi";
 
@@ -14,8 +12,9 @@ function ModulesPage() {
 
   const [modules, setModules] = useState([]);
 
-  const { isLoading, refetch } = useQuery({
+  const { isLoading, refetch, isRefetching } = useQuery({
     queryKey: "modules",
+    enabled: false,
     queryFn: () => {
       return getAllModules(user._id, userType, user.token);
     },
@@ -25,17 +24,16 @@ function ModulesPage() {
     },
   });
 
+  useEffect(() => {
+    refetch();
+  }, [modules, refetch]);
+
   if (isLoading) return <LoadingPage />;
 
   return (
     <CustomPageWithoutDrawer>
       <Stack spacing={2}>
-        {userType === "Teacher" ? (
-          <AddModule refetch={refetch} />
-        ) : (
-          <RejoindreModule />
-        )}
-        <AllModules modules={modules} />
+        <AllModules modules={modules} refetch={refetch} />
       </Stack>
     </CustomPageWithoutDrawer>
   );

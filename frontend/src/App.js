@@ -11,7 +11,6 @@ import CoursPage from "./pages/CoursPage/CoursPage";
 import ExamensPage from "./pages/ExamensPage/ExamensPage";
 import HomePage from "./pages/HomePage/HomePage";
 import NotFoundPage from "./pages/NotFound/NotFoundPage";
-import MyAppBar from "./pages/shared/AppBar";
 import BoardPage from "./pages/board/BoardPage";
 import StudentsPage from "./pages/StudentsPages/StudentsPage";
 import TdsPages from "./pages/TdsPage/TdsPages";
@@ -25,6 +24,7 @@ import InvitationsPage from "./pages/invitations/InvitationsPage";
 import MessagesPages from "./pages/messages/MessagesPages";
 import PubDetailsPage from "./pages/pubDetails/PubDetailsPage";
 import ChatDetailsPage from "./pages/messages/ChatDetailsPage";
+import MyAppBar from "./pages/shared/AppBar/AppBar";
 
 const queryClient = new QueryClient();
 

@@ -52,7 +52,10 @@ const style = (theme) => ({
 });
 
 export default function CustomModal(props) {
-  const handleClose = () => props.setOpen(false);
+  const handleClose = (e) => {
+    e.stopPropagation();
+    props.setOpen(false);
+  };
 
   return (
     <div>
@@ -63,6 +66,9 @@ export default function CustomModal(props) {
         onClose={handleClose}
         slots={{ backdrop: Backdrop }}
         sx={{}}
+        onClick={(e) => {
+          e.stopPropagation();
+        }}
       >
         <Box sx={style}>{props.children}</Box>
       </Modal>

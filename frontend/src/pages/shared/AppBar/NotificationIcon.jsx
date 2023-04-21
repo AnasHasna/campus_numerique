@@ -11,24 +11,21 @@ import { useMutation, useQuery } from "react-query";
 import {
   getNotifications,
   readNotification,
-} from "../../redux/api/notificationsApi";
+} from "../../../redux/api/notificationsApi";
 import { useSelector } from "react-redux";
 import { useState } from "react";
 import Menu from "@mui/material/Menu";
-import MenuItem from "@mui/material/MenuItem";
-import { useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 
 function NotificationIcon() {
   const { user } = useSelector((state) => state.auth);
   const [notifications, setNotifications] = useState([]);
   const navigate = useNavigate();
-  const { isLoading, refetch } = useQuery({
+  useQuery({
     queryKey: "getNotifications",
     queryFn: () => getNotifications(user.token),
     onSuccess: (data) => {
       setNotifications(data.data.notifications);
-      console.log(data.data.notifications);
     },
     onError: (error) => {
       console.log(error);
@@ -80,10 +77,12 @@ function NotificationIcon() {
           color: "white",
         }}
         size="large"
-        onClick={handleClick}>
+        onClick={handleClick}
+      >
         <Badge
           color="secondary"
-          badgeContent={notifications.filter((e) => e.isRead === false).length}>
+          badgeContent={notifications.filter((e) => e.isRead === false).length}
+        >
           <NotificationsNoneIcon />
         </Badge>
       </IconButton>
@@ -123,7 +122,8 @@ function NotificationIcon() {
           },
         }}
         transformOrigin={{ horizontal: "right", vertical: "top" }}
-        anchorOrigin={{ horizontal: "right", vertical: "bottom" }}>
+        anchorOrigin={{ horizontal: "right", vertical: "bottom" }}
+      >
         <Stack spacing={1} divider={<Divider />} ml={1} mr={1}>
           {notifications.map((e, key) => (
             <Button
@@ -131,7 +131,8 @@ function NotificationIcon() {
               onClick={() => {
                 handleNavigation(e);
                 handleClickNotification(e, key);
-              }}>
+              }}
+            >
               <Typography
                 sx={{
                   textTransform: "none",
@@ -143,7 +144,8 @@ function NotificationIcon() {
                     color: "white",
                     cursor: "pointer",
                   },
-                }}>
+                }}
+              >
                 {e.message}
               </Typography>
             </Button>

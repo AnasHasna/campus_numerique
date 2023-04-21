@@ -1,9 +1,12 @@
 import {
   Box,
   Button,
+  Card,
   Divider,
+  Icon,
   Stack,
   TextField,
+  Tooltip,
   Typography,
 } from "@mui/material";
 import React, { useState } from "react";
@@ -14,6 +17,8 @@ import { useMutation } from "react-query";
 import { createModules } from "../../redux/api/moduleApi";
 import { useSelector } from "react-redux";
 import SnackBar from "../../components/SnackBar";
+
+import AddIcon from "@mui/icons-material/Add";
 
 const colors = [
   "#0096c7",
@@ -103,15 +108,39 @@ function AddModule(props) {
         message={snackBarMessage}
         type={snackBarType}
       />
-      <LoadingButton
-        variant="contained"
-        onClick={() => {
-          setOpenModal(true);
-        }}
-        loading={isLoading}
-      >
-        Ajouter un cours
-      </LoadingButton>
+      <Tooltip title="Ajouter un module">
+        <Card
+          onClick={() => {
+            setOpenModal(true);
+          }}
+          sx={{
+            width: "100%",
+            height: 150,
+            display: "flex",
+            justifyContent: "center",
+            alignItems: "center",
+            cursor: "pointer",
+            borderRadius: 1,
+            boxShadow: 1,
+            border: "1px dashed",
+            borderColor: "primary.main",
+          }}
+        >
+          <Icon
+            sx={{
+              fontSize: 60,
+              color: "primary.main",
+            }}
+          >
+            <AddIcon
+              sx={{
+                fontSize: 60,
+                color: "primary.main",
+              }}
+            />
+          </Icon>
+        </Card>
+      </Tooltip>
       <CustomModal open={openModal} setOpen={setOpenModal}>
         <Stack spacing={2}>
           <Typography

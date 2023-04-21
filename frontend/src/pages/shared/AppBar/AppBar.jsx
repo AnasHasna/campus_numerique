@@ -12,11 +12,14 @@ import Tooltip from "@mui/material/Tooltip";
 import MenuItem from "@mui/material/MenuItem";
 import AdbIcon from "@mui/icons-material/Adb";
 import { Link, useLocation, useNavigate } from "react-router-dom";
-import { primaryColor } from "../../utils/colors";
+import { primaryColor } from "../../../utils/colors";
 import { useDispatch, useSelector } from "react-redux";
-import { authActions } from "../../redux/slices/authSlice";
+import { authActions } from "../../../redux/slices/authSlice";
 import { Stack } from "@mui/material";
 import NotificationIcon from "./NotificationIcon";
+
+import useMediaQuery from "@mui/material/useMediaQuery";
+import MenuButtonAppBar from "./MenuIcon";
 
 const settings = [
   { setting: "Paramètres", route: "settings" },
@@ -37,6 +40,8 @@ function MyAppBar() {
 
   const [fileName, setFileName] = React.useState(null);
   const [fullUrl, setFullUrl] = React.useState(null);
+
+  const isSmallScreen = useMediaQuery("(max-width:600px)");
 
   React.useEffect(() => {
     if (userType === "Teacher") {
@@ -85,7 +90,15 @@ function MyAppBar() {
           disableGutters
           sx={{ display: "flex", justifyContent: "space-between" }}
         >
-          <Link to="/" style={{ textDecoration: "none", display: "flex" }}>
+          {isSmallScreen && isLogin && <MenuButtonAppBar />}
+
+          <Link
+            to="/"
+            style={{
+              textDecoration: "none",
+              display: "flex",
+            }}
+          >
             <AdbIcon
               sx={{
                 mr: 1,
@@ -102,6 +115,7 @@ function MyAppBar() {
                 letterSpacing: ".3rem",
                 color: "white",
                 textDecoration: "none",
+                display: isSmallScreen && "none",
               }}
             >
               Campus Numérique
@@ -109,26 +123,28 @@ function MyAppBar() {
           </Link>
 
           <Box sx={{ flexGrow: 0 }}>
-            <Box display={user && isLogin ? "none" : "flex"}>
-              <Button
-                sx={{ color: "white", mr: 1 }}
-                variant="contained"
-                onClick={(e) => {
-                  handleGoToRoute(e, "auth/login");
-                }}
-              >
-                Se Connecter
-              </Button>
-              <Button
-                sx={{ color: "white" }}
-                variant="outlined"
-                onClick={(e) => {
-                  handleGoToRoute(e, "auth/register");
-                }}
-              >
-                S'inscrire
-              </Button>
-            </Box>
+            {!isLogin && (
+              <Box display="flex">
+                <Button
+                  sx={{ color: "white", mr: 1 }}
+                  variant="contained"
+                  onClick={(e) => {
+                    handleGoToRoute(e, "auth/login");
+                  }}
+                >
+                  Se Connecter
+                </Button>
+                <Button
+                  sx={{ color: "white" }}
+                  variant="outlined"
+                  onClick={(e) => {
+                    handleGoToRoute(e, "auth/register");
+                  }}
+                >
+                  S'inscrire
+                </Button>
+              </Box>
+            )}
 
             {isLogin === true && (
               <Stack direction="row" spacing={2}>

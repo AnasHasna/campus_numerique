@@ -152,6 +152,13 @@ function ChatDetailsPage() {
           dataSource={messages}
         />
         <Input
+          inputStyle={{
+            backgroundColor: "#f5f5f5",
+            borderRadius: "2",
+            border: "none",
+            padding: "0 10px",
+            fontSize: "14px",
+          }}
           placeholder="Entrer un message..."
           multiline={false}
           onChange={(e) => {

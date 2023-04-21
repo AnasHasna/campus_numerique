@@ -9,7 +9,16 @@ function CustomPageWithDrawer({ children }) {
           display: "flex",
         }}
       >
-        <CustomDrarwer />
+        <Box
+          sx={{
+            display: {
+              xs: "none",
+              sm: "block",
+            },
+          }}
+        >
+          <CustomDrarwer />
+        </Box>
         <Box component="main" sx={{ flexGrow: 1, p: 3 }}>
           <Toolbar />
           {children}

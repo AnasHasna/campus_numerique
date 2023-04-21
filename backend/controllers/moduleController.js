@@ -13,6 +13,8 @@ const { Chat } = require("../models/chatModel");
 const { Message } = require("../models/messageModel");
 const { Notification } = require("../models/notificationModel");
 const { ObjectId } = require("mongodb");
+const Pub = require("../models/pubModel");
+const Comment = require("../models/commentsModel");
 /**
  * @description     Get all modules
  * @router          /modules/all
@@ -92,6 +94,80 @@ module.exports.createModuleController = asyncHandler(async (req, res) => {
 
   await module.save();
   res.status(201).json({ status: true, message: "Module créer avec succès" });
+});
+
+/**
+ * @description     Update Module
+ * @router          /modules/:moduleId
+ * @method          PUT
+ * @access          private(only teacher)
+ */
+module.exports.updateModuleController = asyncHandler(async (req, res) => {
+  const { moduleId } = req.params;
+  const { name, classe } = req.body;
+  const module = await Module.findById(moduleId);
+  if (!module)
+    return res
+      .status(404)
+      .json({ status: false, message: "Module introuvable" });
+  module.name = name;
+  module.classe = classe;
+  await module.save();
+  res.status(200).json({ status: true, message: "Module modifié avec succès" });
+});
+
+/**
+ * @description     DELETE
+ * @router          /modules/:moduleId
+ * @method          DELETE
+ * @access          private
+ */
+
+module.exports.deleteModuleController = asyncHandler(async (req, res) => {
+  // get the module
+  const { moduleId } = req.params;
+  const module = await Module.findById(moduleId);
+
+  // delete all files
+  await File.deleteMany({ module: moduleId });
+
+  // get all pubs
+  const pubs = await Pub.find({ module: moduleId });
+
+  // delete all comments
+  for (let i = 0; i < pubs.length; i++) {
+    await Comment.deleteMany({
+      pubId: pubs[i]._id.toString(),
+    });
+  }
+
+  // delete all pubs
+  await Pub.deleteMany({ module: moduleId });
+
+  // delete all invitations
+  await Invitation.deleteMany({ module: moduleId });
+  // delete all notes
+  await Mark.deleteMany({ module: moduleId });
+
+  // get all chats
+  const chats = await Chat.find({ module: moduleId });
+  // delete all messages
+  for (let i = 0; i < chats.length; i++) {
+    const messages = chats[i].messages;
+    for (let j = 0; j < messages.length; j++) {
+      await Message.findByIdAndDelete(messages[j]);
+    }
+  }
+  // delete all chats
+  await Chat.deleteMany({ module: moduleId });
+
+  // delete the module
+  await Module.findByIdAndDelete(moduleId);
+
+  res.status(200).json({
+    status: true,
+    message: "Module supprimé avec succès",
+  });
 });
 
 /**
@@ -517,4 +593,42 @@ module.exports.sendMessageController = asyncHandler(async (req, res) => {
   await Promise.all([newMessage.save(), chat.save()]);
 
   res.status(201).json({ status: true, message: "Message envoyé avec succès" });
+});
+
+/**
+ * @description     Exit from module
+ * @router          /modules/:moduleId/exit
+ * @method          POST
+ * @access          private
+ */
+
+module.exports.exitFromModuleController = asyncHandler(async (req, res) => {
+  const { moduleId } = req.params;
+  const { id: userId } = req.user;
+
+  // get the module
+  const module = await Module.findById(moduleId);
+
+  const students = module.students;
+
+  // filter student in module
+  const newStudents = students.filter((student) => student._id != userId);
+
+  module.students = newStudents;
+
+  await module.save();
+
+  // delete marks
+  await Mark.findOneAndDelete({
+    module: moduleId,
+    student: userId,
+  });
+
+  // delete chat
+  await Chat.findOneAndDelete({
+    module: moduleId,
+    student: userId,
+  });
+
+  res.status(200).json({ status: true, message: "Vous avez quitté le module" });
 });

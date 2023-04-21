@@ -81,8 +81,6 @@ function CardAddPubBoard(props) {
     formData.append("type", type);
     formData.append("content", content);
     formData.append("moduleId", id);
-    //TODO: make it dynamic
-    formData.append("teacherId", "642844e021bb6dc06e928dd7");
     mutate({ id, data: formData, token: user.token });
   };
 
@@ -95,7 +93,8 @@ function CardAddPubBoard(props) {
           backgroundColor: "lightgrey",
           cursor: "pointer",
         },
-      }}>
+      }}
+    >
       <SnackBar
         open={openSnackBar}
         setOpen={setOpenSnackBar}
@@ -117,7 +116,8 @@ function CardAddPubBoard(props) {
               color: "grey",
               display: "flex",
               alignItems: "center",
-            }}>
+            }}
+          >
             Annoncer quelque chose a votre classe
           </Typography>
         </Stack>
@@ -130,7 +130,8 @@ function CardAddPubBoard(props) {
             pb: 1.3,
             pr: 2,
             pl: 2,
-          }}>
+          }}
+        >
           <Stack spacing={1}>
             <Typography
               sx={{
@@ -138,7 +139,8 @@ function CardAddPubBoard(props) {
                 color: "b",
                 display: "flex",
                 alignItems: "center",
-              }}>
+              }}
+            >
               Annoncer quelque chose a votre classe
             </Typography>
             <TextareaAutosize
@@ -169,14 +171,16 @@ function CardAddPubBoard(props) {
                   pr: 2,
                   pl: 2,
                   alignItems: "center",
-                }}>
+                }}
+              >
                 <Typography>{file.name}</Typography>
                 <Stack
                   direction="row"
                   spacing={2}
                   sx={{
                     alignItems: "center",
-                  }}>
+                  }}
+                >
                   <CustomDropDawn
                     options={["COURS", "TD", "EXAM", "TP"]}
                     setOption={(option) => {
@@ -195,7 +199,8 @@ function CardAddPubBoard(props) {
                       backgroundColor: "white",
                       borderRadius: "50%",
                       border: "1px solid red",
-                    }}>
+                    }}
+                  >
                     <IconButton onClick={handleDeleteFile}>
                       <DeleteOutlineIcon sx={{ color: "red" }} />
                     </IconButton>
@@ -209,7 +214,8 @@ function CardAddPubBoard(props) {
                   <Avatar
                     sx={{
                       backgroundColor: "white",
-                    }}>
+                    }}
+                  >
                     <IconButton onClick={handleUploadButtonClick}>
                       <UploadIcon
                         sx={{
@@ -231,7 +237,8 @@ function CardAddPubBoard(props) {
                 <LoadingButton
                   loading={isLoading}
                   variant="contained"
-                  onClick={handleAddPub}>
+                  onClick={handleAddPub}
+                >
                   Publier
                 </LoadingButton>
                 <Button
@@ -239,7 +246,8 @@ function CardAddPubBoard(props) {
                     setIsHover(false);
                     setIsCardClicked(false);
                   }}
-                  variant="outlined">
+                  variant="outlined"
+                >
                   Annuler
                 </Button>
               </Stack>

@@ -15,6 +15,9 @@ const {
   sendMessageController,
   getSingleChatController,
   searchModuleController,
+  updateModuleController,
+  deleteModuleController,
+  exitFromModuleController,
 } = require("../controllers/moduleController");
 const {
   getAllPubController,
@@ -36,7 +39,15 @@ moduleRouter.route("/all").post(verifyToken, getAllModulesController);
 
 moduleRouter.route("/search").post(verifyToken, searchModuleController);
 
-moduleRouter.route("/:moduleId").get(verifyToken, getModuleInfoController);
+moduleRouter
+  .route("/:moduleId")
+  .get(verifyToken, getModuleInfoController)
+  .put(verifyToken, updateModuleController)
+  .delete(verifyToken, deleteModuleController);
+
+moduleRouter
+  .route("/:moduleId/exit")
+  .post(verifyToken, exitFromModuleController);
 
 moduleRouter
   .route("/:moduleId/students")
