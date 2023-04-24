@@ -296,7 +296,11 @@ export default function LoginPage() {
                 </LoadingButton>
 
                 <Stack
-                  direction="row"
+                  spacing={1}
+                  direction={{
+                    xs: "column",
+                    sm: "row",
+                  }}
                   sx={{
                     justifyContent: "space-between",
                   }}
@@ -319,7 +323,7 @@ export default function LoginPage() {
                       navigate("/auth/register", { relative: true });
                     }}
                   >
-                    {"Créer nouveau compte"}
+                    Créer nouveau compte
                   </Link>
                 </Stack>
               </Form>
