@@ -19,6 +19,9 @@ const {
   deleteModuleController,
   exitFromModuleController,
   generateAutoIdController,
+  addTaskController,
+  getAllTasksController,
+  getSingleTaskController,
 } = require("../controllers/moduleController");
 const {
   getAllPubController,
@@ -87,6 +90,17 @@ moduleRouter
   .delete(verifyToken, rejectInvitationController)
   .post(verifyToken, confirmInvitationController);
 
+// ======tasks
+moduleRouter
+  .route("/:moduleId/tasks")
+  .post(verifyToken, fileUpload.single("file"), addTaskController)
+  .get(verifyToken, getAllTasksController);
+
+moduleRouter
+  .route("/:moduleId/tasks/:taskId")
+  .get(verifyToken, getSingleTaskController);
+
+// ======chats
 moduleRouter
   .route("/:moduleId/chats")
   .post(verifyToken, getAllConversationsController);

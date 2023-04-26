@@ -65,7 +65,6 @@ export default function CustomModal(props) {
         open={props.open}
         onClose={handleClose}
         slots={{ backdrop: Backdrop }}
-        sx={{}}
         onClick={(e) => {
           e.stopPropagation();
         }}

@@ -233,6 +233,28 @@ const generateAutoId = (token) => {
   });
 };
 
+//=======Tasks
+const getAllTasks = async (moduleId, token) => {
+  return await axios.get(`http://localhost:5000/modules/${moduleId}/tasks`, {
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+  });
+};
+
+const addTask = async (data, moduleId, token) => {
+  return await axios.post(
+    `http://localhost:5000/modules/${moduleId}/tasks`,
+    data,
+    {
+      headers: {
+        "Content-Type": "multipart/form-data",
+        Authorization: `Bearer ${token}`,
+      },
+    }
+  );
+};
+
 export {
   getStatistiques,
   getNotes,
@@ -253,4 +275,6 @@ export {
   deleteModule,
   exitFromModule,
   generateAutoId,
+  getAllTasks,
+  addTask,
 };

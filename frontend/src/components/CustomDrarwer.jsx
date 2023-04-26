@@ -26,6 +26,7 @@ import { useSelector } from "react-redux";
 import { useEffect, useState } from "react";
 
 import CloseIcon from "@mui/icons-material/Close";
+import AssignmentIcon from "@mui/icons-material/Assignment";
 import { primaryColor } from "../utils/colors";
 
 let allSections = [
@@ -63,6 +64,11 @@ let allSections = [
     title: "Exams",
     url: "exams",
     icon: <InsertChartOutlinedIcon />,
+  },
+  {
+    title: "Tâches",
+    url: "tasks",
+    icon: <AssignmentIcon />,
   },
   {
     title: "Messages",
@@ -110,10 +116,11 @@ function CustomDrarwer(props) {
   const handleClick = (url) => {
     const pathArray = location.pathname.split("/");
     pathArray.pop();
-    // if he is finished by boards or messages then pop again
+    // if he is finished by boards or messages or tasks then pop again
     if (
       pathArray[pathArray.length - 1] === "boards" ||
-      pathArray[pathArray.length - 1] === "messages"
+      pathArray[pathArray.length - 1] === "messages" ||
+      pathArray[pathArray.length - 1] === "tasks"
     ) {
       pathArray.pop();
     }

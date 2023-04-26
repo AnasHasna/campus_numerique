@@ -41,7 +41,6 @@ function TdsPage() {
             fontWeight: "bold",
           }}
         >
-          {" "}
           Les travaux derigés :
         </Typography>
         {data.map((file, i) => {

@@ -12,11 +12,13 @@ const Teacher = require("../models/teacherModel");
 const { Chat } = require("../models/chatModel");
 const { Message } = require("../models/messageModel");
 const { Notification } = require("../models/notificationModel");
-const { ObjectId } = require("mongodb");
 const Pub = require("../models/pubModel");
 const Comment = require("../models/commentsModel");
+const path = require("path");
 
 const { v4: uuidv4 } = require("uuid");
+const Task = require("../models/taskModel");
+const TaskCompletion = require("../models/taskCompletionModel");
 /**
  * @description     Get all modules
  * @router          /modules/all
@@ -645,4 +647,92 @@ module.exports.exitFromModuleController = asyncHandler(async (req, res) => {
   });
 
   res.status(200).json({ status: true, message: "Vous avez quitté le module" });
+});
+
+//!========================Tasks===========
+
+/**
+ * @description     Get all tasks
+ * @router          /modules/:moduleId/tasks
+ * @method          GET
+ * @access          private(only logged in)
+ */
+
+module.exports.getAllTasksController = asyncHandler(async (req, res) => {
+  const { moduleId } = req.params;
+
+  const tasks = await Task.find({ module: moduleId });
+
+  res.status(200).json({ status: true, tasks });
+});
+
+/**
+ * @description     Get Single Task
+ * @router          /modules/:moduleId/tasks/:taskId
+ * @method          GET
+ * @access          private (only logged in)
+ */
+
+module.exports.getSingleTaskController = asyncHandler(async (req, res) => {
+  const { taskId } = req.params;
+
+  // get the task
+  const task = await Task.findById(taskId);
+
+  // get the task completion
+  const taskCompletion = await TaskCompletion.findOne({ task: taskId });
+
+  res.status(200).json({ status: true, task, taskCompletion });
+});
+
+/**
+ * @description     Add task
+ * @router          /modules/:moduleId/tasks
+ * @method          POST
+ * @access          private (only teacher)
+ */
+
+module.exports.addTaskController = asyncHandler(async (req, res) => {
+  const { debut, fin, description, bonus, penalty } = req.body;
+
+  const task = await Task.create({
+    module: req.params.moduleId,
+    debut,
+    fin,
+    description,
+    bonus,
+    penalty,
+  });
+
+  if (req.file) {
+    // get the path to the image
+    const filePath = path.join(__dirname, `../files/${req.file.filename}`);
+
+    const file = new File({
+      module: req.params.moduleId,
+      name: req.file.originalname,
+      type: "task",
+      path: filePath,
+    });
+    await file.save();
+
+    task.file = file._id;
+    await task.save();
+  }
+
+  const module = await Module.findById(req.params.moduleId);
+
+  // send notification to all students in the module
+  const students = module.students;
+
+  students.forEach(async (student) => {
+    await Notification.create({
+      user: student,
+      userType: "Student",
+      page: `/modules/${module.id}/tasks`,
+      message: `Une nouveau task a été ajouté dans le module ${module.name}`,
+    });
+  });
+
+  res.status(201).json({ status: true, task });
 });
