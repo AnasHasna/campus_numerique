@@ -188,6 +188,8 @@ function TableTasks() {
       onRowClick={goToTaskDetail}
       columns={columns}
       disableColumnMenu
+      showCellVerticalBorder
+      showColumnVerticalBorder
       disableRowSelectionOnClick
       editMode="row"
       rowsPerPageOptions={[5, 15, 30]}

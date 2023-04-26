@@ -680,7 +680,7 @@ module.exports.getSingleTaskController = asyncHandler(async (req, res) => {
   const task = await Task.findById(taskId);
 
   // get the task completion
-  const taskCompletion = await TaskCompletion.findOne({ task: taskId });
+  const taskCompletion = await TaskCompletion.find({ task: taskId });
 
   res.status(200).json({ status: true, task, taskCompletion });
 });

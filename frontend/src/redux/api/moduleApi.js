@@ -255,6 +255,17 @@ const addTask = async (data, moduleId, token) => {
   );
 };
 
+const getSingleTask = async (moduleId, taskId, token) => {
+  return await axios.get(
+    `http://localhost:5000/modules/${moduleId}/tasks/${taskId}`,
+    {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    }
+  );
+};
+
 export {
   getStatistiques,
   getNotes,
@@ -277,4 +288,5 @@ export {
   generateAutoId,
   getAllTasks,
   addTask,
+  getSingleTask,
 };
