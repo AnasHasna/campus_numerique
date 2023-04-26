@@ -216,7 +216,7 @@ function AddTask() {
                 onChange={(e) => {
                   setData({
                     ...data,
-                    debut: dayjs(e).format("DD-MM-YYYY"),
+                    debut: dayjs(e).format("DD/MM/YYYY"),
                   });
                 }}
                 sx={{

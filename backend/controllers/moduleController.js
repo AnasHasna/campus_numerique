@@ -736,3 +736,37 @@ module.exports.addTaskController = asyncHandler(async (req, res) => {
 
   res.status(201).json({ status: true, task });
 });
+
+/**
+ * @description     Answer Task
+ * @router          /modules/:moduleId/tasks/taskId/answer
+ * @method          POST
+ * @access          private (only student)
+ */
+
+module.exports.answerTaskController = asyncHandler(async (req, res) => {
+  const { taskId } = req.params;
+  const { id: studentId } = req.user;
+
+  const taskCompletion = await TaskCompletion.create({
+    task: taskId,
+    student: studentId,
+  });
+  if (req.file) {
+    // get the path to the image
+    const filePath = path.join(__dirname, `../files/${req.file.filename}`);
+
+    const file = new File({
+      module: req.params.moduleId,
+      name: req.file.originalname,
+      type: "taskAnswer",
+      path: filePath,
+    });
+    await file.save();
+
+    taskCompletion.file = file._id;
+    await taskCompletion.save();
+  }
+
+  res.status(201).json({ status: true, taskCompletion });
+});

@@ -22,6 +22,7 @@ const {
   addTaskController,
   getAllTasksController,
   getSingleTaskController,
+  answerTaskController,
 } = require("../controllers/moduleController");
 const {
   getAllPubController,
@@ -99,6 +100,13 @@ moduleRouter
 moduleRouter
   .route("/:moduleId/tasks/:taskId")
   .get(verifyToken, getSingleTaskController);
+
+moduleRouter.post(
+  "/:moduleId/tasks/:taskId/answer",
+  verifyToken,
+  fileUpload.single("file"),
+  answerTaskController
+);
 
 // ======chats
 moduleRouter

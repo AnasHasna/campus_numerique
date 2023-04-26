@@ -266,6 +266,19 @@ const getSingleTask = async (moduleId, taskId, token) => {
   );
 };
 
+const answerTask = async (moduleId, taskId, token, data) => {
+  return await axios.post(
+    `http://localhost:5000/modules/${moduleId}/tasks/${taskId}/answer`,
+    data,
+    {
+      headers: {
+        "Content-Type": "multipart/form-data",
+        Authorization: `Bearer ${token}`,
+      },
+    }
+  );
+};
+
 export {
   getStatistiques,
   getNotes,
@@ -289,4 +302,5 @@ export {
   getAllTasks,
   addTask,
   getSingleTask,
+  answerTask,
 };
