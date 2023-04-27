@@ -770,3 +770,40 @@ module.exports.answerTaskController = asyncHandler(async (req, res) => {
 
   res.status(201).json({ status: true, taskCompletion });
 });
+
+/**
+ * @description     EvaluateTask
+ * @router          /modules/:moduleId/tasks/taskId/evaluate
+ * @method          POST
+ * @access          private (only teacher)
+ */
+
+module.exports.evaluateTaskController = asyncHandler(async (req, res) => {
+  const { studentId, point } = req.body;
+
+  const { moduleId } = req.params;
+
+  const mark = await Mark.findOne({ student: studentId, module: moduleId });
+
+  const noteModule = mark.mark;
+
+  if (!noteModule) {
+    mark.mark = 0;
+    await mark.save();
+    return res
+      .status(200)
+      .json({ status: true, message: "Note ajoutée avec succès" });
+  }
+
+  let newNote = noteModule + point;
+
+  if (newNote > 20) newNote = 20;
+
+  if (newNote < 0) newNote = 0;
+
+  mark.mark = newNote;
+
+  await mark.save();
+
+  res.status(200).json({ status: true, message: "Note ajoutée avec succès" });
+});

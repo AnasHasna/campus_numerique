@@ -157,7 +157,10 @@ function TaskCompletionStudent(props) {
                 color: "red",
               }}
             >
-              Vous pouvez la faire en cliquant sur le bouton "Importer fichier"
+              {dayjs(task.end).isBefore(dayjs()) ||
+              dayjs(task.end).isSame(dayjs())
+                ? 'Vous pouvez la faire en cliquant sur le bouton "Importer un fichier"'
+                : "La date limite de cette tache est dépassée"}
             </Typography>
           </Box>
           <Stack
@@ -196,13 +199,17 @@ function TaskCompletionStudent(props) {
             </Stack>
             <Tooltip
               title={
-                dayjs(task.end).isBefore(dayjs())
+                dayjs(task.end).isBefore(dayjs()) ||
+                dayjs(task.end).isSame(dayjs())
                   ? "Envoyer la réponse"
                   : "La date limite de cette tache est dépassée"
               }
             >
               <LoadingButton
-                // disabled={!dayjs(task.end).isBefore(dayjs())}
+                disabled={
+                  !dayjs(task.end).isBefore(dayjs()) &&
+                  !dayjs(task.end).isSame(dayjs())
+                }
                 loading={isLoading}
                 variant="contained"
                 color="success"

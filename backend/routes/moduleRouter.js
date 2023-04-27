@@ -23,6 +23,7 @@ const {
   getAllTasksController,
   getSingleTaskController,
   answerTaskController,
+  evaluateTaskController,
 } = require("../controllers/moduleController");
 const {
   getAllPubController,
@@ -106,6 +107,11 @@ moduleRouter.post(
   verifyToken,
   fileUpload.single("file"),
   answerTaskController
+);
+moduleRouter.post(
+  "/:moduleId/tasks/:taskId/evaluate",
+  verifyToken,
+  evaluateTaskController
 );
 
 // ======chats

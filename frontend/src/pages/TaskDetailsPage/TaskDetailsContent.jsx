@@ -16,7 +16,6 @@ import axios from "axios";
 
 function TaskDetailsContent(props) {
   const [isDownloading, setIsDownloading] = useState(false);
-
   const handleClickDownload = async (event, file) => {
     event.preventDefault();
     event.stopPropagation();

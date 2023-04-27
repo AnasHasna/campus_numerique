@@ -42,9 +42,12 @@ function TaskDetailsPage() {
         <Typography variant="h4">Details du taches</Typography>
         <TaskDetailsContent task={task} />
         {userType === "Teacher" ? (
-          <TaskCompletionTeacher taskCompletion={allTaskCompletion} />
+          <TaskCompletionTeacher
+            taskCompletion={allTaskCompletion}
+            task={task}
+          />
         ) : (
-          taskCompletion && (
+          task && (
             <TaskCompletionStudent
               taskCompletion={taskCompletion}
               task={task}

@@ -279,6 +279,18 @@ const answerTask = async (moduleId, taskId, token, data) => {
   );
 };
 
+const evaluateTask = async (moduleId, taskId, data, token) => {
+  return await axios.post(
+    `http://localhost:5000/modules/${moduleId}/tasks/${taskId}/evaluate`,
+    data,
+    {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    }
+  );
+};
+
 export {
   getStatistiques,
   getNotes,
@@ -303,4 +315,5 @@ export {
   addTask,
   getSingleTask,
   answerTask,
+  evaluateTask,
 };
