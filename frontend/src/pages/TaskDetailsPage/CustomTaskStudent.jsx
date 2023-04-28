@@ -35,8 +35,8 @@ function CustomTaskStudent(props) {
     },
     onSuccess: (data) => {
       typeEvaluate === "add"
-        ? setMessageSnackBar("Points ajoutés avec succès")
-        : setMessageSnackBar("Points retirés avec succès");
+        ? setMessageSnackBar("Points ajoutés avec succès.")
+        : setMessageSnackBar("Points retirés avec succès.");
 
       setTypeSnackBar("success");
       setOpenSnackBar(true);
