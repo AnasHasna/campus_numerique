@@ -7,6 +7,7 @@ import { getStudents } from "../../redux/api/moduleApi";
 import { useQuery } from "react-query";
 import { useParams } from "react-router-dom";
 import LoadingPage from "../../components/LoadingPage/LoadingPage";
+import SnackBar from "../../components/SnackBar";
 
 function StudentsPage() {
   const baseUrl = "http://localhost:5000/images/";
@@ -18,6 +19,11 @@ function StudentsPage() {
   const { id } = useParams();
   const [studentArr, setStudentArr] = useState([]);
   const [teacher, setTeacher] = useState({});
+
+  const [openSnackBar, setOpenSnackBar] = useState(false);
+  const [snackBarMessage, setSnackBarMessage] = useState("");
+  const [snackBarType, setSnackBarType] = useState("");
+
   const { isLoading, refetch, data } = useQuery({
     queryKey: "getStudents",
     queryFn: () => getStudents(id, user.token),
@@ -75,6 +81,11 @@ function StudentsPage() {
             <Divider sx={{ backgroundColor: "#071A2F" }} variant="fullWidth" />
             {studentArr.map((student, i) => (
               <PersonComponent
+                setSnackBarMessage={setSnackBarMessage}
+                setSnackBarType={setSnackBarType}
+                setOpenSnackBar={setOpenSnackBar}
+                studentArr={studentArr}
+                setStudentArr={setStudentArr}
                 key={i}
                 name={student.fullName}
                 id={student._id}
@@ -84,6 +95,12 @@ function StudentsPage() {
           </Box>
         </Grid>
       </Grid>
+      <SnackBar
+        setOpen={setOpenSnackBar}
+        open={openSnackBar}
+        message={snackBarMessage}
+        type={snackBarType}
+      />
     </CustomPageWithDrawer>
   );
 }

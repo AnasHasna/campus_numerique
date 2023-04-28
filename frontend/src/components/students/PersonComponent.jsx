@@ -20,9 +20,7 @@ function PersonComponent(props) {
   const { user } = useSelector((state) => state.auth);
   const { id } = useParams();
   const name = props.name;
-  const [openSnackBar, setOpenSnackBar] = useState(false);
-  const [snackBarMessage, setSnackBarMessage] = useState("");
-  const [snackBarType, setSnackBarType] = useState("");
+
   const [anchorEl, setAnchorEl] = useState(null);
   const open = Boolean(anchorEl);
   const handleClick = (event) => {
@@ -37,14 +35,17 @@ function PersonComponent(props) {
       return deleteStudent(id, user.token, props.id);
     },
     onSuccess: (data) => {
-      setSnackBarMessage(data.data.message);
-      setSnackBarType("success");
-      setOpenSnackBar(true);
+      props.setSnackBarMessage(data.data.message);
+      props.setSnackBarType("success");
+      props.setOpenSnackBar(true);
+      props.setStudentArr(
+        props.studentArr.filter((student) => student._id !== props.id)
+      );
     },
     onError: (err) => {
-      setSnackBarMessage("Une erreur s'est produite");
-      setSnackBarType("error");
-      setOpenSnackBar(true);
+      props.setSnackBarMessage("Une erreur s'est produite");
+      props.setSnackBarType("error");
+      props.setOpenSnackBar(true);
     },
   });
   const handleDelete = () => {

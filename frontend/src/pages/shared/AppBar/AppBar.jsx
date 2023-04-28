@@ -17,7 +17,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { authActions } from "../../../redux/slices/authSlice";
 import { Stack } from "@mui/material";
 import NotificationIcon from "./NotificationIcon";
-
+import Logo from "../../../static/images/logo192.png";
 import useMediaQuery from "@mui/material/useMediaQuery";
 import MenuButtonAppBar from "./MenuIcon";
 
@@ -83,13 +83,11 @@ function MyAppBar() {
         boxShadow: "none",
         borderBottom: "1px solid #e0e0e0",
         zIndex: (theme) => theme.zIndex.drawer + 1,
-      }}
-    >
+      }}>
       <Container maxWidth="xl">
         <Toolbar
           disableGutters
-          sx={{ display: "flex", justifyContent: "space-between" }}
-        >
+          sx={{ display: "flex", justifyContent: "space-between" }}>
           {isSmallScreen && isLogin && <MenuButtonAppBar />}
 
           <Link
@@ -97,14 +95,8 @@ function MyAppBar() {
             style={{
               textDecoration: "none",
               display: "flex",
-            }}
-          >
-            <AdbIcon
-              sx={{
-                mr: 1,
-                color: "white",
-              }}
-            />
+            }}>
+            <Avatar src={Logo} sx={{ width: 40, height: 40 }} />
             <Typography
               variant="h6"
               noWrap
@@ -116,8 +108,7 @@ function MyAppBar() {
                 color: "white",
                 textDecoration: "none",
                 display: isSmallScreen && "none",
-              }}
-            >
+              }}>
               Campus Numérique
             </Typography>
           </Link>
@@ -130,8 +121,7 @@ function MyAppBar() {
                   variant="contained"
                   onClick={(e) => {
                     handleGoToRoute(e, "auth/login");
-                  }}
-                >
+                  }}>
                   Se Connecter
                 </Button>
                 <Button
@@ -139,8 +129,7 @@ function MyAppBar() {
                   variant="outlined"
                   onClick={(e) => {
                     handleGoToRoute(e, "auth/register");
-                  }}
-                >
+                  }}>
                   S'inscrire
                 </Button>
               </Stack>
@@ -171,8 +160,7 @@ function MyAppBar() {
                     horizontal: "right",
                   }}
                   open={Boolean(anchorElUser)}
-                  onClose={handleCloseUserMenu}
-                >
+                  onClose={handleCloseUserMenu}>
                   {settings.map((setting) => (
                     <MenuItem
                       key={setting.setting}
@@ -184,8 +172,7 @@ function MyAppBar() {
                         if (setting.route === "settings") {
                           handleGoToSettings();
                         }
-                      }}
-                    >
+                      }}>
                       <Typography textAlign="center">
                         {setting.setting}
                       </Typography>
