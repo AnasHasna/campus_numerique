@@ -233,6 +233,18 @@ const generateAutoId = (token) => {
   });
 };
 
+const deleteStudent = async (moduleId, token, studentId) => {
+  return await axios.put(
+    `http://localhost:5000/modules/${moduleId}/deletestudent/${studentId}`,
+    {},
+    {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    }
+  );
+};
+
 //=======Tasks
 const getAllTasks = async (moduleId, token) => {
   return await axios.get(`http://localhost:5000/modules/${moduleId}/tasks`, {
@@ -311,6 +323,7 @@ export {
   deleteModule,
   exitFromModule,
   generateAutoId,
+  deleteStudent,
   getAllTasks,
   addTask,
   getSingleTask,

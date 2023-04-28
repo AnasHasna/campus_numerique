@@ -19,6 +19,7 @@ const {
   deleteModuleController,
   exitFromModuleController,
   generateAutoIdController,
+  deleteStudentFromModuleController,
   addTaskController,
   getAllTasksController,
   getSingleTaskController,
@@ -57,6 +58,10 @@ moduleRouter
 moduleRouter
   .route("/:moduleId/exit")
   .post(verifyToken, exitFromModuleController);
+
+moduleRouter
+  .route("/:moduleId/deletestudent/:studentId")
+  .put(verifyToken, deleteStudentFromModuleController);
 
 moduleRouter
   .route("/:moduleId/students")

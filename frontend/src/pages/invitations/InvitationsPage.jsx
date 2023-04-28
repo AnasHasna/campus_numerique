@@ -154,36 +154,36 @@ function InvitationsPage() {
         message={snackBarMessage}
         type={snackBarSeverity}
       />
-      <div style={{ height: 400, width: "100%" }}>
-        <DataGrid
-          rows={rows}
-          columns={columns}
-          disableColumnMenu
-          disableRowSelectionOnClick
-          editMode="row"
-          rowsPerPageOptions={[5, 15, 30]}
-          slots={{
-            noRowsOverlay: () => (
-              <CustomNoDataTable message="Aucune invitation" />
-            ),
-          }}
-          initialState={{
-            pagination: {
-              paginationModel: {
-                pageSize: 10,
-              },
+
+      <DataGrid
+        rows={rows}
+        columns={columns}
+        disableColumnMenu
+        disableRowSelectionOnClick
+        editMode="row"
+        rowsPerPageOptions={[5, 15, 30]}
+        slots={{
+          noRowsOverlay: () => (
+            <CustomNoDataTable message="Aucune invitation" />
+          ),
+        }}
+        sx={{ height: "calc(100vh - 64px - 48px - 48px)" }}
+        initialState={{
+          pagination: {
+            paginationModel: {
+              pageSize: 10,
             },
-          }}
-          pageSizeOptions={[5, 10, 15, 30]}
-          localeText={{
-            MuiTablePagination: {
-              labelDisplayedRows: ({ from, to, count }) =>
-                `${from} - ${to} sur ${count !== -1 ? count : `plus de ${to}`}`,
-              labelRowsPerPage: "Invitations par page",
-            },
-          }}
-        />
-      </div>
+          },
+        }}
+        pageSizeOptions={[5, 10, 15, 30]}
+        localeText={{
+          MuiTablePagination: {
+            labelDisplayedRows: ({ from, to, count }) =>
+              `${from} - ${to} sur ${count !== -1 ? count : `plus de ${to}`}`,
+            labelRowsPerPage: "Invitations par page",
+          },
+        }}
+      />
     </CustomPageWithDrawer>
   );
 }

@@ -649,6 +649,46 @@ module.exports.exitFromModuleController = asyncHandler(async (req, res) => {
   res.status(200).json({ status: true, message: "Vous avez quitté le module" });
 });
 
+/**
+ * @description     Delete student from module
+ * @router          /modules/:moduleId/deletestudent/:studentId
+ * @method          POST
+ * @access          private
+ */
+
+module.exports.deleteStudentFromModuleController = asyncHandler(
+  async (req, res) => {
+    const { moduleId, studentId } = req.params;
+    console.log(moduleId, studentId);
+    // get the module
+    const module = await Module.findById(moduleId);
+
+    const students = module.students;
+
+    // filter student in module
+    const newStudents = students.filter((student) => student._id != studentId);
+
+    module.students = newStudents;
+
+    await module.save();
+
+    // delete marks
+    await Mark.findOneAndDelete({
+      module: moduleId,
+      student: studentId,
+    });
+
+    // delete chat
+    await Chat.findOneAndDelete({
+      module: moduleId,
+      student: studentId,
+    });
+
+    res
+      .status(200)
+      .json({ status: true, message: "Etudiant supprimé avec succès" });
+  }
+);
 //!========================Tasks===========
 
 /**
