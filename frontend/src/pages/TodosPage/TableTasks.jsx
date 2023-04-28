@@ -52,8 +52,7 @@ function TableTasks() {
                 mt: 1,
                 mb: 1,
                 textAlign: "center",
-              }}
-            >
+              }}>
               Pas de fichier
             </Typography>
           );
@@ -87,8 +86,7 @@ function TableTasks() {
           sx={{
             color: "green",
             textAlign: "center",
-          }}
-        >
+          }}>
           +{params.row.bonus} points
         </Typography>
       ),
@@ -103,8 +101,7 @@ function TableTasks() {
           sx={{
             textAlign: "center",
             color: "red",
-          }}
-        >
+          }}>
           -{params.row.penalty} points
         </Typography>
       ),
@@ -164,7 +161,6 @@ function TableTasks() {
         document.body.appendChild(link);
         link.click();
       } catch (error) {
-        console.log(error);
       } finally {
         setIsDownloading(false);
       }
@@ -179,10 +175,7 @@ function TableTasks() {
 
   return (
     <DataGrid
-      sx={{
-        minWidth: 600,
-        minHeight: 400,
-      }}
+      sx={{ height: "calc(100vh - 64px - 48px - 48px)" }}
       getRowHeight={() => "auto"}
       rows={rows}
       onRowClick={goToTaskDetail}

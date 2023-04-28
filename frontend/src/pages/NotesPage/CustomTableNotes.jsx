@@ -118,12 +118,12 @@ export default function CustomTableNotes() {
     );
 
   return (
-    <Box sx={{ height: 800, width: "100%" }}>
+    <Box>
       <DataGrid
         aria-label="Notes"
         disableColumnMenu
         editMode="row"
-        autoHeight
+        sx={{ height: "calc(100vh - 64px - 48px - 48px)" }}
         slots={{
           noRowsOverlay: () => (
             <CustomNoDataTable message="Aucun Etudiant trouvé" />
