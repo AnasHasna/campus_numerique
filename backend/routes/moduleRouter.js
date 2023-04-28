@@ -19,6 +19,12 @@ const {
   deleteModuleController,
   exitFromModuleController,
   generateAutoIdController,
+  deleteStudentFromModuleController,
+  addTaskController,
+  getAllTasksController,
+  getSingleTaskController,
+  answerTaskController,
+  evaluateTaskController,
 } = require("../controllers/moduleController");
 const {
   getAllPubController,

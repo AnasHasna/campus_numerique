@@ -648,3 +648,202 @@ module.exports.exitFromModuleController = asyncHandler(async (req, res) => {
 
   res.status(200).json({ status: true, message: "Vous avez quitté le module" });
 });
+
+/**
+ * @description     Delete student from module
+ * @router          /modules/:moduleId/deletestudent/:studentId
+ * @method          POST
+ * @access          private
+ */
+
+module.exports.deleteStudentFromModuleController = asyncHandler(
+  async (req, res) => {
+    const { moduleId, studentId } = req.params;
+    console.log(moduleId, studentId);
+    // get the module
+    const module = await Module.findById(moduleId);
+
+    const students = module.students;
+
+    // filter student in module
+    const newStudents = students.filter((student) => student._id != studentId);
+
+    module.students = newStudents;
+
+    await module.save();
+
+    // delete marks
+    await Mark.findOneAndDelete({
+      module: moduleId,
+      student: studentId,
+    });
+
+    // delete chat
+    await Chat.findOneAndDelete({
+      module: moduleId,
+      student: studentId,
+    });
+
+    res
+      .status(200)
+      .json({ status: true, message: "Etudiant supprimé avec succès" });
+  }
+);
+//!========================Tasks===========
+
+/**
+ * @description     Get all tasks
+ * @router          /modules/:moduleId/tasks
+ * @method          GET
+ * @access          private(only logged in)
+ */
+
+module.exports.getAllTasksController = asyncHandler(async (req, res) => {
+  const { moduleId } = req.params;
+
+  const tasks = await Task.find({ module: moduleId });
+
+  res.status(200).json({ status: true, tasks });
+});
+
+/**
+ * @description     Get Single Task
+ * @router          /modules/:moduleId/tasks/:taskId
+ * @method          GET
+ * @access          private (only logged in)
+ */
+
+module.exports.getSingleTaskController = asyncHandler(async (req, res) => {
+  const { taskId } = req.params;
+
+  // get the task
+  const task = await Task.findById(taskId);
+
+  // get the task completion
+  const taskCompletion = await TaskCompletion.find({ task: taskId });
+
+  res.status(200).json({ status: true, task, taskCompletion });
+});
+
+/**
+ * @description     Add task
+ * @router          /modules/:moduleId/tasks
+ * @method          POST
+ * @access          private (only teacher)
+ */
+
+module.exports.addTaskController = asyncHandler(async (req, res) => {
+  const { debut, fin, description, bonus, penalty } = req.body;
+
+  const task = await Task.create({
+    module: req.params.moduleId,
+    debut,
+    fin,
+    description,
+    bonus,
+    penalty,
+  });
+
+  if (req.file) {
+    // get the path to the image
+    const filePath = path.join(__dirname, `../files/${req.file.filename}`);
+
+    const file = new File({
+      module: req.params.moduleId,
+      name: req.file.originalname,
+      type: "task",
+      path: filePath,
+    });
+    await file.save();
+
+    task.file = file._id;
+    await task.save();
+  }
+
+  const module = await Module.findById(req.params.moduleId);
+
+  // send notification to all students in the module
+  const students = module.students;
+
+  students.forEach(async (student) => {
+    await Notification.create({
+      user: student,
+      userType: "Student",
+      page: `/modules/${module.id}/tasks`,
+      message: `Une nouveau task a été ajouté dans le module ${module.name}`,
+    });
+  });
+
+  res.status(201).json({ status: true, task });
+});
+
+/**
+ * @description     Answer Task
+ * @router          /modules/:moduleId/tasks/taskId/answer
+ * @method          POST
+ * @access          private (only student)
+ */
+
+module.exports.answerTaskController = asyncHandler(async (req, res) => {
+  const { taskId } = req.params;
+  const { id: studentId } = req.user;
+
+  const taskCompletion = await TaskCompletion.create({
+    task: taskId,
+    student: studentId,
+  });
+  if (req.file) {
+    // get the path to the image
+    const filePath = path.join(__dirname, `../files/${req.file.filename}`);
+
+    const file = new File({
+      module: req.params.moduleId,
+      name: req.file.originalname,
+      type: "taskAnswer",
+      path: filePath,
+    });
+    await file.save();
+
+    taskCompletion.file = file._id;
+    await taskCompletion.save();
+  }
+
+  res.status(201).json({ status: true, taskCompletion });
+});
+
+/**
+ * @description     EvaluateTask
+ * @router          /modules/:moduleId/tasks/taskId/evaluate
+ * @method          POST
+ * @access          private (only teacher)
+ */
+
+module.exports.evaluateTaskController = asyncHandler(async (req, res) => {
+  const { studentId, point } = req.body;
+
+  const { moduleId } = req.params;
+
+  const mark = await Mark.findOne({ student: studentId, module: moduleId });
+
+  const noteModule = mark.mark;
+
+  if (!noteModule) {
+    mark.mark = 0;
+    await mark.save();
+    return res
+      .status(200)
+      .json({ status: true, message: "Note ajoutée avec succès" });
+  }
+
+  let newNote = noteModule + point;
+
+  if (newNote > 20) newNote = 20;
+
+  if (newNote < 0) newNote = 0;
+
+  mark.mark = newNote;
+
+  await mark.save();
+
+  res.status(200).json({ status: true, message: "Note ajoutée avec succès" });
+});

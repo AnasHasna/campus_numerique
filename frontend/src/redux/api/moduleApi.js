@@ -233,6 +233,76 @@ const generateAutoId = (token) => {
   });
 };
 
+const deleteStudent = async (moduleId, token, studentId) => {
+  return await axios.put(
+    `http://localhost:5000/modules/${moduleId}/deletestudent/${studentId}`,
+    {},
+    {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    }
+  );
+};
+
+//=======Tasks
+const getAllTasks = async (moduleId, token) => {
+  return await axios.get(`http://localhost:5000/modules/${moduleId}/tasks`, {
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+  });
+};
+
+const addTask = async (data, moduleId, token) => {
+  return await axios.post(
+    `http://localhost:5000/modules/${moduleId}/tasks`,
+    data,
+    {
+      headers: {
+        "Content-Type": "multipart/form-data",
+        Authorization: `Bearer ${token}`,
+      },
+    }
+  );
+};
+
+const getSingleTask = async (moduleId, taskId, token) => {
+  return await axios.get(
+    `http://localhost:5000/modules/${moduleId}/tasks/${taskId}`,
+    {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    }
+  );
+};
+
+const answerTask = async (moduleId, taskId, token, data) => {
+  return await axios.post(
+    `http://localhost:5000/modules/${moduleId}/tasks/${taskId}/answer`,
+    data,
+    {
+      headers: {
+        "Content-Type": "multipart/form-data",
+        Authorization: `Bearer ${token}`,
+      },
+    }
+  );
+};
+
+const evaluateTask = async (moduleId, taskId, data, token) => {
+  return await axios.post(
+    `http://localhost:5000/modules/${moduleId}/tasks/${taskId}/evaluate`,
+    data,
+    {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    }
+  );
+};
+
 export {
   getStatistiques,
   getNotes,
@@ -253,4 +323,10 @@ export {
   deleteModule,
   exitFromModule,
   generateAutoId,
+  deleteStudent,
+  getAllTasks,
+  addTask,
+  getSingleTask,
+  answerTask,
+  evaluateTask,
 };
