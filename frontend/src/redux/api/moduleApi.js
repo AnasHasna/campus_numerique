@@ -233,18 +233,6 @@ const generateAutoId = (token) => {
   });
 };
 
-const deleteStudent = async (moduleId, token, studentId) => {
-  return await axios.put(
-    `http://localhost:5000/modules/${moduleId}/deletestudent/${studentId}`,
-    {},
-    {
-      headers: {
-        Authorization: `Bearer ${token}`,
-      },
-    }
-  );
-};
-
 export {
   getStatistiques,
   getNotes,
@@ -265,5 +253,4 @@ export {
   deleteModule,
   exitFromModule,
   generateAutoId,
-  deleteStudent,
 };

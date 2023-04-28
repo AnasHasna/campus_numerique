@@ -159,6 +159,7 @@ function InvitationsPage() {
           rows={rows}
           columns={columns}
           disableColumnMenu
+          disableRowSelectionOnClick
           editMode="row"
           rowsPerPageOptions={[5, 15, 30]}
           slots={{

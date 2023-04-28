@@ -11,7 +11,7 @@ function AllModulesStudent(props) {
   return (
     <Grid container spacing={2}>
       {props.modules.map((e, index) => (
-        <Grid item xs={12} sm={6} md={4} lg={3} key={e}>
+        <Grid item xs={12} sm={6} md={4} lg={3} key={index}>
           <CardModule module={props.modules[index]} refetch={props.refetch} />
         </Grid>
       ))}

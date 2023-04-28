@@ -1,7 +1,7 @@
 const mongoose = require("mongoose");
 
 const markSchema = new mongoose.Schema({
-  mark: { type: Number, trim: true },
+  mark: { type: Number },
   student: {
     type: mongoose.Schema.Types.ObjectId,
     required: true,

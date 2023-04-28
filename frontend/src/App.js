@@ -25,6 +25,8 @@ import MessagesPages from "./pages/messages/MessagesPages";
 import PubDetailsPage from "./pages/pubDetails/PubDetailsPage";
 import ChatDetailsPage from "./pages/messages/ChatDetailsPage";
 import MyAppBar from "./pages/shared/AppBar/AppBar";
+import TasksPage from "./pages/TodosPage/TasksPage";
+import TaskDetailsPage from "./pages/TaskDetailsPage/TaskDetailsPage";
 
 const queryClient = new QueryClient();
 
@@ -75,6 +77,10 @@ function App() {
               <Route path="tps" element={<TpsPage />} />
               <Route path="exams" element={<ExamensPage />} />
               <Route path="statistiques" element={<StatistiquePage />} />
+              <Route path="tasks">
+                <Route index element={<TasksPage />} />
+                <Route path=":taskId" element={<TaskDetailsPage />} />
+              </Route>
               <Route path="invitations" element={<InvitationsPage />} />
               <Route path="messages">
                 <Route index element={<MessagesPages />} />
