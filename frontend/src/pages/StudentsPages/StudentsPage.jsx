@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import CustomPageWithDrawer from "../../components/CustomPageWithDrawer";
 import PersonComponent from "../../components/students/PersonComponent";
-import { Box, Divider, Typography } from "@mui/material";
+import { Box, Divider, Grid, Stack, Typography } from "@mui/material";
 import { useSelector } from "react-redux";
 import { getStudents } from "../../redux/api/moduleApi";
 import { useQuery } from "react-query";
@@ -30,7 +30,6 @@ function StudentsPage() {
       console.log(error);
     },
   });
-
   useEffect(() => {
     setFileName(
       data?.data?.teacher.imageUrl.substring(
@@ -43,42 +42,48 @@ function StudentsPage() {
   React.useEffect(() => {
     refetch();
   }, [refetch]);
-
+  console.log(studentArr);
   if (isLoading) return <LoadingPage />;
   return (
     <CustomPageWithDrawer>
-      <Box display="flex" alignItems="center" sx={{ minWidth: 600 }} mb={6}>
-        <Box
-          display="flex"
-          flexDirection="column"
-          sx={{ gap: 3 }}
-          minWidth="800px"
-          justifyContent="left"
-        >
-          <Typography variant="h4" ml={3} style={{ color: "#071A2F" }}>
-            Ensaignants
-          </Typography>
-          <Divider sx={{ backgroundColor: "#071A2F" }} variant="fullWidth" />
-          <PersonComponent name={teacher.fullName} imageUrl={fullUrl} />
-        </Box>
-      </Box>
-      <Box display="flex" alignItems="center" sx={{ minWidth: 600 }}>
-        <Box
-          display="flex"
-          flexDirection="column"
-          sx={{ gap: 3 }}
-          minWidth="800px"
-          justifyContent="left"
-        >
-          <Typography variant="h4" ml={3} style={{ color: "#071A2F" }}>
-            Etudiants
-          </Typography>
-          <Divider sx={{ backgroundColor: "#071A2F" }} variant="fullWidth" />
-          {studentArr.map((student, i) => (
-            <PersonComponent key={i} name={student.fullName} />
-          ))}
-        </Box>
-      </Box>
+      <Grid>
+        <Grid item xs={12}>
+          <Box sx={{ mb: 3 }} justifyContent="left">
+            <Typography variant="h4" mb={3} style={{ color: "#071A2F" }}>
+              Ensaignants
+            </Typography>
+            <Divider
+              sx={{ backgroundColor: "#071A2F", mb: 3 }}
+              variant="fullWidth"
+            />
+            <PersonComponent
+              name={teacher.fullName}
+              imageUrl={fullUrl}
+              user="Teacher"
+            />
+          </Box>
+        </Grid>
+        <Grid item xs={12}>
+          <Box
+            display="flex"
+            flexDirection="column"
+            sx={{ gap: 3 }}
+            justifyContent="left">
+            <Typography variant="h4" style={{ color: "#071A2F" }}>
+              Etudiants
+            </Typography>
+            <Divider sx={{ backgroundColor: "#071A2F" }} variant="fullWidth" />
+            {studentArr.map((student, i) => (
+              <PersonComponent
+                key={i}
+                name={student.fullName}
+                id={student._id}
+                userType={userType}
+              />
+            ))}
+          </Box>
+        </Grid>
+      </Grid>
     </CustomPageWithDrawer>
   );
 }

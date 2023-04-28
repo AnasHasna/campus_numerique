@@ -19,6 +19,7 @@ const {
   deleteModuleController,
   exitFromModuleController,
   generateAutoIdController,
+  deleteStudentFromModuleController,
 } = require("../controllers/moduleController");
 const {
   getAllPubController,
@@ -52,6 +53,10 @@ moduleRouter
 moduleRouter
   .route("/:moduleId/exit")
   .post(verifyToken, exitFromModuleController);
+
+moduleRouter
+  .route("/:moduleId/deletestudent/:studentId")
+  .put(verifyToken, deleteStudentFromModuleController);
 
 moduleRouter
   .route("/:moduleId/students")
