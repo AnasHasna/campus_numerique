@@ -108,6 +108,13 @@ module.exports.loginTeacherController = asyncHandler(async (req, res) => {
     .select("-verifyCode");
 
   let result = { ...teacher.toObject() };
+
+  if (teacher.isAccountVerified === false) {
+    return res.status(400).json({
+      status: false,
+      message: "Compte non vérifié! Veuillez vérifier votre compte.",
+    });
+  }
   result.token = accessToken;
   res.status(200).json({ status: true, user: result });
 });
